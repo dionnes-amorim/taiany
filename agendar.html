@@ -1,0 +1,861 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff8fb">
+  <meta name="description" content="Agende seu horário com Taiany Trindade Nail Designer. Escolha seu serviço e encontre o melhor horário para você.">
+  <title>Agende seu horário | Taiany Trindade</title>
+
+  <style>
+    :root {
+      --pink: #bd7896;
+      --pink-dark: #985674;
+      --pink-light: #f9eaf1;
+      --cream: #fffaf8;
+      --ink: #34262d;
+      --muted: #887780;
+      --line: #f0e1e8;
+      --white: #ffffff;
+      --green: #467c61;
+      --shadow: 0 16px 50px rgba(104, 54, 78, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--cream);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      padding: 22px 20px;
+      background: rgba(255,255,255,.9);
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--pink-light);
+      color: var(--pink-dark);
+      font-size: 25px;
+    }
+
+    .brand-name {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      letter-spacing: .2px;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .hero {
+      padding: 42px 20px 30px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse at top, #fbeaf1 0%, transparent 65%);
+    }
+
+    .eyebrow {
+      color: var(--pink-dark);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 12px 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 500;
+      line-height: 1.12;
+    }
+
+    .hero p {
+      max-width: 480px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      gap: 22px;
+      width: min(100% - 32px, 1000px);
+      margin: 0 auto 60px;
+      align-items: start;
+    }
+
+    .panel, .summary {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel { padding: 26px; }
+    .summary { padding: 24px; position: sticky; top: 18px; }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 20px;
+    }
+
+    .step {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border-radius: 50%;
+      color: var(--pink-dark);
+      background: var(--pink-light);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .section-desc {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .service {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .service:hover { border-color: var(--pink); }
+
+    .service.selected {
+      border: 2px solid var(--pink);
+      padding: 15px;
+      background: #fff8fb;
+      box-shadow: 0 0 0 3px rgba(189,120,150,.09);
+    }
+
+    .service-title {
+      display: block;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .service-description {
+      display: block;
+      min-height: 18px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .service-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .service-price {
+      color: var(--pink-dark);
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .service-duration {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .field { margin-bottom: 17px; }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      outline: none;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(189,120,150,.1);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .divider {
+      height: 1px;
+      margin: 26px 0;
+      background: var(--line);
+    }
+
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .slot {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .slot:hover:not(:disabled), .slot.selected {
+      border-color: var(--pink);
+      background: var(--pink-light);
+      color: var(--pink-dark);
+    }
+
+    .slot:disabled {
+      cursor: not-allowed;
+      color: #c7bbc1;
+      background: #f8f5f6;
+      text-decoration: line-through;
+    }
+
+    .hint {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      font-weight: 500;
+    }
+
+    .summary-note {
+      margin: 5px 0 22px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin: 14px 0;
+      font-size: 13px;
+    }
+
+    .summary-row span:first-child { color: var(--muted); }
+    .summary-row strong { text-align: right; overflow-wrap: anywhere; }
+
+    .total {
+      padding-top: 17px;
+      border-top: 1px solid var(--line);
+    }
+
+    .total strong {
+      color: var(--pink-dark);
+      font-size: 24px;
+    }
+
+    .primary {
+      width: 100%;
+      min-height: 50px;
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--pink);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 7px 18px rgba(189,120,150,.2);
+      transition: .2s;
+    }
+
+    .primary:hover { background: var(--pink-dark); }
+    .primary:disabled { opacity: .55; cursor: wait; }
+
+    .secure-note {
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .message {
+      display: none;
+      padding: 13px 14px;
+      margin: 0 0 18px;
+      border-radius: 11px;
+      font-size: 13px;
+    }
+
+    .message.show { display: block; }
+    .message.error { color: #8f3049; background: #fff0f2; }
+    .message.success { color: #286346; background: #eaf7ef; }
+
+    .loading {
+      grid-column: 1 / -1;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .footer {
+      padding: 24px 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .summary { position: static; grid-row: 1; }
+      .panel { padding: 20px; }
+      .services { grid-template-columns: 1fr; }
+      .slots { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero { padding-top: 32px; }
+    }
+
+    @media (max-width: 380px) {
+      .two-cols { grid-template-columns: 1fr; gap: 0; }
+      .slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">✿</div>
+      <div>
+        <div class="brand-name">Taiany Trindade</div>
+        <div class="brand-subtitle">Nail Designer</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Um momento só seu</div>
+    <h1>Seu próximo momento<br>de beleza começa aqui.</h1>
+    <p>Escolha seu serviço, encontre o melhor horário e faça seu agendamento de forma simples.</p>
+  </section>
+
+  <main class="layout">
+    <div class="panel">
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+
+      <form id="bookingForm">
+        <section>
+          <div class="section-head">
+            <span class="step">1</span>
+            <div>
+              <h2>Escolha seu serviço</h2>
+              <p class="section-desc">Selecione o procedimento desejado.</p>
+            </div>
+          </div>
+          <div id="services" class="services">
+            <div class="loading">Carregando serviços...</div>
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+          <div class="section-head">
+            <span class="step">2</span>
+            <div>
+              <h2>Escolha data e horário</h2>
+              <p class="section-desc">Consulte os horários disponíveis.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="date">Data do atendimento</label>
+            <input type="date" id="date" required>
+          </div>
+
+          <div id="slots" class="slots">
+            <div class="loading">Selecione uma data para consultar os horários.</div>
+          </div>
+          <p class="hint" id="slotHint">Os horários são atualizados conforme a agenda.</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+          <div class="section-head">
+            <span class="step">3</span>
+            <div>
+              <h2>Seus dados</h2>
+              <p class="section-desc">Precisamos dessas informações para registrar seu horário.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="name">Nome completo</label>
+            <input id="name" name="nome_cliente" type="text"
+              maxlength="120" autocomplete="name"
+              placeholder="Como podemos te chamar?" required>
+          </div>
+
+          <div class="two-cols">
+            <div class="field">
+              <label for="phone">WhatsApp / telefone</label>
+              <input id="phone" name="telefone_cliente" type="tel"
+                maxlength="30" autocomplete="tel"
+                placeholder="(00) 00000-0000" required>
+            </div>
+            <div class="field">
+              <label for="email">E-mail (opcional)</label>
+              <input id="email" name="email" type="email"
+                maxlength="150" autocomplete="email"
+                placeholder="voce@email.com">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="notes">Observações (opcional)</label>
+            <textarea id="notes" name="observacoes" maxlength="500"
+              placeholder="Conte se há algum detalhe importante para o atendimento."></textarea>
+          </div>
+        </section>
+
+        <button id="submitButton" class="primary" type="submit">
+          Solicitar agendamento
+        </button>
+        <p class="secure-note">Seu agendamento será enviado para registro na agenda.</p>
+      </form>
+    </div>
+
+    <aside class="summary">
+      <div class="summary-title">Resumo do agendamento</div>
+      <p class="summary-note">Confira os detalhes antes de continuar.</p>
+
+      <div class="summary-row">
+        <span>Serviço</span>
+        <strong id="sumService">Não selecionado</strong>
+      </div>
+      <div class="summary-row">
+        <span>Duração</span>
+        <strong id="sumDuration">—</strong>
+      </div>
+      <div class="summary-row">
+        <span>Data</span>
+        <strong id="sumDate">—</strong>
+      </div>
+      <div class="summary-row">
+        <span>Horário</span>
+        <strong id="sumTime">—</strong>
+      </div>
+      <div class="summary-row total">
+        <span>Valor</span>
+        <strong id="sumPrice">R$ 0,00</strong>
+      </div>
+      <p class="hint">O valor exibido é o preço cadastrado para o serviço selecionado.</p>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    TA IANY TRINDADE · NAIL DESIGNER
+    <br>
+    Beleza, cuidado e um momento para você.
+  </footer>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const $ = (id) => document.getElementById(id);
+
+      const state = {
+        services: [],
+        availability: [],
+        selectedService: null,
+        selectedTime: null,
+        occupied: [],
+        blocks: []
+      };
+
+      const money = (value) => Number(value || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+
+      const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;',
+        '"': '&quot;', "'": '&#39;'
+      })[char]);
+
+      function showMessage(message, type = 'error') {
+        const box = $('message');
+        box.className = 'message show ' + type;
+        box.textContent = message;
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function clearMessage() {
+        $('message').className = 'message';
+        $('message').textContent = '';
+      }
+
+      function dateTodayLocal() {
+        const d = new Date();
+        const offset = d.getTimezoneOffset();
+        return new Date(d.getTime() - offset * 60000).toISOString().slice(0, 10);
+      }
+
+      function formatDate(value) {
+        if (!value) return '—';
+        const [y, m, d] = value.split('-');
+        return `${d}/${m}/${y}`;
+      }
+
+      function minutes(value) {
+        const parts = String(value).split(':').map(Number);
+        return parts[0] * 60 + parts[1];
+      }
+
+      function timeLabel(value) {
+        return String(value).slice(0, 5);
+      }
+
+      function hasConflict(start, end, list) {
+        return list.some(item =>
+          start < minutes(item.hora_fim) &&
+          end > minutes(item.hora_inicio)
+        );
+      }
+
+      async function api(url, options = {}) {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+          }
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.ok === false) {
+          throw new Error(result.error || 'Não foi possível concluir a solicitação.');
+        }
+        return result;
+      }
+
+      function renderServices() {
+        const container = $('services');
+
+        if (!state.services.length) {
+          container.innerHTML =
+            '<div class="loading">Nenhum serviço disponível no momento.</div>';
+          return;
+        }
+
+        container.innerHTML = state.services.map(service => `
+          <button class="service ${state.selectedService?.id === service.id ? 'selected' : ''}"
+            type="button" data-service-id="${escapeHtml(service.id)}"
+            aria-pressed="${state.selectedService?.id === service.id}">
+            <span class="service-title">${escapeHtml(service.nome)}</span>
+            <span class="service-description">${escapeHtml(service.descricao || service.categoria || 'Atendimento personalizado')}</span>
+            <span class="service-bottom">
+              <span class="service-price">${money(service.preco)}</span>
+              <span class="service-duration">${Number(service.duracao_minutos)} min</span>
+            </span>
+          </button>
+        `).join('');
+
+        container.querySelectorAll('[data-service-id]').forEach(button => {
+          button.addEventListener('click', () => {
+            state.selectedService = state.services.find(
+              service => String(service.id) === button.dataset.serviceId
+            );
+            state.selectedTime = null;
+            renderServices();
+            updateSummary();
+            renderSlots();
+          });
+        });
+      }
+
+      function updateSummary() {
+        const service = state.selectedService;
+        $('sumService').textContent = service?.nome || 'Não selecionado';
+        $('sumDuration').textContent = service
+          ? Number(service.duracao_minutos) + ' minutos' : '—';
+        $('sumDate').textContent = formatDate($('date').value);
+        $('sumTime').textContent = state.selectedTime || '—';
+        $('sumPrice').textContent = money(service?.preco);
+      }
+
+      async function loadDay() {
+        state.selectedTime = null;
+        state.occupied = [];
+        state.blocks = [];
+        updateSummary();
+
+        const date = $('date').value;
+        if (!date) {
+          $('slots').innerHTML = '<div class="loading">Selecione uma data para consultar os horários.</div>';
+          return;
+        }
+
+        $('slots').innerHTML = '<div class="loading">Consultando horários...</div>';
+        $('slotHint').textContent = 'Aguarde enquanto consultamos a agenda.';
+
+        try {
+          const result = await api('/api/horarios?data=' + encodeURIComponent(date));
+          state.occupied = result.ocupados || [];
+          state.blocks = result.bloqueios || [];
+          renderSlots();
+        } catch (error) {
+          $('slots').innerHTML = '<div class="loading">Não foi possível consultar os horários.</div>';
+          $('slotHint').textContent = error.message;
+        }
+      }
+
+      function renderSlots() {
+        const container = $('slots');
+        const date = $('date').value;
+        const service = state.selectedService;
+
+        if (!date) {
+          container.innerHTML = '<div class="loading">Selecione uma data para consultar os horários.</div>';
+          return;
+        }
+
+        if (!service) {
+          container.innerHTML = '<div class="loading">Escolha um serviço primeiro.</div>';
+          $('slotHint').textContent = 'A duração do serviço define o horário final.';
+          return;
+        }
+
+        const weekday = new Date(date + 'T12:00:00Z').getUTCDay();
+        const periods = state.availability.filter(p =>
+          Number(p.dia_semana) === weekday
+        );
+
+        if (!periods.length) {
+          container.innerHTML = '<div class="loading">Não há atendimento cadastrado para este dia.</div>';
+          $('slotHint').textContent = 'Escolha outra data.';
+          return;
+        }
+
+        const duration = Number(service.duracao_minutos);
+        const all = [];
+
+        periods.forEach(period => {
+          const open = minutes(period.hora_inicio);
+          const close = minutes(period.hora_fim);
+
+          // Oferece horários a cada 30 minutos e respeita a duração do serviço.
+          for (let start = open; start + duration <= close; start += 30) {
+            const end = start + duration;
+            const startLabel = String(Math.floor(start / 60)).padStart(2, '0') +
+              ':' + String(start % 60).padStart(2, '0');
+            const endLabel = String(Math.floor(end / 60)).padStart(2, '0') +
+              ':' + String(end % 60).padStart(2, '0');
+
+            const blocked = hasConflict(start, end, state.blocks);
+            const busy = hasConflict(start, end, state.occupied);
+            const todayPast = date === dateTodayLocal() &&
+              start <= (new Date().getHours() * 60 + new Date().getMinutes());
+
+            all.push({
+              start, end, startLabel, endLabel,
+              unavailable: blocked || busy || todayPast
+            });
+          }
+        });
+
+        const unique = [...new Map(all.map(slot => [slot.startLabel, slot])).values()]
+          .sort((a, b) => a.start - b.start);
+
+        if (!unique.length) {
+          container.innerHTML = '<div class="loading">Não há horários que comportem esse serviço.</div>';
+          $('slotHint').textContent = 'Escolha outra data ou serviço.';
+          return;
+        }
+
+        container.innerHTML = unique.map(slot => `
+          <button type="button"
+            class="slot ${state.selectedTime === slot.startLabel ? 'selected' : ''}"
+            data-time="${slot.startLabel}"
+            ${slot.unavailable ? 'disabled' : ''}
+            aria-pressed="${state.selectedTime === slot.startLabel}">
+            ${slot.startLabel}
+          </button>
+        `).join('');
+
+        container.querySelectorAll('[data-time]:not(:disabled)').forEach(button => {
+          button.addEventListener('click', () => {
+            state.selectedTime = button.dataset.time;
+            renderSlots();
+            updateSummary();
+            clearMessage();
+          });
+        });
+
+        $('slotHint').textContent =
+          'Horários ocupados ou bloqueados não podem ser selecionados. A disponibilidade será validada novamente ao reservar.';
+      }
+
+      async function initialize() {
+        $('date').min = dateTodayLocal();
+        $('date').value = dateTodayLocal();
+
+        try {
+          const [servicesResult, availabilityResult] = await Promise.all([
+            api('/api/servicos'),
+            api('/api/disponibilidade')
+          ]);
+
+          state.services = servicesResult.data || [];
+          state.availability = availabilityResult.data || [];
+
+          renderServices();
+          updateSummary();
+          await loadDay();
+        } catch (error) {
+          $('services').innerHTML =
+            '<div class="loading">Não foi possível carregar os serviços. Tente novamente mais tarde.</div>';
+          showMessage(error.message);
+        }
+      }
+
+      $('date').addEventListener('change', async () => {
+        clearMessage();
+        updateSummary();
+        await loadDay();
+      });
+
+      $('bookingForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clearMessage();
+
+        if (!state.selectedService) {
+          return showMessage('Selecione um serviço para continuar.');
+        }
+
+        if (!$('date').value || !state.selectedTime) {
+          return showMessage('Selecione a data e um horário disponível.');
+        }
+
+        const button = $('submitButton');
+        button.disabled = true;
+        button.textContent = 'Enviando solicitação...';
+
+        try {
+          const payload = {
+            nome_cliente: $('name').value.trim(),
+            telefone_cliente: $('phone').value.trim(),
+            servico_id: state.selectedService.id,
+            data: $('date').value,
+            hora_inicio: state.selectedTime,
+            observacoes: $('notes').value.trim(),
+            email: $('email').value.trim() || null
+          };
+
+          const result = await api('/api/agendamentos', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+
+          showMessage(
+            'Agendamento registrado! Guarde os detalhes para consultar seu atendimento.',
+            'success'
+          );
+
+          if (result.data) {
+            $('sumService').textContent = result.data.nome_servico || state.selectedService.nome;
+            $('sumDate').textContent = formatDate(result.data.data);
+            $('sumTime').textContent = timeLabel(result.data.hora_inicio);
+          }
+
+          $('bookingForm').reset();
+          state.selectedService = null;
+          state.selectedTime = null;
+          $('date').value = dateTodayLocal();
+          renderServices();
+          updateSummary();
+          await loadDay();
+        } catch (error) {
+          showMessage(error.message || 'Não foi possível realizar o agendamento.');
+          // Atualiza a agenda para refletir uma eventual reserva concorrente.
+          await loadDay();
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Solicitar agendamento';
+        }
+      });
+
+      initialize();
+    })();
+  </script>
+</body>
+</html>
