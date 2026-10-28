@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7eee7">
+  <title>Painel Administrativo | Taiany Trindade</title>
+  <!-- Estrutura inicial. Em uma próxima etapa, o CSS visual será separado em /assets/css/admin.css -->
+  <style>
+    :root {
+      --cream: #fbf5ef;
+      --nude: #ead6c8;
+      --rose: #b97861;
+      --copper: #9b5c43;
+      --ink: #211916;
+      --muted: #7f7069;
+      --line: #eadfd7;
+      --white: #fffdfb;
+      --green: #47745d;
+      --red: #a84747;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--cream); font-family: Arial, Helvetica, sans-serif; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { background: var(--white); border-bottom: 1px solid var(--line); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-mark { font-family: Georgia, serif; font-size: 35px; font-weight: bold; color: var(--copper); line-height: 1; }
+    .brand h1 { font-family: Georgia, serif; font-size: 22px; margin: 0 0 4px; font-weight: 500; }
+    .brand p { margin: 0; color: var(--muted); font-size: 12px; letter-spacing: 2px; }
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .layout { max-width: 1400px; margin: auto; padding: 24px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; }
+    aside { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 12px; height: fit-content; }
+    .nav-button { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 12px; border-radius: 8px; color: var(--ink); margin: 3px 0; }
+    .nav-button.active, .nav-button:hover { background: var(--cream); color: var(--copper); }
+    main { min-width: 0; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .page-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    h2 { font-family: Georgia, serif; font-weight: 500; font-size: 28px; margin: 0 0 6px; }
+    h3 { font-size: 16px; margin: 0 0 14px; }
+    .sub { margin: 0; color: var(--muted); font-size: 14px; }
+    .button { border: 1px solid var(--copper); background: var(--copper); color: white; padding: 10px 14px; border-radius: 8px; }
+    .button.secondary { color: var(--copper); background: transparent; }
+    .button.danger { background: var(--red); border-color: var(--red); }
+    .button.small { padding: 6px 9px; font-size: 12px; }
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .card, .panel { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+    .metric-label { color: var(--muted); font-size: 13px; }
+    .metric-value { font-size: 27px; margin-top: 10px; font-family: Georgia, serif; }
+    .panel { margin-bottom: 18px; }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .filters, .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    label { font-size: 13px; color: var(--muted); }
+    input, select, textarea { width: 100%; border: 1px solid #d9c9bf; border-radius: 8px; padding: 10px; background: #fff; color: var(--ink); }
+    textarea { min-height: 75px; resize: vertical; }
+    .full { grid-column: 1 / -1; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 12px 9px; white-space: nowrap; }
+    th { color: var(--muted); font-weight: 600; }
+    .status { display: inline-block; border-radius: 20px; padding: 5px 8px; font-size: 11px; background: #eee4dc; }
+    .status.confirmed, .status.paid { background: #e1eee5; color: #2c6546; }
+    .status.cancelled { background: #f5e2e0; color: #9a3e3e; }
+    .status.pending { background: #f7edcf; color: #80611b; }
+    .empty { color: var(--muted); padding: 18px 0; font-size: 14px; }
+    .hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .availability-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; align-items: end; margin-bottom: 10px; }
+    .link-box { overflow-wrap: anywhere; padding: 12px; background: var(--cream); border: 1px dashed var(--rose); border-radius: 8px; }
+    .notice { background: #f8eddf; border-left: 3px solid var(--rose); padding: 12px; border-radius: 5px; font-size: 13px; line-height: 1.5; margin-bottom: 16px; }
+    .footer { text-align: center; color: var(--muted); padding: 12px 24px 28px; font-size: 11px; letter-spacing: 1.5px; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; padding: 14px; }
+      aside { display: flex; overflow-x: auto; gap: 4px; }
+      .nav-button { width: auto; white-space: nowrap; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .topbar { padding: 14px; }
+      .brand h1 { font-size: 19px; }
+      .cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .card, .panel { padding: 13px; }
+      .form-grid, .filters { grid-template-columns: 1fr; }
+      .availability-row { grid-template-columns: 1fr 1fr; }
+      h2 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">TT</div>
+      <div>
+        <h1>Taiany Trindade</h1>
+        <p>NAIL DESIGNER · PAINEL ADMINISTRATIVO</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="button secondary" id="exportBtn" type="button">Exportar dados</button>
+      <button class="button" type="button" onclick="showPage('agenda')">＋ Novo agendamento</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside aria-label="Navegação principal">
+      <button class="nav-button active" data-page="dashboard">Visão geral</button>
+      <button class="nav-button" data-page="agenda">Agenda</button>
+      <button class="nav-button" data-page="clientes">Clientes</button>
+      <button class="nav-button" data-page="servicos">Serviços e preços</button>
+      <button class="nav-button" data-page="disponibilidade">Disponibilidade</button>
+      <button class="nav-button" data-page="bloqueios">Bloqueios</button>
+      <button class="nav-button" data-page="configuracoes">Configurações</button>
+    </aside>
+
+    <main>
+      <section class="page active" id="page-dashboard">
+        <div class="page-heading">
+          <div><h2>Visão geral</h2><p class="sub">Resumo do seu studio e dos próximos atendimentos.</p></div>
+          <div class="field"><label for="dashboardDate">Data de referência</label><input id="dashboardDate" type="date"></div>
+        </div>
+        <div class="cards">
+          <div class="card"><div class="metric-label">Agendamentos do dia</div><div class="metric-value" id="metricToday">0</div></div>
+          <div class="card"><div class="metric-label">Confirmados</div><div class="metric-value" id="metricConfirmed">0</div></div>
+          <div class="card"><div class="metric-label">Clientes cadastradas</div><div class="metric-value" id="metricClients">0</div></div>
+          <div class="card"><div class="metric-label">Previsão do dia</div><div class="metric-value" id="metricRevenue">R$ 0,00</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-heading"><h3>Próximos atendimentos</h3><button class="button secondary small" onclick="showPage('agenda')">Ver agenda</button></div>
+          <div id="dashboardAppointments"></div>
+        </div>
+        <div class="notice">Esta é a primeira versão funcional do painel. Os dados ficam salvos neste navegador para demonstração. A integração com Supabase será feita na próxima etapa para compartilhar a mesma agenda entre o painel e a página pública.</div>
+      </section>
+
+      <section class="page" id="page-agenda">
+        <div class="page-heading"><div><h2>Agenda</h2><p class="sub">Cadastre, confirme, reagende ou cancele atendimentos.</p></div></div>
+        <div class="panel">
+          <h3>Novo agendamento manual</h3>
+          <form id="appointmentForm">
+            <div class="form-grid">
+              <div class="field"><label for="appointmentClient">Nome da cliente *</label><input id="appointmentClient" required placeholder="Nome completo"></div>
+              <div class="field"><label for="appointmentPhone">WhatsApp / telefone</label><input id="appointmentPhone" placeholder="(00) 00000-0000"></div>
+              <div class="field"><label for="appointmentService">Serviço *</label><select id="appointmentService" required></select></div>
+              <div class="field"><label for="appointmentDate">Data *</label><input id="appointmentDate" type="date" required></div>
+              <div class="field"><label for="appointmentTime">Horário *</label><select id="appointmentTime" required><option value="">Escolha a data e o serviço</option></select></div>
+              <div class="field"><label for="appointmentStatus">Situação</label><select id="appointmentStatus"><option value="confirmed">Confirmado</option><option value="pending">Pendente</option></select></div>
+              <div class="field full"><label for="appointmentNotes">Observações</label><textarea id="appointmentNotes" placeholder="Preferências, formato, cor, detalhes..."></textarea></div>
+            </div>
+            <button class="button" type="submit">Salvar agendamento</button>
+          </form>
+          <p class="hint">A disponibilidade considera os dias e horários configurados, a duração do serviço e os agendamentos existentes.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-heading"><h3>Todos os agendamentos</h3></div>
+          <div class="filters">
+            <div class="field"><label for="filterDate">Filtrar por data</label><input id="filterDate" type="date"></div>
+            <div class="field"><label for="filterStatus">Filtrar por situação</label><select id="filterStatus"><option value="">Todas</option><option value="confirmed">Confirmado</option><option value="pending">Pendente</option><option value="cancelled">Cancelado</option><option value="completed">Concluído</option></select></div>
+          </div>
+          <div id="appointmentsTable"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-clientes">
+        <div class="page-heading"><div><h2>Clientes</h2><p class="sub">Cadastro e histórico de relacionamento.</p></div></div>
+        <div class="panel">
+          <h3>Cadastrar cliente</h3>
+          <form id="clientForm">
+            <div class="form-grid">
+              <div class="field"><label for="clientName">Nome *</label><input id="clientName" required></div>
+              <div class="field"><label for="clientPhone">Telefone / WhatsApp *</label><input id="clientPhone" required></div>
+              <div class="field"><label for="clientEmail">E-mail</label><input id="clientEmail" type="email"></div>
+              <div class="field"><label for="clientBirthday">Data de nascimento</label><input id="clientBirthday" type="date"></div>
+              <div class="field full"><label for="clientNotes">Preferências e observações</label><textarea id="clientNotes" placeholder="Cores favoritas, formato, alergias informadas pela cliente..."></textarea></div>
+            </div>
+            <button class="button" type="submit">Cadastrar cliente</button>
+          </form>
+        </div>
+        <div class="panel"><div class="panel-heading"><h3>Lista de clientes</h3></div><div class="field"><label for="clientSearch">Buscar por nome ou telefone</label><input id="clientSearch" placeholder="Digite para pesquisar..."></div><div id="clientsTable"></div></div>
+      </section>
+
+      <section class="page" id="page-servicos">
+        <div class="page-heading"><div><h2>Serviços e preços</h2><p class="sub">Configure o catálogo que aparecerá para as clientes.</p></div></div>
+        <div class="panel">
+          <h3>Adicionar serviço</h3>
+          <form id="serviceForm">
+            <div class="form-grid">
+              <div class="field"><label for="serviceName">Nome do serviço *</label><input id="serviceName" required placeholder="Ex.: Manicure tradicional"></div>
+              <div class="field"><label for="servicePrice">Preço (R$) *</label><input id="servicePrice" type="number" min="0" step="0.01" required placeholder="35,00"></div>
+              <div class="field"><label for="serviceDuration">Duração em minutos *</label><input id="serviceDuration" type="number" min="10" step="5" value="60" required></div>
+              <div class="field"><label for="serviceCategory">Categoria</label><select id="serviceCategory"><option>Manicure</option><option>Pedicure</option><option>Alongamento</option><option>Manutenção</option><option>Decoração</option><option>Outro</option></select></div>
+              <div class="field full"><label for="serviceDescription">Descrição</label><textarea id="serviceDescription" placeholder="O que está incluído neste serviço?"></textarea></div>
+            </div>
+            <button class="button" type="submit">Adicionar serviço</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Catálogo atual</h3><div id="servicesTable"></div></div>
+      </section>
+
+      <section class="page" id="page-disponibilidade">
+        <div class="page-heading"><div><h2>Disponibilidade</h2><p class="sub">Defina os dias e períodos em que aceita agendamentos.</p></div></div>
+        <div class="panel">
+          <h3>Horários semanais</h3>
+          <p class="hint">Marque os dias de atendimento e configure início e fim. O intervalo entre opções é configurável.</p>
+          <form id="availabilityForm">
+            <div id="availabilityRows"></div>
+            <div class="field" style="max-width:260px"><label for="slotInterval">Intervalo das opções (minutos)</label><select id="slotInterval"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option></select></div>
+            <button class="button" type="submit">Salvar disponibilidade</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="page" id="page-bloqueios">
+        <div class="page-heading"><div><h2>Bloqueios de agenda</h2><p class="sub">Reserve períodos para pausas, compromissos ou folgas.</p></div></div>
+        <div class="panel">
+          <h3>Novo bloqueio</h3>
+          <form id="blockForm">
+            <div class="form-grid">
+              <div class="field"><label for="blockDate">Data *</label><input id="blockDate" type="date" required></div>
+              <div class="field"><label for="blockReason">Motivo</label><input id="blockReason" placeholder="Ex.: Compromisso pessoal"></div>
+              <div class="field"><label for="blockStart">Início *</label><input id="blockStart" type="time" required></div>
+              <div class="field"><label for="blockEnd">Fim *</label><input id="blockEnd" type="time" required></div>
+            </div>
+            <button class="button" type="submit">Adicionar bloqueio</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Bloqueios cadastrados</h3><div id="blocksTable"></div></div>
+      </section>
+
+      <section class="page" id="page-configuracoes">
+        <div class="page-heading"><div><h2>Configurações</h2><p class="sub">Personalize a experiência de agendamento.</p></div></div>
+        <div class="panel">
+          <h3>Dados do studio</h3>
+          <form id="settingsForm">
+            <div class="form-grid">
+              <div class="field"><label for="studioName">Nome profissional</label><input id="studioName" value="Taiany Trindade"></div>
+              <div class="field"><label for="studioTitle">Especialidade</label><input id="studioTitle" value="Nail Designer"></div>
+              <div class="field"><label for="studioPhone">WhatsApp para contato</label><input id="studioPhone" placeholder="DDD + número"></div>
+              <div class="field"><label for="advanceDays">Até quantos dias à frente pode agendar?</label><input id="advanceDays" type="number" min="1" max="365" value="60"></div>
+              <div class="field"><label for="minNotice">Antecedência mínima (horas)</label><input id="minNotice" type="number" min="0" value="2"></div>
+              <div class="field"><label for="cancelPolicy">Política de cancelamento</label><input id="cancelPolicy" placeholder="Ex.: cancelar com 12h de antecedência"></div>
+              <div class="field full"><label for="welcomeMessage">Mensagem inicial do agendamento automático</label><textarea id="welcomeMessage">Olá! Seja bem-vinda ao studio Taiany Trindade. 💅 Vamos encontrar o melhor horário para você?</textarea></div>
+            </div>
+            <button class="button" type="submit">Salvar configurações</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Link para as clientes</h3>
+          <p class="sub">Este será o endereço da página pública de agendamento, que construiremos na próxima etapa.</p>
+          <div class="link-box" id="publicLink">A página pública ainda será criada.</div>
+          <p class="hint">Depois de publicar o projeto, este campo receberá o link real para compartilhar no Instagram e WhatsApp.</p>
+        </div>
+        <div class="panel">
+          <h3>Dados de demonstração</h3>
+          <p class="hint">Limpar os dados locais apaga somente os registros salvos neste navegador. Na versão conectada, o banco Supabase será a fonte oficial dos dados.</p>
+          <button class="button danger" id="resetBtn" type="button">Limpar dados locais</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">TAIANY TRINDADE · NAIL DESIGNER</footer>
+
+  <script>
+    /*
+      VERSÃO INICIAL DE PROTÓTIPO:
+      - Persiste os dados no localStorage deste navegador.
+      - Ainda não se conecta ao Supabase.
+      - A validação definitiva contra reservas simultâneas deverá ocorrer no banco/servidor.
+      - Não coloque a chave service_role do Supabase no HTML público.
+    */
+    const STORAGE_KEY = 'taiany_nail_admin_v1';
+    const weekdays = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const todayISO = () => {
+      const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 10);
+    };
+    const defaultAvailability = weekdays.map((day, i) => ({
+      day, enabled: i >= 1 && i <= 5, start: '09:00', end: '18:00'
+    }));
+    const defaultServices = [
+      { id: uid(), name: 'Manicure tradicional', category: 'Manicure', price: 30, duration: 45, description: 'Cuidado e esmaltação das unhas das mãos.', active: true },
+      { id: uid(), name: 'Pedicure tradicional', category: 'Pedicure', price: 35, duration: 60, description: 'Cuidado e esmaltação das unhas dos pés.', active: true },
+      { id: uid(), name: 'Mão e pé', category: 'Manicure', price: 60, duration: 90, description: 'Manicure e pedicure na mesma visita.', active: true },
+      { id: uid(), name: 'Alongamento em gel', category: 'Alongamento', price: 120, duration: 120, description: 'Aplicação de alongamento em gel.', active: true },
+      { id: uid(), name: 'Manutenção de alongamento', category: 'Manutenção', price: 80, duration: 90, description: 'Manutenção do alongamento.', active: true }
+    ];
+    function uid() { return (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())); }
+    function initialState() {
+      return { services: defaultServices, clients: [], appointments: [], blocks: [],
+        availability: defaultAvailability, interval: 30,
+        settings: { studioName: 'Taiany Trindade', title: 'Nail Designer', phone: '', advanceDays: 60, minNotice: 2, cancelPolicy: '', welcomeMessage: 'Olá! Seja bem-vinda ao studio Taiany Trindade. 💅 Vamos encontrar o melhor horário para você?' } };
+    }
+    let state;
+    try { state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialState(); }
+    catch { state = initialState(); }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); renderAll(); }
+    function esc(value='') { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function money(value) { return Number(value || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
+    function serviceById(id) { return state.services.find(s => s.id === id); }
+    function statusLabel(s) { return ({confirmed:'Confirmado', pending:'Pendente', cancelled:'Cancelado', completed:'Concluído'})[s] || s; }
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + name));
+      document.querySelectorAll('.nav-button').forEach(b => b.classList.toggle('active', b.dataset.page === name));
+      renderAll();
+    }
+    document.querySelectorAll('.nav-button').forEach(b => b.addEventListener('click', () => showPage(b.dataset.page)));
+    function overlaps(aStart, aEnd, bStart, bEnd) { return aStart < bEnd && bStart < aEnd; }
+    function isAvailable(date, time, duration, ignoreId='') {
+      const day = new Date(date + 'T12:00:00').getDay();
+      const avail = state.availability[day];
+      if (!avail || !avail.enabled) return false;
+      const endMinutes = toMinutes(time) + Number(duration);
+      if (time < avail.start || endMinutes > toMinutes(avail.end)) return false;
+      const now = new Date();
+      const startDate = new Date(date + 'T' + time + ':00');
+      if (startDate.getTime() < now.getTime() + Number(state.settings.minNotice || 0) * 3600000) return false;
+      const maxDate = new Date(); maxDate.setDate(maxDate.getDate() + Number(state.settings.advanceDays || 60));
+      if (new Date(date + 'T23:59:00') > maxDate) return false;
+      for (const a of state.appointments) {
+        if (a.id === ignoreId || a.date !== date || ['cancelled'].includes(a.status)) continue;
+        const svc = serviceById(a.serviceId);
+        const otherDuration = Number(a.duration || (svc && svc.duration) || 60);
+        if (overlaps(toMinutes(time), endMinutes, toMinutes(a.time), toMinutes(a.time) + otherDuration)) return false;
+      }
+      for (const b of state.blocks) {
+        if (b.date === date && overlaps(toMinutes(time), endMinutes, toMinutes(b.start), toMinutes(b.end))) return false;
+      }
+      return true;
+    }
+    function toMinutes(time) { const [h,m] = String(time || '00:00').split(':').map(Number); return h*60+m; }
+    function timeOptions(date, duration) {
+      if (!date || !duration) return [];
+      const day = new Date(date + 'T12:00:00').getDay(), av = state.availability[day];
+      if (!av || !av.enabled) return [];
+      const result = [], interval = Number(state.interval || 30);
+      for (let m = toMinutes(av.start); m + Number(duration) <= toMinutes(av.end); m += interval) {
+        const time = String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+        if (isAvailable(date, time, duration)) result.push(time);
+      }
+      return result;
+    }
+    function refreshTimeOptions() {
+      const date = document.getElementById('appointmentDate').value;
+      const svc = serviceById(document.getElementById('appointmentService').value);
+      const select = document.getElementById('appointmentTime');
+      const times = timeOptions(date, svc ? svc.duration : 0);
+      select.innerHTML = '<option value="">Selecione um horário disponível</option>' +
+        times.map(t => `<option value="${t}">${t}</option>`).join('');
+      if (!times.length) select.innerHTML = '<option value="">Sem horários disponíveis</option>';
+    }
+    document.getElementById('appointmentDate').min = todayISO();
+    document.getElementById('appointmentDate').addEventListener('change', refreshTimeOptions);
+    document.getElementById('appointmentService').addEventListener('change', refreshTimeOptions);
+    document.getElementById('dashboardDate').value = todayISO();
+    document.getElementById('dashboardDate').addEventListener('change', renderDashboard);
+    document.getElementById('filterDate').addEventListener('change', renderAppointments);
+    document.getElementById('filterStatus').addEventListener('change', renderAppointments);
+    document.getElementById('clientSearch').addEventListener('input', renderClients);
+
+    document.getElementById('appointmentForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const client = document.getElementById('appointmentClient').value.trim();
+      const phone = document.getElementById('appointmentPhone').value.trim();
+      const serviceId = document.getElementById('appointmentService').value;
+      const service = serviceById(serviceId), date = document.getElementById('appointmentDate').value;
+      const time = document.getElementById('appointmentTime').value;
+      if (!service || !date || !time || !isAvailable(date, time, service.duration)) {
+        alert('Esse horário não está mais disponível. Escolha outra opção.'); refreshTimeOptions(); return;
+      }
+      state.appointments.push({ id:uid(), client, phone, serviceId, date, time, duration:service.duration, price:service.price,
+        status:document.getElementById('appointmentStatus').value, notes:document.getElementById('appointmentNotes').value.trim(), createdAt:new Date().toISOString() });
+      if (phone && !state.clients.some(c => c.phone === phone)) state.clients.push({ id:uid(), name:client, phone, email:'', birthday:'', notes:'', createdAt:new Date().toISOString() });
+      e.target.reset(); document.getElementById('appointmentDate').min = todayISO(); refreshTimeOptions(); save();
+      alert('Agendamento salvo neste navegador.');
+    });
+    document.getElementById('clientForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const phone = document.getElementById('clientPhone').value.trim();
+      if (state.clients.some(c => c.phone === phone)) { alert('Já existe uma cliente com esse telefone.'); return; }
+      state.clients.push({ id:uid(), name:document.getElementById('clientName').value.trim(), phone,
+        email:document.getElementById('clientEmail').value.trim(), birthday:document.getElementById('clientBirthday').value,
+        notes:document.getElementById('clientNotes').value.trim(), createdAt:new Date().toISOString() });
+      e.target.reset(); save();
+    });
+    document.getElementById('serviceForm').addEventListener('submit', e => {
+      e.preventDefault();
+      state.services.push({ id:uid(), name:document.getElementById('serviceName').value.trim(),
+        price:Number(document.getElementById('servicePrice').value), duration:Number(document.getElementById('serviceDuration').value),
+        category:document.getElementById('serviceCategory').value, description:document.getElementById('serviceDescription').value.trim(), active:true });
+      e.target.reset(); document.getElementById('serviceDuration').value = 60; save();
+    });
+    document.getElementById('availabilityForm').addEventListener('submit', e => {
+      e.preventDefault();
+      state.availability = weekdays.map((day,i) => ({ day, enabled:document.getElementById('enabled'+i).checked,
+        start:document.getElementById('start'+i).value, end:document.getElementById('end'+i).value }));
+      for (const a of state.availability) if (a.enabled && toMinutes(a.start) >= toMinutes(a.end)) { alert('Em cada dia ativo, o início deve ser anterior ao fim.'); return; }
+      state.interval = Number(document.getElementById('slotInterval').value); save(); alert('Disponibilidade salva.');
+    });
+    document.getElementById('blockForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const date = document.getElementById('blockDate').value, start = document.getElementById('blockStart').value, end = document.getElementById('blockEnd').value;
+      if (toMinutes(start) >= toMinutes(end)) { alert('O horário final deve ser depois do horário inicial.'); return; }
+      state.blocks.push({ id:uid(), date, start, end, reason:document.getElementById('blockReason').value.trim() });
+      e.target.reset(); save();
+    });
+    document.getElementById('settingsForm').addEventListener('submit', e => {
+      e.preventDefault();
+      state.settings = { studioName:document.getElementById('studioName').value.trim(), title:document.getElementById('studioTitle').value.trim(),
+        phone:document.getElementById('studioPhone').value.trim(), advanceDays:Number(document.getElementById('advanceDays').value),
+        minNotice:Number(document.getElementById('minNotice').value), cancelPolicy:document.getElementById('cancelPolicy').value.trim(),
+        welcomeMessage:document.getElementById('welcomeMessage').value.trim() };
+      save(); alert('Configurações salvas.');
+    });
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = 'taiany-agenda-backup.json'; a.click(); URL.revokeObjectURL(url);
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Apagar todos os dados de demonstração salvos neste navegador?')) { state = initialState(); save(); }
+    });
+    function changeAppointment(id, status) { const a = state.appointments.find(x => x.id === id); if (a) { a.status = status; save(); } }
+    function deleteAppointment(id) { if (confirm('Excluir este agendamento?')) { state.appointments = state.appointments.filter(a => a.id !== id); save(); } }
+    function deleteClient(id) { if (confirm('Excluir cadastro desta cliente?')) { state.clients = state.clients.filter(c => c.id !== id); save(); } }
+    function toggleService(id) { const s = serviceById(id); if (s) { s.active = !s.active; save(); } }
+    function deleteService(id) { if (confirm('Excluir este serviço?')) { state.services = state.services.filter(s => s.id !== id); save(); } }
+    function deleteBlock(id) { state.blocks = state.blocks.filter(b => b.id !== id); save(); }
+    function renderDashboard() {
+      const date = document.getElementById('dashboardDate').value || todayISO();
+      const day = state.appointments.filter(a => a.date === date && a.status !== 'cancelled');
+      document.getElementById('metricToday').textContent = day.length;
+      document.getElementById('metricConfirmed').textContent = day.filter(a => a.status === 'confirmed').length;
+      document.getElementById('metricClients').textContent = state.clients.length;
+      document.getElementById('metricRevenue').textContent = money(day.reduce((sum,a) => sum + Number(a.price || 0), 0));
+      const upcoming = state.appointments.filter(a => a.date >= todayISO() && a.status !== 'cancelled')
+        .sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time)).slice(0,6);
+      document.getElementById('dashboardAppointments').innerHTML = upcoming.length ? appointmentTable(upcoming, false) : '<p class="empty">Nenhum atendimento futuro cadastrado.</p>';
+    }
+    function appointmentTable(items, actions=true) {
+      if (!items.length) return '<p class="empty">Nenhum agendamento encontrado.</p>';
+      return `<div class="table-wrap"><table><thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Situação</th>${actions?'<th>Ações</th>':''}</tr></thead><tbody>` +
+        items.map(a => { const svc=serviceById(a.serviceId); return `<tr><td>${esc(a.date)}</td><td>${esc(a.time)}</td><td>${esc(a.client)}</td><td>${esc(svc ? svc.name : 'Serviço removido')}</td><td>${money(a.price)}</td><td><span class="status ${esc(a.status)}">${esc(statusLabel(a.status))}</span></td>` +
+        (actions ? `<td><select aria-label="Alterar situação" onchange="changeAppointment('${a.id}',this.value)"><option value="${a.status}">${statusLabel(a.status)}</option><option value="confirmed">Confirmado</option><option value="pending">Pendente</option><option value="completed">Concluído</option><option value="cancelled">Cancelado</option></select> <button class="button danger small" onclick="deleteAppointment('${a.id}')">Excluir</button></td>` : '') + '</tr>'; }).join('') + '</tbody></table></div>';
+    }
+    function renderAppointments() {
+      const date = document.getElementById('filterDate').value, status = document.getElementById('filterStatus').value;
+      const list = state.appointments.filter(a => (!date || a.date === date) && (!status || a.status === status))
+        .sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+      document.getElementById('appointmentsTable').innerHTML = appointmentTable(list, true);
+    }
+    function renderClients() {
+      const q = (document.getElementById('clientSearch').value || '').toLowerCase();
+      const clients = state.clients.filter(c => (c.name+' '+c.phone).toLowerCase().includes(q));
+      document.getElementById('clientsTable').innerHTML = clients.length ? `<div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Atendimentos</th><th>Ação</th></tr></thead><tbody>` +
+        clients.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.email || '—')}</td><td>${state.appointments.filter(a => a.phone === c.phone && a.status !== 'cancelled').length}</td><td><button class="button danger small" onclick="deleteClient('${c.id}')">Excluir</button></td></tr>`).join('') + '</tbody></table></div>' : '<p class="empty">Nenhuma cliente cadastrada.</p>';
+    }
+    function renderServices() {
+      document.getElementById('appointmentService').innerHTML = state.services.filter(s => s.active).map(s => `<option value="${s.id}">${esc(s.name)} · ${money(s.price)} · ${s.duration} min</option>`).join('');
+      document.getElementById('servicesTable').innerHTML = state.services.length ? `<div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Duração</th><th>Preço</th><th>Disponível</th><th>Ações</th></tr></thead><tbody>` +
+        state.services.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.category)}</td><td>${s.duration} min</td><td>${money(s.price)}</td><td>${s.active?'Sim':'Não'}</td><td><button class="button secondary small" onclick="toggleService('${s.id}')">${s.active?'Desativar':'Ativar'}</button> <button class="button danger small" onclick="deleteService('${s.id}')">Excluir</button></td></tr>`).join('') + '</tbody></table></div>' : '<p class="empty">Nenhum serviço cadastrado.</p>';
+    }
+    function renderAvailability() {
+      document.getElementById('availabilityRows').innerHTML = state.availability.map((a,i) => `<div class="availability-row">
+        <div class="field"><label><input type="checkbox" id="enabled${i}" ${a.enabled?'checked':''} style="width:auto"> ${a.day}</label></div>
+        <div class="field"><label for="start${i}">Início</label><input id="start${i}" type="time" value="${a.start}"></div>
+        <div class="field"><label for="end${i}">Fim</label><input id="end${i}" type="time" value="${a.end}"></div>
+        <div class="hint">${a.enabled?'Atendimento ativo':'Folga'}</div></div>`).join('');
+      document.getElementById('slotInterval').value = String(state.interval);
+    }
+    function renderBlocks() {
+      document.getElementById('blocksTable').innerHTML = state.blocks.length ? `<div class="table-wrap"><table><thead><tr><th>Data</th><th>Período</th><th>Motivo</th><th>Ação</th></tr></thead><tbody>` +
+        state.blocks.slice().sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).map(b=>`<tr><td>${esc(b.date)}</td><td>${esc(b.start)}–${esc(b.end)}</td><td>${esc(b.reason||'—')}</td><td><button class="button danger small" onclick="deleteBlock('${b.id}')">Remover</button></td></tr>`).join('') + '</tbody></table></div>' : '<p class="empty">Nenhum bloqueio cadastrado.</p>';
+    }
+    function renderSettings() {
+      const s=state.settings;
+      for (const [id,key] of [['studioName','studioName'],['studioTitle','title'],['studioPhone','phone'],['advanceDays','advanceDays'],['minNotice','minNotice'],['cancelPolicy','cancelPolicy'],['welcomeMessage','welcomeMessage']]) {
+        const el=document.getElementById(id); if (el && document.activeElement !== el) el.value=s[key] ?? '';
+      }
+      document.getElementById('publicLink').textContent = location.origin === 'null' ? 'O link será definido quando a página for publicada.' : location.origin + '/agendar.html';
+    }
+    function renderAll() { renderDashboard(); renderAppointments(); renderClients(); renderServices(); renderAvailability(); renderBlocks(); renderSettings(); refreshTimeOptions(); }
+    renderAll();
+  </script>
+</body>
+</html>
