@@ -4,7 +4,6 @@
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
-const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -12,8 +11,7 @@ const PORT = process.env.PORT || 10000;
 app.disable('x-powered-by');
 app.use(express.json({ limit: '100kb' }));
 
-// A chave privilegiada fica exclusivamente no servidor.
-// Nunca envie esta chave ao navegador.
+// A chave privilegiada permanece exclusivamente no servidor.
 const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
 
 const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
@@ -33,30 +31,12 @@ function database(res) {
     });
     return null;
   }
+
   return supabase;
 }
 
+// Temporário: autenticação administrativa será implementada depois.
 function admin(req, res, next) {
-  const expected = process.env.ADMIN_API_TOKEN;
-  const supplied = req.get('x-admin-token') || '';
-
-  if (!expected) {
-    return res.status(503).json({
-      ok: false,
-      error: 'Configure ADMIN_API_TOKEN no Render.'
-    });
-  }
-
-  const a = Buffer.from(supplied);
-  const b = Buffer.from(expected);
-
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-    return res.status(401).json({
-      ok: false,
-      error: 'Acesso administrativo não autorizado.'
-    });
-  }
-
   next();
 }
 
@@ -117,15 +97,14 @@ const STATUS = [
 ];
 
 // -----------------------------------------------------------------------------
-// STATUS DO SERVIDOR
+// SAÚDE DO SERVIDOR
 // -----------------------------------------------------------------------------
 
 app.get('/health', (req, res) => {
   res.json({
     ok: true,
     app: 'Taiany Trindade — Nail Designer',
-    supabaseConfigured: Boolean(supabase),
-    adminTokenConfigured: Boolean(process.env.ADMIN_API_TOKEN)
+    supabaseConfigured: Boolean(supabase)
   });
 });
 
@@ -143,7 +122,9 @@ app.get('/api/servicos', route(async (req, res) => {
     .eq('ativo', true)
     .order('nome');
 
-  if (error) return sendDbError(res, 'Não foi possível carregar os serviços.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar os serviços.', error);
+  }
 
   res.json({ ok: true, data });
 }));
@@ -163,14 +144,15 @@ app.get('/api/disponibilidade', route(async (req, res) => {
     .order('dia_semana')
     .order('hora_inicio');
 
-  if (error) return sendDbError(res, 'Não foi possível carregar a disponibilidade.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar a disponibilidade.', error);
+  }
 
   res.json({ ok: true, data });
 }));
 
 // -----------------------------------------------------------------------------
 // CONSULTA DE HORÁRIOS OCUPADOS E BLOQUEIOS
-// Não expõe nome, telefone ou outros dados dos clientes.
 // -----------------------------------------------------------------------------
 
 app.get('/api/horarios', route(async (req, res) => {
@@ -215,7 +197,6 @@ app.get('/api/horarios', route(async (req, res) => {
 
 // -----------------------------------------------------------------------------
 // NOVO AGENDAMENTO PÚBLICO
-// O preço e a duração são obtidos diretamente do banco, nunca confiados ao site.
 // -----------------------------------------------------------------------------
 
 app.post('/api/agendamentos', route(async (req, res) => {
@@ -260,10 +241,12 @@ app.post('/api/agendamentos', route(async (req, res) => {
   const db = database(res);
   if (!db) return;
 
-  // Não permite datas anteriores ao dia atual.
-  const hoje = new Date().toLocaleDateString('en-CA', {
-    timeZone: 'America/Sao_Paulo'
-  });
+  const hoje = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
 
   if (data < hoje) {
     return res.status(400).json({
@@ -309,17 +292,18 @@ app.post('/api/agendamentos', route(async (req, res) => {
 
   const fimMin = inicioMin + duracao;
 
-  if (fimMin > 24 * 60) {
+  if (fimMin > 1440) {
     return res.status(400).json({
       ok: false,
       error: 'O horário escolhido ultrapassa o fim do dia.'
     });
   }
 
-  const horaFim = String(Math.floor(fimMin / 60)).padStart(2, '0') +
-    ':' + String(fimMin % 60).padStart(2, '0');
+  const horaFim =
+    String(Math.floor(fimMin / 60)).padStart(2, '0') +
+    ':' +
+    String(fimMin % 60).padStart(2, '0');
 
-  // O dia da semana é calculado usando a data informada pelo cliente.
   const diaSemana = new Date(data + 'T12:00:00').getDay();
 
   const [disponibilidades, agenda, bloqueios] = await Promise.all([
@@ -353,6 +337,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
   const dentroDoExpediente = (disponibilidades.data || []).some(item => {
     const abre = timeToMinutes(item.hora_inicio);
     const fecha = timeToMinutes(item.hora_fim);
+
     return abre !== null && fecha !== null &&
       inicioMin >= abre && fimMin <= fecha;
   });
@@ -367,6 +352,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
   const conflitoAgenda = (agenda.data || []).some(item => {
     const inicio = timeToMinutes(item.hora_inicio);
     const fim = timeToMinutes(item.hora_fim);
+
     return inicio !== null && fim !== null &&
       overlaps(inicioMin, fimMin, inicio, fim);
   });
@@ -381,6 +367,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
   const conflitoBloqueio = (bloqueios.data || []).some(item => {
     const inicio = timeToMinutes(item.hora_inicio);
     const fim = timeToMinutes(item.hora_fim);
+
     return inicio !== null && fim !== null &&
       overlaps(inicioMin, fimMin, inicio, fim);
   });
@@ -392,7 +379,6 @@ app.post('/api/agendamentos', route(async (req, res) => {
     });
   }
 
-  // Localiza um cadastro existente pelo telefone ou e-mail.
   let cliente = null;
 
   const buscaTelefone = await db
@@ -424,15 +410,13 @@ app.post('/api/agendamentos', route(async (req, res) => {
   }
 
   if (!cliente) {
-    const novoCliente = {
-      nome,
-      telefone,
-      email: email || null
-    };
-
     const { data: clienteCriado, error: erroCliente } = await db
       .from('clientes')
-      .insert(novoCliente)
+      .insert({
+        nome,
+        telefone,
+        email: email || null
+      })
       .select('id,nome,telefone,email')
       .single();
 
@@ -476,7 +460,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
 }));
 
 // -----------------------------------------------------------------------------
-// ROTAS ADMINISTRATIVAS: TODAS EXIGEM x-admin-token
+// AGENDAMENTOS ADMINISTRATIVOS
 // -----------------------------------------------------------------------------
 
 app.get('/api/admin/agendamentos', admin, route(async (req, res) => {
@@ -491,29 +475,43 @@ app.get('/api/admin/agendamentos', admin, route(async (req, res) => {
 
   if (req.query.data) {
     if (!validDate(req.query.data)) {
-      return res.status(400).json({ ok: false, error: 'Data inválida.' });
+      return res.status(400).json({
+        ok: false,
+        error: 'Data inválida.'
+      });
     }
+
     query = query.eq('data', req.query.data);
   }
 
   if (req.query.status) {
     const status = cleanText(req.query.status, 30);
+
     if (!STATUS.includes(status)) {
-      return res.status(400).json({ ok: false, error: 'Status inválido.' });
+      return res.status(400).json({
+        ok: false,
+        error: 'Status inválido.'
+      });
     }
+
     query = query.eq('status', status);
   }
 
   const { data, error } = await query;
 
-  if (error) return sendDbError(res, 'Não foi possível carregar a agenda.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar a agenda.', error);
+  }
 
   res.json({ ok: true, data });
 }));
 
 app.patch('/api/admin/agendamentos/:id/status', admin, route(async (req, res) => {
   if (!validId(req.params.id) || !STATUS.includes(req.body?.status)) {
-    return res.status(400).json({ ok: false, error: 'ID ou status inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'ID ou status inválido.'
+    });
   }
 
   const db = database(res);
@@ -526,10 +524,15 @@ app.patch('/api/admin/agendamentos/:id/status', admin, route(async (req, res) =>
     .select()
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível atualizar o agendamento.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível atualizar o agendamento.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Agendamento não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Agendamento não encontrado.'
+    });
   }
 
   res.json({ ok: true, data });
@@ -550,17 +553,22 @@ app.delete('/api/admin/agendamentos/:id', admin, route(async (req, res) => {
     .select('id')
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível excluir o agendamento.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível excluir o agendamento.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Agendamento não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Agendamento não encontrado.'
+    });
   }
 
   res.json({ ok: true });
 }));
 
 // -----------------------------------------------------------------------------
-// CLIENTES: CONSULTA E EDIÇÃO ADMINISTRATIVA
+// CLIENTES
 // -----------------------------------------------------------------------------
 
 app.get('/api/admin/clientes', admin, route(async (req, res) => {
@@ -573,9 +581,59 @@ app.get('/api/admin/clientes', admin, route(async (req, res) => {
     .order('nome')
     .limit(1000);
 
-  if (error) return sendDbError(res, 'Não foi possível carregar os clientes.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar os clientes.', error);
+  }
 
   res.json({ ok: true, data });
+}));
+
+app.post('/api/admin/clientes', admin, route(async (req, res) => {
+  const nome = cleanText(req.body?.nome, 120);
+  const telefone = cleanText(req.body?.telefone, 30);
+  const email = cleanText(req.body?.email, 160).toLowerCase();
+
+  if (nome.length < 2) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Informe o nome do cliente.'
+    });
+  }
+
+  if (telefone.replace(/\D/g, '').length < 10) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Informe um telefone válido com DDD.'
+    });
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Informe um e-mail válido.'
+    });
+  }
+
+  const db = database(res);
+  if (!db) return;
+
+  const { data, error } = await db
+    .from('clientes')
+    .insert({
+      nome,
+      telefone,
+      email: email || null,
+      data_nascimento: req.body?.data_nascimento || null,
+      observacoes: cleanText(req.body?.observacoes, 1000) || null
+    })
+    .select()
+    .single();
+
+  if (error) {
+    return sendDbError(res, 'Não foi possível cadastrar o cliente.', error);
+  }
+
+  res.status(201).json({ ok: true, data });
 }));
 
 app.patch('/api/admin/clientes/:id', admin, route(async (req, res) => {
@@ -583,25 +641,59 @@ app.patch('/api/admin/clientes/:id', admin, route(async (req, res) => {
     return res.status(400).json({ ok: false, error: 'ID inválido.' });
   }
 
-  const permitidos = ['nome', 'telefone', 'email', 'data_nascimento', 'observacoes'];
+  const permitidos = [
+    'nome',
+    'telefone',
+    'email',
+    'data_nascimento',
+    'observacoes'
+  ];
+
   const atualizacao = {};
 
   for (const campo of permitidos) {
     if (Object.prototype.hasOwnProperty.call(req.body || {}, campo)) {
-      atualizacao[campo] = campo === 'observacoes'
-        ? cleanText(req.body[campo], 1000) || null
-        : campo === 'nome'
-          ? cleanText(req.body[campo], 120)
-          : campo === 'telefone'
-            ? cleanText(req.body[campo], 30)
-            : campo === 'email'
-              ? cleanText(req.body[campo], 160).toLowerCase() || null
-              : req.body[campo] || null;
+      atualizacao[campo] =
+        campo === 'observacoes'
+          ? cleanText(req.body[campo], 1000) || null
+          : campo === 'nome'
+            ? cleanText(req.body[campo], 120)
+            : campo === 'telefone'
+              ? cleanText(req.body[campo], 30)
+              : campo === 'email'
+                ? cleanText(req.body[campo], 160).toLowerCase() || null
+                : req.body[campo] || null;
     }
   }
 
   if (!Object.keys(atualizacao).length) {
-    return res.status(400).json({ ok: false, error: 'Nenhum campo para atualizar.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'Nenhum campo para atualizar.'
+    });
+  }
+
+  if ('nome' in atualizacao && atualizacao.nome.length < 2) {
+    return res.status(400).json({
+      ok: false,
+      error: 'O nome precisa ter pelo menos 2 caracteres.'
+    });
+  }
+
+  if ('telefone' in atualizacao &&
+      atualizacao.telefone.replace(/\D/g, '').length < 10) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Informe um telefone válido com DDD.'
+    });
+  }
+
+  if ('email' in atualizacao && atualizacao.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(atualizacao.email)) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Informe um e-mail válido.'
+    });
   }
 
   const db = database(res);
@@ -614,17 +706,22 @@ app.patch('/api/admin/clientes/:id', admin, route(async (req, res) => {
     .select()
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível atualizar o cliente.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível atualizar o cliente.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Cliente não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Cliente não encontrado.'
+    });
   }
 
   res.json({ ok: true, data });
 }));
 
 // -----------------------------------------------------------------------------
-// SERVIÇOS: CRUD ADMINISTRATIVO
+// SERVIÇOS
 // -----------------------------------------------------------------------------
 
 app.get('/api/admin/servicos', admin, route(async (req, res) => {
@@ -636,7 +733,9 @@ app.get('/api/admin/servicos', admin, route(async (req, res) => {
     .select('*')
     .order('nome');
 
-  if (error) return sendDbError(res, 'Não foi possível carregar os serviços.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar os serviços.', error);
+  }
 
   res.json({ ok: true, data });
 }));
@@ -672,7 +771,9 @@ app.post('/api/admin/servicos', admin, route(async (req, res) => {
     .select()
     .single();
 
-  if (error) return sendDbError(res, 'Não foi possível cadastrar o serviço.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível cadastrar o serviço.', error);
+  }
 
   res.status(201).json({ ok: true, data });
 }));
@@ -682,7 +783,15 @@ app.patch('/api/admin/servicos/:id', admin, route(async (req, res) => {
     return res.status(400).json({ ok: false, error: 'ID inválido.' });
   }
 
-  const campos = ['nome', 'categoria', 'descricao', 'preco', 'duracao_minutos', 'ativo'];
+  const campos = [
+    'nome',
+    'categoria',
+    'descricao',
+    'preco',
+    'duracao_minutos',
+    'ativo'
+  ];
+
   const atualizacao = {};
 
   for (const campo of campos) {
@@ -692,18 +801,44 @@ app.patch('/api/admin/servicos/:id', admin, route(async (req, res) => {
   }
 
   if (!Object.keys(atualizacao).length) {
-    return res.status(400).json({ ok: false, error: 'Nenhum campo para atualizar.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'Nenhum campo para atualizar.'
+    });
   }
 
-  if ('nome' in atualizacao) atualizacao.nome = cleanText(atualizacao.nome, 120);
-  if ('preco' in atualizacao) atualizacao.preco = Number(atualizacao.preco);
-  if ('duracao_minutos' in atualizacao) atualizacao.duracao_minutos = Number(atualizacao.duracao_minutos);
+  if ('nome' in atualizacao) {
+    atualizacao.nome = cleanText(atualizacao.nome, 120);
+  }
+
+  if ('categoria' in atualizacao) {
+    atualizacao.categoria = cleanText(atualizacao.categoria, 80) || null;
+  }
+
+  if ('descricao' in atualizacao) {
+    atualizacao.descricao = cleanText(atualizacao.descricao, 1000) || null;
+  }
+
+  if ('preco' in atualizacao) {
+    atualizacao.preco = Number(atualizacao.preco);
+  }
+
+  if ('duracao_minutos' in atualizacao) {
+    atualizacao.duracao_minutos = Number(atualizacao.duracao_minutos);
+  }
 
   if (('nome' in atualizacao && !atualizacao.nome) ||
-      ('preco' in atualizacao && (!Number.isFinite(atualizacao.preco) || atualizacao.preco < 0)) ||
-      ('duracao_minutos' in atualizacao && (!Number.isInteger(atualizacao.duracao_minutos) || atualizacao.duracao_minutos <= 0)) ||
-      ('ativo' in atualizacao && typeof atualizacao.ativo !== 'boolean')) {
-    return res.status(400).json({ ok: false, error: 'Dados do serviço inválidos.' });
+      ('preco' in atualizacao &&
+        (!Number.isFinite(atualizacao.preco) || atualizacao.preco < 0)) ||
+      ('duracao_minutos' in atualizacao &&
+        (!Number.isInteger(atualizacao.duracao_minutos) ||
+         atualizacao.duracao_minutos <= 0)) ||
+      ('ativo' in atualizacao &&
+        typeof atualizacao.ativo !== 'boolean')) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Dados do serviço inválidos.'
+    });
   }
 
   const db = database(res);
@@ -716,10 +851,15 @@ app.patch('/api/admin/servicos/:id', admin, route(async (req, res) => {
     .select()
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível atualizar o serviço.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível atualizar o serviço.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Serviço não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Serviço não encontrado.'
+    });
   }
 
   res.json({ ok: true, data });
@@ -727,13 +867,16 @@ app.patch('/api/admin/servicos/:id', admin, route(async (req, res) => {
 
 app.delete('/api/admin/servicos/:id', admin, route(async (req, res) => {
   if (!validId(req.params.id)) {
-    return res.status(400).json({ ok: false, error: 'ID inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'ID inválido.'
+    });
   }
 
   const db = database(res);
   if (!db) return;
 
-  // Desativa para preservar o histórico de agendamentos existentes.
+  // Desativa o serviço para preservar o histórico de agendamentos.
   const { data, error } = await db
     .from('servicos')
     .update({ ativo: false })
@@ -741,17 +884,22 @@ app.delete('/api/admin/servicos/:id', admin, route(async (req, res) => {
     .select('id')
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível desativar o serviço.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível desativar o serviço.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Serviço não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Serviço não encontrado.'
+    });
   }
 
   res.json({ ok: true });
 }));
 
 // -----------------------------------------------------------------------------
-// DISPONIBILIDADE: CRUD ADMINISTRATIVO
+// DISPONIBILIDADE
 // -----------------------------------------------------------------------------
 
 app.get('/api/admin/disponibilidade', admin, route(async (req, res) => {
@@ -764,7 +912,9 @@ app.get('/api/admin/disponibilidade', admin, route(async (req, res) => {
     .order('dia_semana')
     .order('hora_inicio');
 
-  if (error) return sendDbError(res, 'Não foi possível carregar a disponibilidade.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar a disponibilidade.', error);
+  }
 
   res.json({ ok: true, data });
 }));
@@ -777,7 +927,10 @@ app.post('/api/admin/disponibilidade', admin, route(async (req, res) => {
   if (!Number.isInteger(dia) || dia < 0 || dia > 6 ||
       !validTime(inicio) || !validTime(fim) ||
       timeToMinutes(inicio) >= timeToMinutes(fim)) {
-    return res.status(400).json({ ok: false, error: 'Dia ou horário inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'Dia ou horário inválido.'
+    });
   }
 
   const db = database(res);
@@ -794,32 +947,52 @@ app.post('/api/admin/disponibilidade', admin, route(async (req, res) => {
     .select()
     .single();
 
-  if (error) return sendDbError(res, 'Não foi possível cadastrar a disponibilidade.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível cadastrar a disponibilidade.', error);
+  }
 
   res.status(201).json({ ok: true, data });
 }));
 
 app.patch('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
   if (!validId(req.params.id)) {
-    return res.status(400).json({ ok: false, error: 'ID inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'ID inválido.'
+    });
   }
 
+  const corpo = req.body || {};
   const atualizacao = {};
 
-  if ('dia_semana' in (req.body || {})) atualizacao.dia_semana = Number(req.body.dia_semana);
-  if ('hora_inicio' in (req.body || {})) atualizacao.hora_inicio = normalizeTime(req.body.hora_inicio);
-  if ('hora_fim' in (req.body || {})) atualizacao.hora_fim = normalizeTime(req.body.hora_fim);
-  if ('ativo' in (req.body || {})) atualizacao.ativo = req.body.ativo;
+  if ('dia_semana' in corpo) atualizacao.dia_semana = Number(corpo.dia_semana);
+  if ('hora_inicio' in corpo) atualizacao.hora_inicio = normalizeTime(corpo.hora_inicio);
+  if ('hora_fim' in corpo) atualizacao.hora_fim = normalizeTime(corpo.hora_fim);
+  if ('ativo' in corpo) atualizacao.ativo = corpo.ativo;
+
+  if (!Object.keys(atualizacao).length) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Nenhum campo para atualizar.'
+    });
+  }
 
   if ('dia_semana' in atualizacao &&
-      (!Number.isInteger(atualizacao.dia_semana) || atualizacao.dia_semana < 0 || atualizacao.dia_semana > 6)) {
-    return res.status(400).json({ ok: false, error: 'Dia da semana inválido.' });
+      (!Number.isInteger(atualizacao.dia_semana) ||
+       atualizacao.dia_semana < 0 || atualizacao.dia_semana > 6)) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Dia da semana inválido.'
+    });
   }
 
   if (('hora_inicio' in atualizacao && !validTime(atualizacao.hora_inicio)) ||
       ('hora_fim' in atualizacao && !validTime(atualizacao.hora_fim)) ||
       ('ativo' in atualizacao && typeof atualizacao.ativo !== 'boolean')) {
-    return res.status(400).json({ ok: false, error: 'Dados de disponibilidade inválidos.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'Dados de disponibilidade inválidos.'
+    });
   }
 
   const db = database(res);
@@ -827,22 +1000,31 @@ app.patch('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
 
   const { data: atual, error: erroAtual } = await db
     .from('disponibilidade')
-    .select('dia_semana,hora_inicio,hora_fim')
+    .select('hora_inicio,hora_fim')
     .eq('id', req.params.id)
     .maybeSingle();
 
-  if (erroAtual) return sendDbError(res, 'Não foi possível consultar a disponibilidade.', erroAtual);
+  if (erroAtual) {
+    return sendDbError(res, 'Não foi possível consultar a disponibilidade.', erroAtual);
+  }
 
   if (!atual) {
-    return res.status(404).json({ ok: false, error: 'Disponibilidade não encontrada.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Disponibilidade não encontrada.'
+    });
   }
 
   const inicio = atualizacao.hora_inicio || atual.hora_inicio;
   const fim = atualizacao.hora_fim || atual.hora_fim;
 
-  if (timeToMinutes(inicio) === null || timeToMinutes(fim) === null ||
+  if (timeToMinutes(inicio) === null ||
+      timeToMinutes(fim) === null ||
       timeToMinutes(inicio) >= timeToMinutes(fim)) {
-    return res.status(400).json({ ok: false, error: 'O horário final deve ser posterior ao inicial.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'O horário final deve ser posterior ao inicial.'
+    });
   }
 
   const { data, error } = await db
@@ -852,14 +1034,19 @@ app.patch('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
     .select()
     .single();
 
-  if (error) return sendDbError(res, 'Não foi possível atualizar a disponibilidade.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível atualizar a disponibilidade.', error);
+  }
 
   res.json({ ok: true, data });
 }));
 
 app.delete('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
   if (!validId(req.params.id)) {
-    return res.status(400).json({ ok: false, error: 'ID inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'ID inválido.'
+    });
   }
 
   const db = database(res);
@@ -872,17 +1059,22 @@ app.delete('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
     .select('id')
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível excluir a disponibilidade.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível excluir a disponibilidade.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Disponibilidade não encontrada.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Disponibilidade não encontrada.'
+    });
   }
 
   res.json({ ok: true });
 }));
 
 // -----------------------------------------------------------------------------
-// BLOQUEIOS DE AGENDA: CRUD ADMINISTRATIVO
+// BLOQUEIOS
 // -----------------------------------------------------------------------------
 
 app.get('/api/admin/bloqueios', admin, route(async (req, res) => {
@@ -896,7 +1088,9 @@ app.get('/api/admin/bloqueios', admin, route(async (req, res) => {
     .order('hora_inicio')
     .limit(1000);
 
-  if (error) return sendDbError(res, 'Não foi possível carregar os bloqueios.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível carregar os bloqueios.', error);
+  }
 
   res.json({ ok: true, data });
 }));
@@ -906,9 +1100,13 @@ app.post('/api/admin/bloqueios', admin, route(async (req, res) => {
   const inicio = req.body?.hora_inicio;
   const fim = req.body?.hora_fim;
 
-  if (!validDate(dataBloqueio) || !validTime(inicio) || !validTime(fim) ||
+  if (!validDate(dataBloqueio) || !validTime(inicio) ||
+      !validTime(fim) ||
       timeToMinutes(inicio) >= timeToMinutes(fim)) {
-    return res.status(400).json({ ok: false, error: 'Data ou horário de bloqueio inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'Data ou horário de bloqueio inválido.'
+    });
   }
 
   const db = database(res);
@@ -925,27 +1123,43 @@ app.post('/api/admin/bloqueios', admin, route(async (req, res) => {
     .select()
     .single();
 
-  if (error) return sendDbError(res, 'Não foi possível cadastrar o bloqueio.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível cadastrar o bloqueio.', error);
+  }
 
   res.status(201).json({ ok: true, data });
 }));
 
 app.patch('/api/admin/bloqueios/:id', admin, route(async (req, res) => {
   if (!validId(req.params.id)) {
-    return res.status(400).json({ ok: false, error: 'ID inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'ID inválido.'
+    });
   }
 
+  const corpo = req.body || {};
   const atualizacao = {};
 
-  if ('data' in (req.body || {})) atualizacao.data = req.body.data;
-  if ('hora_inicio' in (req.body || {})) atualizacao.hora_inicio = normalizeTime(req.body.hora_inicio);
-  if ('hora_fim' in (req.body || {})) atualizacao.hora_fim = normalizeTime(req.body.hora_fim);
-  if ('motivo' in (req.body || {})) atualizacao.motivo = cleanText(req.body.motivo, 300) || null;
+  if ('data' in corpo) atualizacao.data = corpo.data;
+  if ('hora_inicio' in corpo) atualizacao.hora_inicio = normalizeTime(corpo.hora_inicio);
+  if ('hora_fim' in corpo) atualizacao.hora_fim = normalizeTime(corpo.hora_fim);
+  if ('motivo' in corpo) atualizacao.motivo = cleanText(corpo.motivo, 300) || null;
+
+  if (!Object.keys(atualizacao).length) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Nenhum campo para atualizar.'
+    });
+  }
 
   if (('data' in atualizacao && !validDate(atualizacao.data)) ||
       ('hora_inicio' in atualizacao && !validTime(atualizacao.hora_inicio)) ||
       ('hora_fim' in atualizacao && !validTime(atualizacao.hora_fim))) {
-    return res.status(400).json({ ok: false, error: 'Dados do bloqueio inválidos.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'Dados do bloqueio inválidos.'
+    });
   }
 
   const db = database(res);
@@ -957,18 +1171,27 @@ app.patch('/api/admin/bloqueios/:id', admin, route(async (req, res) => {
     .eq('id', req.params.id)
     .maybeSingle();
 
-  if (erroAtual) return sendDbError(res, 'Não foi possível consultar o bloqueio.', erroAtual);
+  if (erroAtual) {
+    return sendDbError(res, 'Não foi possível consultar o bloqueio.', erroAtual);
+  }
 
   if (!atual) {
-    return res.status(404).json({ ok: false, error: 'Bloqueio não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Bloqueio não encontrado.'
+    });
   }
 
   const inicio = atualizacao.hora_inicio || atual.hora_inicio;
   const fim = atualizacao.hora_fim || atual.hora_fim;
 
-  if (timeToMinutes(inicio) === null || timeToMinutes(fim) === null ||
+  if (timeToMinutes(inicio) === null ||
+      timeToMinutes(fim) === null ||
       timeToMinutes(inicio) >= timeToMinutes(fim)) {
-    return res.status(400).json({ ok: false, error: 'O horário final deve ser posterior ao inicial.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'O horário final deve ser posterior ao inicial.'
+    });
   }
 
   const { data, error } = await db
@@ -978,14 +1201,19 @@ app.patch('/api/admin/bloqueios/:id', admin, route(async (req, res) => {
     .select()
     .single();
 
-  if (error) return sendDbError(res, 'Não foi possível atualizar o bloqueio.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível atualizar o bloqueio.', error);
+  }
 
   res.json({ ok: true, data });
 }));
 
 app.delete('/api/admin/bloqueios/:id', admin, route(async (req, res) => {
   if (!validId(req.params.id)) {
-    return res.status(400).json({ ok: false, error: 'ID inválido.' });
+    return res.status(400).json({
+      ok: false,
+      error: 'ID inválido.'
+    });
   }
 
   const db = database(res);
@@ -998,10 +1226,15 @@ app.delete('/api/admin/bloqueios/:id', admin, route(async (req, res) => {
     .select('id')
     .maybeSingle();
 
-  if (error) return sendDbError(res, 'Não foi possível excluir o bloqueio.', error);
+  if (error) {
+    return sendDbError(res, 'Não foi possível excluir o bloqueio.', error);
+  }
 
   if (!data) {
-    return res.status(404).json({ ok: false, error: 'Bloqueio não encontrado.' });
+    return res.status(404).json({
+      ok: false,
+      error: 'Bloqueio não encontrado.'
+    });
   }
 
   res.json({ ok: true });
@@ -1041,6 +1274,4 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log('Servidor Taiany iniciado na porta ' + PORT);
   console.log('Supabase: ' + (supabase ? 'configurado' : 'não configurado'));
-  console.log('Token administrativo: ' +
-    (process.env.ADMIN_API_TOKEN ? 'configurado' : 'não configurado'));
 });
