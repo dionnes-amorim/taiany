@@ -117,7 +117,29 @@ document.getElementById('clientSearch').addEventListener('input',renderClients);
 document.getElementById('appointmentForm').addEventListener('submit',async e=>{e.preventDefault();const client=document.getElementById('appointmentClient').value.trim();const phone=document.getElementById('appointmentPhone').value.trim();const serviceId=document.getElementById('appointmentService').value;const service=serviceById(serviceId);const date=document.getElementById('appointmentDate').value;const time=document.getElementById('appointmentTime').value;if(!service||!date||!time||!isAvailable(date,time,service.duration)){alert('Esse horário não está mais disponível. Escolha outra opção.');refreshChoices(true);return;}try{await api('/api/agendamentos',{method:'POST',body:{nome_cliente:client,telefone_cliente:phone,servico_id:serviceId,data:date,hora_inicio:time,observacoes:document.getElementById('appointmentNotes').value}});e.target.reset();document.getElementById('appointmentDate').value='';document.getElementById('appointmentTime').value='';await loadFromServer();refreshChoices(false);alert('Agendamento salvo no Supabase!');}catch(err){alert(err.message);}});
 document.getElementById('clientForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/admin/clientes',{method:'POST',body:{nome:document.getElementById('clientName').value,telefone:document.getElementById('clientPhone').value,email:document.getElementById('clientEmail').value,data_nascimento:document.getElementById('clientBirthday').value,observacoes:document.getElementById('clientNotes').value}});e.target.reset();loadFromServer();}catch(err){alert(err.message);}});
 document.getElementById('serviceForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/admin/servicos',{method:'POST',body:{nome:document.getElementById('serviceName').value,preco:Number(document.getElementById('servicePrice').value),duracao_minutos:Number(document.getElementById('serviceDuration').value),categoria:document.getElementById('serviceCategory').value,descricao:document.getElementById('serviceDescription').value}});e.target.reset();document.getElementById('serviceDuration').value=60;loadFromServer();}catch(err){alert(err.message);}});
-document.getElementById('availabilityForm').addEventListener('submit',async e=>{e.preventDefault();const next=weekdays.map((day,i)=>({day,enabled:document.getElementById('enabled'+i).checked,start:document.getElementById('start'+i).value,end:document.getElementById('end'+i).value}));for(const a of next){if(a.enabled&&(!a.start||!a.end||toMinutes(a.start)>=toMinutes(a.end))){alert('Em cada dia ativo, o início deve ser anterior ao fim.');return;}}state.availability=next;state.interval=Number(document.getElementById('slotInterval').value);saveLocal();refreshChoices(false);alert('Disponibilidade salva localmente. Para salvar no Supabase, configure no server.');});
+document.getElementById('availabilityForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=e.target.querySelector('button'); const textoOriginal=btn.textContent; btn.disabled=true; btn.textContent='Salvando no Supabase...';
+  try{
+    const existentes=await api('/api/admin/disponibilidade');
+    for(const item of existentes){ try{ await api('/api/admin/disponibilidade/'+item.id,{method:'DELETE'}); }catch{} }
+    let salvou=0;
+    for(let i=0;i<7;i++){
+      const enabled=document.getElementById('enabled'+i)?.checked;
+      const start=document.getElementById('start'+i)?.value;
+      const end=document.getElementById('end'+i)?.value;
+      if(enabled){
+        if(!start||!end||toMinutes(start)>=toMinutes(end)){ alert('O dia '+weekdays[i]+' está com horário inválido.'); btn.disabled=false; btn.textContent=textoOriginal; return; }
+        await api('/api/admin/disponibilidade',{method:'POST',body:{dia_semana:i,hora_inicio:start,hora_fim:end,ativo:true}});
+        salvou++;
+      }
+    }
+    state.interval=Number(document.getElementById('slotInterval').value); saveLocal();
+    alert('Disponibilidade salva no Supabase! '+salvou+' dias ativos. Sua cliente já vê em /agendar');
+    await loadFromServer();
+  }catch(err){ alert('Erro ao salvar no Supabase: '+err.message); }
+  finally{ btn.disabled=false; btn.textContent=textoOriginal||'Salvar disponibilidade'; }
+});
 document.getElementById('blockForm').addEventListener('submit',async e=>{e.preventDefault();const date=document.getElementById('blockDate').value;const start=document.getElementById('blockStart').value;const end=document.getElementById('blockEnd').value;if(toMinutes(start)>=toMinutes(end)){alert('O horário final deve ser depois do horário inicial.');return;}try{await api('/api/admin/bloqueios',{method:'POST',body:{data:date,hora_inicio:start,hora_fim:end,motivo:document.getElementById('blockReason').value}});e.target.reset();loadFromServer();refreshChoices(true);}catch(err){alert(err.message);}});
 document.getElementById('settingsForm').addEventListener('submit',e=>{e.preventDefault();state.settings={studioName:document.getElementById('studioName').value.trim(),title:document.getElementById('studioTitle').value.trim(),phone:document.getElementById('studioPhone').value.trim(),advanceDays:Number(document.getElementById('advanceDays').value),minNotice:Number(document.getElementById('minNotice').value),cancelPolicy:document.getElementById('cancelPolicy').value.trim(),welcomeMessage:document.getElementById('welcomeMessage').value.trim()};saveLocal();refreshChoices(false);alert('Configurações salvas.');});
 document.getElementById('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='taiany-agenda-backup.json';a.click();URL.revokeObjectURL(url);});
