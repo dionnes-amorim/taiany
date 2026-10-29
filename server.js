@@ -945,7 +945,7 @@ app.post('/api/agendamentos', async (req, res) => {
         hora_fim: minutesToTime(end),
         preco: Number(context.service.preco || 0),
         status: 'Pendente',
-        observacoes,
+        observacoes: observations,
         origem: 'site'
       };
 
