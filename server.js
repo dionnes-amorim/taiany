@@ -85,8 +85,8 @@ function cleanText(value, max = 200) {
 }
 
 function sendDbError(res, message, error) {
-  console.error('[SUPABASE]', error?.message || error);
-  return res.status(500).json({ ok: false, error: message });
+  console.error('[SUPABASE]', error?.message || error, error?.details, error?.hint);
+  return res.status(500).json({ ok: false, error: message + ' | Detalhe: ' + (error?.message || JSON.stringify(error)) });
 }
 
 const STATUS = [
