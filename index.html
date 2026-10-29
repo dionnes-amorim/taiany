@@ -2,108 +2,74 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Taiany Trindade | Sistema de Gestão</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>Taiany Trindade | Acesso</title>
 <style>
-:root{--cream:#fbf5ef;--rose:#b97861;--copper:#9b5c43;--ink:#211916;--muted:#7f7069;--line:#eadfd7;--white:#fffdfb;--pink:#bd7896}
-*{box-sizing:border-box}*{ -webkit-font-smoothing:antialiased }
-body{margin:0;min-height:100vh;background:radial-gradient(1200px 600px at 50% -10%, #fff 0%, #fbe9e1 18%, #fbf5ef 55%, #fbf5ef 100%);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;display:flex;flex-direction:column}
-.top{padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
-.badge{font-size:10px;letter-spacing:2px;color:var(--muted);border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#fff}
-.wrap{width:min(100% - 32px, 1180px);margin:0 auto;flex:1;display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;padding:20px 0 40px}
-.left{display:flex;flex-direction:column;gap:18px}
-.logo-hero{width:220px;height:220px;border-radius:28px;background:linear-gradient(135deg,var(--rose),#d89a85);display:grid;place-items:center;box-shadow:0 20px 60px rgba(185,120,97,.35), inset 0 0 0 2px #ead6c8;overflow:hidden;position:relative}
-.logo-hero img{width:100%;height:100%;object-fit:contain;padding:14px;background:#fff;border-radius:20px;display:block}
-.logo-hero .fallback{font-family:Georgia,serif;font-size:88px;color:#fff;letter-spacing:-2px}
-h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(36px,5vw,54px);line-height:1.05;margin:10px 0 0}
-h1 span{color:var(--rose)}
-.sub{color:var(--muted);font-size:16px;max-width:520px;line-height:1.6;margin:0}
-.grid{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(33,25,22,.05);transition:.2s;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px}
-.card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(33,25,22,.08);border-color:var(--rose)}
-.card .icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#fdf2ec;color:var(--copper);font-size:20px}
-.card h3{margin:0;font-size:16px}.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
-.card.primary{background:var(--ink);color:#fff;border-color:var(--ink)}.card.primary p{color:#b9a9a3}.card.primary .icon{background:rgba(255,255,255,.12);color:#fff}
-.right{background:var(--white);border:1px solid var(--line);border-radius:24px;box-shadow:0 20px 60px rgba(33,25,22,.08);padding:26px}
-.right h2{font-family:Georgia,serif;font-size:22px;margin:0 0 4px}.right .hint{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.5}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-input{width:100%;min-height:46px;border:1px solid #d9c9bf;border-radius:12px;padding:12px 14px;outline:none;background:#fff}
+:root{--cream:#fbf5ef;--rose:#b97861;--copper:#9b5c43;--ink:#211916;--muted:#7f7069;--line:#eadfd7;--white:#fffdfb}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#fbf5ef;color:var(--ink);font-family:Inter,system-ui,Arial;display:flex;flex-direction:column}
+.wrap{flex:1;display:grid;place-items:center;padding:24px}
+.card{width:min(100%,420px);background:var(--white);border:1px solid var(--line);border-radius:24px;box-shadow:0 20px 60px rgba(33,25,22,.08);padding:28px;text-align:center}
+.logo-hero{width:140px;height:140px;margin:0 auto 16px;border-radius:22px;background:var(--rose);display:grid;place-items:center;overflow:hidden;box-shadow:0 10px 30px rgba(185,120,97,.3)}
+.logo-hero img{width:100%;height:100%;object-fit:contain;padding:10px;background:#fff}
+h1{font-family:Georgia,serif;font-size:26px;margin:0 0 4px;font-weight:500} .sub{color:var(--muted);font-size:13px;margin:0 0 22px}
+.field{text-align:left;margin-bottom:12px}label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700}
+input{width:100%;height:48px;border:1px solid #d9c9bf;border-radius:12px;padding:0 14px;outline:none;margin-top:6px}
 input:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(185,120,97,.15)}
-.btn{width:100%;min-height:50px;border:0;border-radius:12px;background:var(--copper);color:#fff;font-weight:800;cursor:pointer;transition:.15s}
-.btn:hover{background:#8a4f3a}.btn.secondary{background:#fff;color:var(--copper);border:1px solid var(--copper)}
-.divider{height:1px;background:var(--line);margin:18px 0}
-.status{display:flex;gap:8px;flex-wrap:wrap}.dot{width:8px;height:8px;border-radius:50%;background:#4aa47a;display:inline-block}
-.footer{padding:18px 24px;border-top:1px solid var(--line);background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.dev{display:flex;align-items:center;gap:12px}
-.dev-logo{width:56px;height:56px;border-radius:12px;background:#111;display:grid;place-items:center;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.15);border:1px solid #222}
+.btn{width:100%;height:50px;border:0;border-radius:12px;background:var(--copper);color:#fff;font-weight:800;cursor:pointer;margin-top:10px}
+.btn.secondary{background:#fff;color:var(--copper);border:1px solid var(--copper)}
+.msg{font-size:13px;margin-top:12px;min-height:18px}.msg.error{color:#a84747}.msg.ok{color:#2e7d5a}
+.link-box{margin-top:18px;padding:12px;border:1px dashed var(--rose);border-radius:12px;background:#fff8f4;font-size:12px;word-break:break-all}
+.footer{padding:20px;display:flex;justify-content:center;border-top:1px solid var(--line);background:#fff}
+.dev{display:flex;align-items:center;gap:14px}
+.dev-logo{width:72px;height:72px;border-radius:14px;background:#111;display:grid;place-items:center;overflow:hidden;border:1px solid #222;box-shadow:0 8px 20px rgba(0,0,0,.15)}
 .dev-logo img{width:100%;height:100%;object-fit:contain;padding:6px;background:#fff}
-.dev-text{line-height:1.2}.dev-text strong{display:block;font-size:13px}.dev-text span{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}.logo-hero{width:160px;height:160px}.logo-hero .fallback{font-size:60px}}
+.dev-text{line-height:1.2;text-align:left}.dev-text strong{font-size:14px;display:block}.dev-text span{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 </style>
 </head>
 <body>
-<div class="top"><div class="badge">SISTEMA EM PRODUÇÃO • RENDER • SUPABASE • CLIENTES_TAIANY</div><div class="badge">v2.0 • SECRETÁRIA VIRTUAL</div></div>
-
 <div class="wrap">
-  <div class="left">
-    <div class="logo-hero">
-      <img src="/logo.png" alt="Taiany Trindade" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-      <div class="fallback" style="display:none;width:100%;height:100%;place-items:center">TT</div>
-    </div>
-    <h1>Sistema de Gestão <span>Taiany Trindade</span></h1>
-    <p class="sub">Central completa de agendamentos, clientes e disponibilidade. O painel administrativo controla a secretária virtual que atende suas clientes 24h no link de agendamento.</p>
-    
-    <div class="grid">
-      <a class="card primary" href="/taiany-painel-admin.html">
-        <div class="icon">🗂️</div>
-        <h3>Painel Administrativo</h3>
-        <p>Acesse agenda, clientes, serviços, bloqueios e disponibilidade. Lista em cima, cadastro embaixo.</p>
-      </a>
-      <a class="card" href="/taiany-agendamento.html">
-        <div class="icon">💬</div>
-        <h3>Link da Cliente</h3>
-        <p>Secretária virtual profissional. Teste como cliente: busca por WhatsApp, serviços em cards, datas agrupadas.</p>
-      </a>
-      <a class="card" href="/api/servicos" target="_blank">
-        <div class="icon">🔌</div>
-        <h3>API Status</h3>
-        <p>Verifica se Supabase e serviços estão online. /api/servicos /api/disponibilidade /api/horarios</p>
-      </a>
-      <a class="card" href="https://taiany.onrender.com/taiany-agendamento.html" target="_blank">
-        <div class="icon">🌐</div>
-        <h3>Link Público para Instagram</h3>
-        <p>Use este link na bio: taiany.onrender.com/taiany-agendamento.html</p>
-      </a>
-    </div>
-  </div>
+  <div class="card">
+    <div class="logo-hero"><img src="/logo.png" alt="Taiany" onerror="this.style.display='none';this.parentElement.textContent='TT';this.parentElement.style.color='#fff';this.parentElement.style.fontSize='48px';this.parentElement.style.fontFamily='Georgia,serif'"></div>
+    <h1>Taiany Trindade</h1>
+    <p class="sub">Nail Designer • Acesso restrito</p>
 
-  <div class="right">
-    <h2>Acesso da Proprietária</h2>
-    <p class="hint">Área preparada para autenticação. Quando você ativar a autenticação no Render, esse formulário vai validar o acesso antes de entrar no painel. Por enquanto é visual.</p>
-    
-    <div class="field"><label>E-mail da administradora</label><input id="email" type="email" placeholder="taiany@studio.com" value="taiany@studio.com"></div>
-    <div class="field"><label>Senha</label><input id="pass" type="password" placeholder="••••••••" value="123456"></div>
-    <button class="btn" onclick="location.href='/taiany-painel-admin.html'">Entrar no Painel Administrativo</button>
-    <button class="btn secondary" style="margin-top:10px" onclick="location.href='/taiany-agendamento.html'">Ver como cliente vê</button>
-    
-    <div class="divider"></div>
-    <div class="status">
-      <span style="font-size:12px;color:var(--muted)"><span class="dot"></span> Supabase conectado</span>
-      <span style="font-size:12px;color:var(--muted)"><span class="dot"></span> clientes_taiany isolada</span>
-      <span style="font-size:12px;color:var(--muted)"><span class="dot"></span> Secretária virtual ativa</span>
+    <div class="field"><label>Usuário</label><input id="user" placeholder="Usuário" autocomplete="username"></div>
+    <div class="field"><label>Senha</label><input id="pass" type="password" placeholder="Senha" autocomplete="current-password"></div>
+    <button class="btn" id="loginBtn">Entrar no Painel</button>
+    <div id="msg" class="msg"></div>
+
+    <div style="margin-top:22px">
+      <div class="link-box" id="linkBox">https://taiany.onrender.com/taiany-agendamento.html</div>
+      <button class="btn secondary" id="copyBtn">Copiar link de agendamento</button>
     </div>
-    <p class="hint" style="margin-top:14px">Dica: No Render > Environment > adicione AUTH_USER e AUTH_PASS e depois me avise que eu coloco a lógica de login real aqui.</p>
   </div>
 </div>
 
 <footer class="footer">
-  <div style="font-size:11px;color:var(--muted);letter-spacing:1.2px">TAIANY TRINDADE • NAIL DESIGNER • SISTEMA DE GESTÃO v2.0</div>
   <div class="dev">
-    <div class="dev-text" style="text-align:right"><strong>Sistema desenvolvido por</strong><span>Sua Empresa Aqui</span></div>
-    <div class="dev-logo">
-      <img src="/logo-desenvolvimento.png" alt="Sua empresa" onerror="this.style.display='none';this.parentElement.textContent='SE';this.parentElement.style.color='#fff';this.parentElement.style.fontWeight='800'">
-    </div>
+    <div class="dev-logo"><img src="/logo-desenvolvimento.png" alt="Sua empresa" onerror="this.style.display='none';this.parentElement.textContent='DEV';this.parentElement.style.color='#fff';this.parentElement.style.fontWeight='800'"></div>
+    <div class="dev-text"><strong>Desenvolvido por</strong><span>SUA EMPRESA AQUI</span></div>
   </div>
 </footer>
+
+<script>
+const $=id=>document.getElementById(id);
+$('copyBtn').onclick=async()=>{
+  const link=$('linkBox').textContent.trim();
+  try{await navigator.clipboard.writeText(link);$('copyBtn').textContent='Link copiado! ✓';setTimeout(()=>$('copyBtn').textContent='Copiar link de agendamento',1500);}catch{prompt('Copie o link:',link);}
+};
+$('loginBtn').onclick=async()=>{
+  const user=$('user').value.trim(), pass=$('pass').value.trim();
+  if(!user||!pass){$('msg').textContent='Preencha usuário e senha';$('msg').className='msg error';return;}
+  $('loginBtn').textContent='Verificando...';$('loginBtn').disabled=true;
+  try{
+    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user,pass})});
+    const j=await r.json();
+    if(j.ok){$('msg').textContent='Acesso liberado!';$('msg').className='msg ok';location.href='/taiany-painel-admin.html';}
+    else{throw new Error(j.error||'Acesso negado');}
+  }catch(e){$('msg').textContent=e.message;$('msg').className='msg error';}
+  finally{$('loginBtn').textContent='Entrar no Painel';$('loginBtn').disabled=false;}
+};
+document.addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click();});
+</script>
 </body>
 </html>
