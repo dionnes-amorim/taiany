@@ -466,6 +466,266 @@ app.get('/health', (req, res) => {
   });
 });
 
+
+/**
+ * CANCELAR AGENDAMENTO PELO WHATSAPP
+ * Confere o telefone antes de alterar o registro.
+ */
+app.patch('/api/meus-agendamentos/:id/cancelar', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const telefone = normalizePhone(req.body?.telefone);
+
+    if (!validId(id) || !validPhone(telefone)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe um agendamento e um WhatsApp válidos.'
+      });
+    }
+
+    const client = db();
+
+    const { data: agendamento, error: findError } = await client
+      .from('agendamentos')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (findError) throw findError;
+
+    if (
+      !agendamento ||
+      normalizePhone(agendamento.telefone_cliente) !== telefone
+    ) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Agendamento não encontrado para esse WhatsApp.'
+      });
+    }
+
+    if (isCancelled(agendamento.status)) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Este agendamento já está cancelado.'
+      });
+    }
+
+    const statusAtual = String(agendamento.status || '')
+      .trim()
+      .toLowerCase();
+
+    if (
+      ['concluído', 'concluido', 'concluída', 'concluida'].includes(statusAtual)
+    ) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Não é possível cancelar um atendimento já concluído.'
+      });
+    }
+
+    const { data, error } = await client
+      .from('agendamentos')
+      .update({ status: 'Cancelado' })
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Não foi possível localizar o agendamento para cancelar.'
+      });
+    }
+
+    return res.json({
+      ok: true,
+      data,
+      message: 'Agendamento cancelado com sucesso.'
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+
+/**
+ * REMARCAR AGENDAMENTO PELO WHATSAPP
+ * Confere o telefone, a data, o horário e a disponibilidade real.
+ */
+app.patch('/api/meus-agendamentos/:id/remarcar', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const telefone = normalizePhone(req.body?.telefone);
+    const date = cleanText(req.body?.data, 10);
+    const startTime = normalizeTime(req.body?.hora_inicio);
+
+    if (
+      !validId(id) ||
+      !validPhone(telefone) ||
+      !validDate(date) ||
+      !startTime
+    ) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe o WhatsApp, uma data e um horário válidos.'
+      });
+    }
+
+    const client = db();
+
+    const { data: agendamento, error: findError } = await client
+      .from('agendamentos')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (findError) throw findError;
+
+    if (
+      !agendamento ||
+      normalizePhone(agendamento.telefone_cliente) !== telefone
+    ) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Agendamento não encontrado para esse WhatsApp.'
+      });
+    }
+
+    if (isCancelled(agendamento.status)) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Este agendamento está cancelado. Faça um novo agendamento.'
+      });
+    }
+
+    const statusAtual = String(agendamento.status || '')
+      .trim()
+      .toLowerCase();
+
+    if (
+      ['concluído', 'concluido', 'concluída', 'concluida'].includes(statusAtual)
+    ) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Não é possível remarcar um atendimento já concluído.'
+      });
+    }
+
+    if (isPastSlot(date, timeToMinutes(startTime))) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Escolha uma data e um horário futuros.'
+      });
+    }
+
+    return await withBookingLock(date, async () => {
+      // Reconsulta o registro para evitar atualizar uma reserva já alterada.
+      const { data: atual, error: atualError } = await client
+        .from('agendamentos')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (atualError) throw atualError;
+
+      if (
+        !atual ||
+        normalizePhone(atual.telefone_cliente) !== telefone
+      ) {
+        return res.status(404).json({
+          ok: false,
+          error: 'Agendamento não encontrado.'
+        });
+      }
+
+      if (isCancelled(atual.status)) {
+        return res.status(409).json({
+          ok: false,
+          error: 'Este agendamento foi cancelado e não pode ser remarcado.'
+        });
+      }
+
+      const context = await getBookingContext(date, atual.servico_id);
+
+      if (context.missingService || context.inactiveService) {
+        return res.status(409).json({
+          ok: false,
+          error: 'O serviço deste agendamento não está disponível para remarcação.'
+        });
+      }
+
+      if (context.invalidDuration) {
+        return res.status(400).json({
+          ok: false,
+          error: 'A duração do serviço está configurada incorretamente.'
+        });
+      }
+
+      // Ignora a própria reserva ao verificar conflitos de horário.
+      context.bookings = context.bookings.filter(
+        item => String(item.id) !== String(id)
+      );
+
+      const start = timeToMinutes(startTime);
+      const end = start + context.duration;
+
+      if (!Number.isFinite(start) || end > 1440) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Horário inválido.'
+        });
+      }
+
+      if (isPastSlot(date, start)) {
+        return res.status(409).json({
+          ok: false,
+          error: 'Esse horário já passou. Escolha outro.'
+        });
+      }
+
+      if (!isSlotAvailable(context, start, end)) {
+        return res.status(409).json({
+          ok: false,
+          code: 'HORARIO_INDISPONIVEL',
+          error: 'Esse horário não está disponível. Escolha outro horário.'
+        });
+      }
+
+      const { data, error } = await client
+        .from('agendamentos')
+        .update({
+          data: date,
+          hora_inicio: startTime,
+          hora_fim: minutesToTime(end)
+        })
+        .eq('id', id)
+        .select()
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!data) {
+        return res.status(404).json({
+          ok: false,
+          error: 'Não foi possível atualizar o agendamento.'
+        });
+      }
+
+      return res.json({
+        ok: true,
+        data,
+        message: 'Agendamento remarcado com sucesso.'
+      });
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+
+
 // ======================================================
 // CLIENTES PÚBLICOS
 // ======================================================
