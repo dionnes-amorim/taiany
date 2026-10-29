@@ -3364,7 +3364,7 @@ function consultBooking() {
       }
     }
 
-    /* CAMPO DE ENTRADA */
+    /* CAMPO DE ENTRADA - CORRIGIDO */
 
     $("#composerForm").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -3375,10 +3375,13 @@ function consultBooking() {
       if (!value || input.disabled || state.bookingInProgress) return;
 
       input.value = "";
-
       userSay(value);
 
       switch (state.step) {
+        case "consultBookingPhone": // <-- ESTE CASE FALTAVA
+          await handleConsultPhone(value);
+          break;
+
         case "phone":
           await handlePhone(value);
           break;
@@ -3403,6 +3406,68 @@ function consultBooking() {
           break;
       }
     });
+
+    async function handleConsultPhone(value){
+      const phone = digits(value);
+      if(phone.length < 10){
+        botSay("Esse número parece incompleto. Confira o DDD e o WhatsApp.");
+        configureInput({
+          label: "WhatsApp usado no agendamento",
+          placeholder: "(17) 99999-9999",
+          type: "tel",
+          enabled: true,
+          hint: "Digite o mesmo número informado ao realizar o agendamento."
+        });
+        return;
+      }
+      
+      botSay("Só um instante, estou consultando seus agendamentos... ♡");
+      addTyping();
+      
+      try{
+        // usa a rota nova que você já adicionou no server.js
+        const res = await apiRequest(`/api/meus-agendamentos?telefone=${encodeURIComponent(phone)}`);
+        const list = normalizeList(res);
+        removeTyping();
+        
+        if(!list.length){
+          botSay("Não encontrei agendamentos com esse WhatsApp.");
+          renderQuickReplies([
+            {label: "✦ Quero agendar", gold: true, action: askPhone},
+            {label: "Voltar ao início", action: startChat}
+          ]);
+          return;
+        }
+        
+        botSay(`Encontrei ${list.length} agendamento(s) com esse WhatsApp:`);
+        
+        list.forEach(a=>{
+          const card=document.createElement("div");
+          card.className="review-card";
+          card.innerHTML=`
+            <div class="review-row"><span>Serviço</span><strong>${escapeHTML(a.nome_servico||'—')}</strong></div>
+            <div class="review-row"><span>Data</span><strong>${formatDate(a.data)}</strong></div>
+            <div class="review-row"><span>Horário</span><strong>${String(a.hora_inicio||'').slice(0,5)} ${a.hora_fim?'- '+String(a.hora_fim).slice(0,5):''}</strong></div>
+            <div class="review-row"><span>Status</span><strong>${escapeHTML(a.status||'Pendente')}</strong></div>
+          `;
+          $("#chatMessages").appendChild(card);
+        });
+        scrollChatToBottom();
+        
+        renderQuickReplies([
+          {label: "✦ Fazer novo agendamento", gold: true, action: askPhone},
+          {label: "Voltar ao início", action: startChat}
+        ]);
+        
+      }catch(e){
+        removeTyping();
+        botSay(`Não consegui consultar agora.\n\n${e.message}`);
+        renderQuickReplies([
+          {label: "Tentar novamente", gold: true, action: ()=>handleConsultPhone(phone)},
+          {label: "Voltar ao início", action: startChat}
+        ]);
+      }
+    }
 
     /* NAVEGAÇÃO */
 
