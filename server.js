@@ -1096,6 +1096,15 @@ app.get('/api/horarios', async (req, res) => {
   }
 });
 
+app.get('/api/meus-agendamentos', async (req, res) => {
+  try {
+    const telefone = cleanText(req.query.telefone, 20).replace(/\D/g,'');
+    const { data, error } = await db().from('agendamentos').select('*').ilike('telefone_cliente', `%${telefone}%`).order('data',{ascending:false});
+    if(error) throw error;
+    return res.json({ok:true, data});
+  } catch (e){ return sendDbError(res,e); }
+});
+
 // ======================================================
 // CRIAR AGENDAMENTO PÚBLICO
 // ======================================================
