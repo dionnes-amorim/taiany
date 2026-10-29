@@ -1253,6 +1253,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'taiany-painel-admin.html'));
 });
 
+app.get('/agendar', (req, res) => {
+  res.sendFile(path.join(__dirname, 'taiany-agendamento.html'));
+});
+// se seu arquivo se chama agendamento.html, ajusta o nome aqui
+
 app.use((req, res) => {
   res.status(404).json({
     ok: false,
