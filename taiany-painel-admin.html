@@ -1,840 +1,258 @@
-
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7eee7">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f7eee7">
   <title>Painel Administrativo | Taiany Trindade</title>
   <style>
-    :root {
-      --cream:#fbf5ef; --nude:#ead6c8; --rose:#b97861;
-      --copper:#9b5c43; --ink:#211916; --muted:#7f7069;
-      --line:#eadfd7; --white:#fffdfb; --green:#47745d; --red:#a84747;
-    }
-    * { box-sizing:border-box }
-    body { margin:0; color:var(--ink); background:var(--cream); font-family:Arial,Helvetica,sans-serif }
-    button,input,select,textarea { font:inherit }
-    button { cursor:pointer }
-    .topbar { background:var(--white); border-bottom:1px solid var(--line); padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap }
-    .brand { display:flex; align-items:center; gap:14px }
-    .brand-mark { font-family:Georgia,serif; font-size:35px; font-weight:bold; color:var(--copper); line-height:1 }
-    .brand h1 { font-family:Georgia,serif; font-size:22px; margin:0 0 4px; font-weight:500 }
-    .brand p { margin:0; color:var(--muted); font-size:12px; letter-spacing:2px }
-    .top-actions { display:flex; gap:8px; flex-wrap:wrap }
-    .layout { max-width:1400px; margin:auto; padding:24px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:24px }
-    aside { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:12px; height:fit-content }
-    .nav-button { display:block; width:100%; text-align:left; border:0; background:transparent; padding:12px; border-radius:8px; color:var(--ink); margin:3px 0 }
-    .nav-button.active,.nav-button:hover { background:var(--cream); color:var(--copper) }
-    main { min-width:0 }
-    .page { display:none }
-    .page.active { display:block }
-    .page-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:20px }
-    h2 { font-family:Georgia,serif; font-weight:500; font-size:28px; margin:0 0 6px }
-    h3 { font-size:16px; margin:0 0 14px }
-    .sub { margin:0; color:var(--muted); font-size:14px }
-    .button { border:1px solid var(--copper); background:var(--copper); color:white; padding:10px 14px; border-radius:8px }
-    .button.secondary { color:var(--copper); background:transparent }
-    .button.danger { background:var(--red); border-color:var(--red) }
-    .button.small { padding:6px 9px; font-size:12px }
-    .cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:20px }
-    .card,.panel { background:var(--white); border:1px solid var(--line); border-radius:12px; padding:18px; min-width:0 }
-    .metric-label { color:var(--muted); font-size:13px }
-    .metric-value { font-size:27px; margin-top:10px; font-family:Georgia,serif }
-    .panel { margin-bottom:18px }
-    .panel-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px }
-    .filters,.form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px }
-    .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px }
-    label { font-size:13px; color:var(--muted) }
-    input,select,textarea { width:100%; border:1px solid #d9c9bf; border-radius:8px; padding:10px; background:#fff; color:var(--ink) }
-    textarea { min-height:75px; resize:vertical }
-    .full { grid-column:1/-1 }
-    .table-wrap { overflow-x:auto }
-    table { width:100%; border-collapse:collapse; font-size:13px }
-    th,td { text-align:left; border-bottom:1px solid var(--line); padding:12px 9px; white-space:nowrap }
-    th { color:var(--muted); font-weight:600 }
-    .status { display:inline-block; border-radius:20px; padding:5px 8px; font-size:11px; background:#eee4dc }
-    .status.confirmado,.status.confirmed,.status.concluido,.status.concluído { background:#e1eee5; color:#2c6546 }
-    .status.cancelado,.status.cancelled { background:#f5e2e0; color:#9a3e3e }
-    .status.pendente,.status.pending { background:#f7edcf; color:#80611b }
-    .empty { color:var(--muted); padding:18px 0; font-size:14px }
-    .hint { font-size:12px; color:var(--muted); line-height:1.5 }
-    .availability-row { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; align-items:end; margin-bottom:10px }
-    .link-box { overflow-wrap:anywhere; padding:12px; background:var(--cream); border:1px dashed var(--rose); border-radius:8px }
-    .footer { text-align:center; color:var(--muted); padding:12px 24px 28px; font-size:11px; letter-spacing:1.5px }
-    .message { display:none; margin:0 0 16px; padding:12px; border-radius:8px; font-size:13px }
-    .message.show { display:block }
-    .message.error { background:#f5e2e0; color:#8a2929 }
-    .message.ok { background:#e1eee5; color:#2c6546 }
-    @media(max-width:900px) {
-      .layout { grid-template-columns:1fr; padding:14px }
-      aside { display:flex; overflow-x:auto; gap:4px }
-      .nav-button { width:auto; white-space:nowrap }
-      .cards { grid-template-columns:repeat(2,minmax(0,1fr)) }
-    }
-    @media(max-width:560px) {
-      .topbar { padding:14px }
-      .brand h1 { font-size:19px }
-      .cards { grid-template-columns:1fr 1fr; gap:8px }
-      .card,.panel { padding:13px }
-      .form-grid,.filters { grid-template-columns:1fr }
-      .availability-row { grid-template-columns:1fr 1fr }
-      h2 { font-size:24px }
-    }
+    :root { --cream:#fbf5ef; --nude:#ead6c8; --rose:#b97861; --copper:#9b5c43; --ink:#211916; --muted:#7f7069; --line:#eadfd7; --white:#fffdfb; --green:#47745d; --red:#a84747; }
+    *{box-sizing:border-box} body{margin:0;color:var(--ink);background:var(--cream);font-family:Arial,Helvetica,sans-serif}
+    button,input,select,textarea{font:inherit} button{cursor:pointer}
+    .topbar{background:var(--white);border-bottom:1px solid var(--line);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:16px}
+    .brand-mark{width:110px;height:110px;flex:0 0 110px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px;background:var(--rose);border:2px solid var(--nude);box-shadow:0 4px 20px rgba(185,120,97,.25)}
+    .brand-mark img{width:100%;height:100%;object-fit:contain;padding:6px;display:block;background:#fff;border-radius:12px}
+    .brand h1{font-family:Georgia,serif;font-size:22px;margin:0 0 4px;font-weight:500} .brand p{margin:0;color:var(--muted);font-size:12px;letter-spacing:2px}
+    .top-actions{display:flex;gap:8px;flex-wrap:wrap} .layout{max-width:1400px;margin:auto;padding:24px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px} aside{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px;height:fit-content}
+    .nav-button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:12px;border-radius:8px;color:var(--ink);margin:3px 0} .nav-button.active,.nav-button:hover{background:var(--cream);color:var(--copper)}
+    main{min-width:0} .page{display:none} .page.active{display:block} .page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    h2{font-family:Georgia,serif;font-weight:500;font-size:28px;margin:0 0 6px} h3{font-size:16px;margin:0 0 14px} .sub{margin:0;color:var(--muted);font-size:14px}
+    .button{border:1px solid var(--copper);background:var(--copper);color:white;padding:10px 14px;border-radius:8px} .button.secondary{color:var(--copper);background:transparent} .button.danger{background:var(--red);border-color:var(--red)} .button.small{padding:6px 9px;font-size:12px}
+    .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px} .card,.panel{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+    .metric-label{color:var(--muted);font-size:13px} .metric-value{font-size:27px;margin-top:10px;font-family:Georgia,serif} .panel{margin-bottom:18px} .panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .filters,.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px} .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;min-width:0} label{font-size:13px;color:var(--muted)} input,select,textarea{width:100%;border:1px solid #d9c9bf;border-radius:8px;padding:10px;background:#fff;color:var(--ink)} textarea{min-height:75px;resize:vertical} .full{grid-column:1/-1} .table-wrap{overflow-x:auto} table{width:100%;border-collapse:collapse;font-size:13px} th,td{text-align:left;border-bottom:1px solid var(--line);padding:12px 9px;white-space:nowrap} th{color:var(--muted);font-weight:600}
+    .status{display:inline-block;border-radius:20px;padding:5px 8px;font-size:11px;background:#eee4dc} .status.confirmed,.status.paid,.status.completed{background:#e1eee5;color:#2c6546} .status.cancelled{background:#f5e2e0;color:#9a3e3e} .status.pending{background:#f7edcf;color:#80611b}
+    .empty{color:var(--muted);padding:18px 0;font-size:14px} .hint{font-size:12px;color:var(--muted);line-height:1.5} .availability-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:10px} .link-box{overflow-wrap:anywhere;padding:12px;background:var(--cream);border:1px dashed var(--rose);border-radius:8px} .footer{text-align:center;color:var(--muted);padding:12px 24px 28px;font-size:11px;letter-spacing:1.5px}
+    .choice-group{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 14px} .choice-chip{min-width:66px;border:1px solid #d9c9bf;border-radius:999px;padding:10px 13px;background:#fff;color:var(--ink);text-align:center;transition:background .15s,border-color .15s,color .15s} .choice-chip:hover:not(:disabled){border-color:var(--copper);color:var(--copper)} .choice-chip.selected{background:var(--copper);color:#fff;border-color:var(--copper)} .choice-chip:disabled{opacity:.35;cursor:not-allowed} .date-chip{min-width:88px;padding:10px 12px} .date-chip strong,.date-chip span{display:block} .date-chip strong{font-size:14px;margin-bottom:4px} .date-chip span{font-size:11px} .choice-title{color:var(--muted);font-size:13px;margin:0 0 8px} .choice-empty{font-size:13px;color:var(--muted);padding:8px 0 14px} .selection-summary{font-size:13px;color:var(--copper);margin:0 0 14px}
+    @media(max-width:900px){.layout{grid-template-columns:1fr;padding:14px} aside{display:flex;overflow-x:auto;gap:4px} .nav-button{width:auto;white-space:nowrap} .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:560px){.topbar{padding:14px} .brand{gap:10px} .brand-mark{width:86px;height:86px;flex-basis:86px} .brand h1{font-size:19px} .brand p{font-size:10px;letter-spacing:1.3px} .cards{grid-template-columns:1fr 1fr;gap:8px} .card,.panel{padding:13px} .form-grid,.filters{grid-template-columns:1fr} .availability-row{grid-template-columns:1fr 1fr} h2{font-size:24px} .choice-group{gap:7px} .choice-chip{min-width:58px;padding:9px 10px} .date-chip{min-width:76px}}
   </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-mark">TT</div>
-    <div>
-      <h1>Taiany Trindade</h1>
-      <p>NAIL DESIGNER · PAINEL ADMINISTRATIVO</p>
-    </div>
-  </div>
-  <div class="top-actions">
-    <button class="button secondary" id="exportBtn" type="button">Exportar dados do Supabase</button>
-    <button class="button" type="button" data-goto="agenda">＋ Novo agendamento</button>
-    <button class="button secondary" id="logoutBtn" type="button">Sair</button>
-  </div>
-</header>
-
+<header class="topbar"><div class="brand"><div class="brand-mark"><img src="/logo.png" alt="Logo Taiany Trindade"></div><div><h1>Taiany Trindade</h1><p>NAIL DESIGNER · PAINEL ADMINISTRATIVO</p></div></div><div class="top-actions"><button class="button secondary" id="exportBtn" type="button">Exportar dados</button><button class="button" type="button" onclick="showPage('agenda')">＋ Novo agendamento</button></div></header>
 <div class="layout">
-  <aside aria-label="Navegação principal">
-    <button class="nav-button active" data-page="dashboard">Visão geral</button>
-    <button class="nav-button" data-page="agenda">Agenda</button>
-    <button class="nav-button" data-page="clientes">Clientes</button>
-    <button class="nav-button" data-page="servicos">Serviços e preços</button>
-    <button class="nav-button" data-page="disponibilidade">Disponibilidade</button>
-    <button class="nav-button" data-page="bloqueios">Bloqueios</button>
-    <button class="nav-button" data-page="configuracoes">Link público</button>
-  </aside>
+<aside><button class="nav-button active" data-page="dashboard">Visão geral</button><button class="nav-button" data-page="agenda">Agenda</button><button class="nav-button" data-page="clientes">Clientes</button><button class="nav-button" data-page="servicos">Serviços e preços</button><button class="nav-button" data-page="disponibilidade">Disponibilidade</button><button class="nav-button" data-page="bloqueios">Bloqueios</button><button class="nav-button" data-page="configuracoes">Configurações</button></aside>
+<main>
+<section class="page active" id="page-dashboard"><div class="page-heading"><div><h2>Visão geral</h2><p class="sub">Resumo do seu studio e dos próximos atendimentos.</p></div><div class="field"><label for="dashboardDate">Data de referência</label><input id="dashboardDate" type="date"></div></div><div class="cards"><div class="card"><div class="metric-label">Agendamentos do dia</div><div class="metric-value" id="metricToday">0</div></div><div class="card"><div class="metric-label">Confirmados</div><div class="metric-value" id="metricConfirmed">0</div></div><div class="card"><div class="metric-label">Clientes cadastradas</div><div class="metric-value" id="metricClients">0</div></div><div class="card"><div class="metric-label">Previsão do dia</div><div class="metric-value" id="metricRevenue">R$ 0,00</div></div></div><div class="panel"><div class="panel-heading"><h3>Próximos atendimentos</h3><button class="button secondary small" onclick="showPage('agenda')">Ver agenda</button></div><div id="dashboardAppointments"></div></div></section>
 
-  <main>
-    <div id="globalMessage" class="message" role="status"></div>
+<section class="page" id="page-agenda"><div class="page-heading"><div><h2>Agenda</h2><p class="sub">Cadastre, confirme, reagende ou cancele atendimentos.</p></div></div>
+<div class="panel"><div class="panel-heading"><h3>Todos os agendamentos</h3></div><div class="filters"><div class="field"><label for="filterDate">Filtrar por data</label><input id="filterDate" type="date"></div><div class="field"><label for="filterStatus">Filtrar por situação</label><select id="filterStatus"><option value="">Todas</option><option value="confirmed">Confirmado</option><option value="pending">Pendente</option><option value="cancelled">Cancelado</option><option value="completed">Concluído</option></select></div></div><div id="appointmentsTable"></div></div>
+<div class="panel"><h3>Novo agendamento manual</h3><form id="appointmentForm"><div class="form-grid"><div class="field"><label for="appointmentClient">Nome da cliente *</label><input id="appointmentClient" required placeholder="Nome completo"></div><div class="field"><label for="appointmentPhone">WhatsApp / telefone</label><input id="appointmentPhone" placeholder="(00) 00000-0000"></div><div class="field"><label for="appointmentService">Serviço *</label><select id="appointmentService" required></select></div><div class="field full"><label>Data do atendimento *</label><p class="choice-title">Selecione uma data disponível</p><div id="appointmentDates" class="choice-group"></div><input id="appointmentDate" type="hidden" required><p id="dateSelectionMessage" class="choice-empty">Selecione um serviço para consultar as datas.</p></div><div class="field full"><label>Horário do atendimento *</label><p class="choice-title">Horários disponíveis para o serviço selecionado</p><div id="appointmentTimes" class="choice-group"></div><input id="appointmentTime" type="hidden" required><p id="timeSelectionMessage" class="choice-empty">Selecione uma data para ver os horários.</p><p id="appointmentSelectionSummary" class="selection-summary"></p></div><div class="field"><label for="appointmentStatus">Situação</label><select id="appointmentStatus"><option value="confirmed">Confirmado</option><option value="pending">Pendente</option></select></div><div class="field full"><label for="appointmentNotes">Observações</label><textarea id="appointmentNotes" placeholder="Preferências, formato, cor, detalhes..."></textarea></div></div><button class="button" type="submit">Salvar agendamento</button></form></div>
+</section>
 
-    <section class="page active" id="page-dashboard">
-      <div class="page-heading">
-        <div><h2>Visão geral</h2><p class="sub">Resumo dos registros carregados do banco.</p></div>
-        <div class="field"><label for="dashboardDate">Data de referência</label><input id="dashboardDate" type="date"></div>
-      </div>
-      <div class="cards">
-        <div class="card"><div class="metric-label">Agendamentos do dia</div><div class="metric-value" id="metricToday">—</div></div>
-        <div class="card"><div class="metric-label">Confirmados</div><div class="metric-value" id="metricConfirmed">—</div></div>
-        <div class="card"><div class="metric-label">Clientes cadastradas</div><div class="metric-value" id="metricClients">—</div></div>
-        <div class="card"><div class="metric-label">Previsão do dia</div><div class="metric-value" id="metricRevenue">—</div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-heading"><h3>Próximos atendimentos</h3><button class="button secondary small" data-goto="agenda">Ver agenda</button></div>
-        <div id="dashboardAppointments"><p class="empty">Carregando dados do servidor…</p></div>
-      </div>
-    </section>
+<section class="page" id="page-clientes"><div class="page-heading"><div><h2>Clientes</h2><p class="sub">Cadastro e histórico de relacionamento.</p></div></div>
+<div class="panel"><div class="panel-heading"><h3>Lista de clientes</h3></div><div class="field"><label for="clientSearch">Buscar por nome ou telefone</label><input id="clientSearch" placeholder="Digite para pesquisar..."></div><div id="clientsTable"></div></div>
+<div class="panel"><h3>Cadastrar cliente</h3><form id="clientForm"><div class="form-grid"><div class="field"><label for="clientName">Nome *</label><input id="clientName" required></div><div class="field"><label for="clientPhone">Telefone / WhatsApp *</label><input id="clientPhone" required></div><div class="field"><label for="clientEmail">E-mail</label><input id="clientEmail" type="email"></div><div class="field"><label for="clientBirthday">Data de nascimento</label><input id="clientBirthday" type="date"></div><div class="field full"><label for="clientNotes">Preferências e observações</label><textarea id="clientNotes" placeholder="Cores favoritas, formato, alergias..."></textarea></div></div><button class="button" type="submit">Cadastrar cliente</button></form></div>
+</section>
 
-    <section class="page" id="page-agenda">
-      <div class="page-heading"><div><h2>Agenda</h2><p class="sub">Cadastre, confirme, conclua ou cancele atendimentos.</p></div></div>
-      <div class="panel">
-        <h3>Novo agendamento manual</h3>
-        <form id="appointmentForm">
-          <div class="form-grid">
-            <div class="field"><label for="appointmentClient">Nome da cliente *</label><input id="appointmentClient" required></div>
-            <div class="field"><label for="appointmentPhone">WhatsApp / telefone *</label><input id="appointmentPhone" required></div>
-            <div class="field"><label for="appointmentService">Serviço *</label><select id="appointmentService" required></select></div>
-            <div class="field"><label for="appointmentDate">Data *</label><input id="appointmentDate" type="date" required></div>
-            <div class="field"><label for="appointmentTime">Horário *</label><input id="appointmentTime" type="time" required></div>
-            <div class="field"><label for="appointmentStatus">Situação</label><select id="appointmentStatus"><option value="Agendado">Agendado</option><option value="Confirmado">Confirmado</option></select></div>
-            <div class="field full"><label for="appointmentNotes">Observações</label><textarea id="appointmentNotes"></textarea></div>
-          </div>
-          <button class="button" type="submit">Salvar agendamento</button>
-        </form>
-        <p class="hint">O servidor valida e grava o agendamento. A confirmação depende da resposta da API.</p>
-      </div>
-      <div class="panel">
-        <div class="panel-heading"><h3>Agendamentos cadastrados</h3><button class="button secondary small" id="reloadAppointments" type="button">Atualizar</button></div>
-        <div class="filters">
-          <div class="field"><label for="filterDate">Filtrar por data</label><input id="filterDate" type="date"></div>
-          <div class="field"><label for="filterStatus">Situação</label>
-            <select id="filterStatus">
-              <option value="">Todas</option><option value="Agendado">Agendado</option><option value="Confirmado">Confirmado</option><option value="Pendente">Pendente</option><option value="Cancelado">Cancelado</option><option value="Concluído">Concluído</option>
-            </select>
-          </div>
-        </div>
-        <div id="appointmentsTable"></div>
-      </div>
-    </section>
+<section class="page" id="page-servicos"><div class="page-heading"><div><h2>Serviços e preços</h2><p class="sub">Configure o catálogo que aparecerá para as clientes.</p></div></div>
+<div class="panel"><h3>Catálogo atual</h3><div id="servicesTable"></div></div>
+<div class="panel"><h3>Adicionar serviço</h3><form id="serviceForm"><div class="form-grid"><div class="field"><label for="serviceName">Nome do serviço *</label><input id="serviceName" required></div><div class="field"><label for="servicePrice">Preço (R$) *</label><input id="servicePrice" type="number" min="0" step="0.01" required></div><div class="field"><label for="serviceDuration">Duração em minutos *</label><input id="serviceDuration" type="number" min="10" step="5" value="60" required></div><div class="field"><label for="serviceCategory">Categoria</label><select id="serviceCategory"><option>Manicure</option><option>Pedicure</option><option>Alongamento</option><option>Manutenção</option><option>Decoração</option><option>Outro</option></select></div><div class="field full"><label for="serviceDescription">Descrição</label><textarea id="serviceDescription"></textarea></div></div><button class="button" type="submit">Adicionar serviço</button></form></div>
+</section>
 
-    <section class="page" id="page-clientes">
-      <div class="page-heading"><div><h2>Clientes</h2><p class="sub">Cadastro sincronizado com o banco de dados.</p></div></div>
-      <div class="panel">
-        <h3>Cadastrar cliente</h3>
-        <form id="clientForm">
-          <div class="form-grid">
-            <div class="field"><label for="clientName">Nome *</label><input id="clientName" required></div>
-            <div class="field"><label for="clientPhone">Telefone / WhatsApp *</label><input id="clientPhone" required></div>
-            <div class="field full"><label for="clientEmail">E-mail</label><input id="clientEmail" type="email"></div>
-          </div>
-          <button class="button" type="submit">Cadastrar cliente</button>
-        </form>
-        <p class="hint">Usa os campos existentes na tabela clientes_taiany: nome, telefone e email.</p>
-      </div>
-      <div class="panel">
-        <div class="panel-heading"><h3>Lista de clientes</h3><button class="button secondary small" id="reloadClients" type="button">Atualizar</button></div>
-        <div class="field"><label for="clientSearch">Buscar por nome ou telefone</label><input id="clientSearch" placeholder="Digite para pesquisar…"></div>
-        <div id="clientsTable"></div>
-      </div>
-    </section>
+<section class="page" id="page-disponibilidade"><div class="page-heading"><div><h2>Disponibilidade</h2><p class="sub">Defina os dias e períodos em que aceita agendamentos.</p></div></div><div class="panel"><h3>Horários semanais</h3><form id="availabilityForm"><div id="availabilityRows"></div><div class="field" style="max-width:260px"><label for="slotInterval">Intervalo das opções (minutos)</label><select id="slotInterval"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option></select></div><button class="button" type="submit">Salvar disponibilidade</button></form></div></section>
 
-    <section class="page" id="page-servicos">
-      <div class="page-heading"><div><h2>Serviços e preços</h2><p class="sub">Gerencie o catálogo utilizado no agendamento.</p></div></div>
-      <div class="panel">
-        <h3>Adicionar serviço</h3>
-        <form id="serviceForm">
-          <div class="form-grid">
-            <div class="field"><label for="serviceName">Nome do serviço *</label><input id="serviceName" required></div>
-            <div class="field"><label for="servicePrice">Preço (R$) *</label><input id="servicePrice" type="number" min="0" step="0.01" required></div>
-            <div class="field"><label for="serviceDuration">Duração em minutos *</label><input id="serviceDuration" type="number" min="5" step="5" value="60" required></div>
-            <div class="field"><label for="serviceActive">Disponível para agendamento</label><select id="serviceActive"><option value="true">Sim</option><option value="false">Não</option></select></div>
-            <div class="field full"><label for="serviceDescription">Descrição</label><textarea id="serviceDescription"></textarea></div>
-          </div>
-          <button class="button" type="submit">Adicionar serviço</button>
-        </form>
-        <p class="hint">A tabela atual não possui coluna categoria; esse campo não é enviado.</p>
-      </div>
-      <div class="panel">
-        <div class="panel-heading"><h3>Catálogo atual</h3><button class="button secondary small" id="reloadServices" type="button">Atualizar</button></div>
-        <div id="servicesTable"></div>
-      </div>
-    </section>
+<section class="page" id="page-bloqueios"><div class="page-heading"><div><h2>Bloqueios de agenda</h2><p class="sub">Reserve períodos para pausas, compromissos ou folgas.</p></div></div>
+<div class="panel"><h3>Bloqueios cadastrados</h3><div id="blocksTable"></div></div>
+<div class="panel"><h3>Novo bloqueio</h3><form id="blockForm"><div class="form-grid"><div class="field"><label for="blockDate">Data *</label><input id="blockDate" type="date" required></div><div class="field"><label for="blockReason">Motivo</label><input id="blockReason"></div><div class="field"><label for="blockStart">Início *</label><input id="blockStart" type="time" required></div><div class="field"><label for="blockEnd">Fim *</label><input id="blockEnd" type="time" required></div></div><button class="button" type="submit">Adicionar bloqueio</button></form></div>
+</section>
 
-    <section class="page" id="page-disponibilidade">
-      <div class="page-heading"><div><h2>Disponibilidade</h2><p class="sub">Defina os dias e horários de atendimento.</p></div></div>
-      <div class="panel">
-        <h3>Horários semanais</h3>
-        <p class="hint">Os registros são salvos pela API administrativa de disponibilidade.</p>
-        <form id="availabilityForm"><div id="availabilityRows"></div><button class="button" type="submit">Salvar disponibilidade</button></form>
-      </div>
-    </section>
-
-    <section class="page" id="page-bloqueios">
-      <div class="page-heading"><div><h2>Bloqueios de agenda</h2><p class="sub">Cadastre períodos indisponíveis.</p></div></div>
-      <div class="panel">
-        <h3>Novo bloqueio</h3>
-        <form id="blockForm">
-          <div class="form-grid">
-            <div class="field"><label for="blockDate">Data *</label><input id="blockDate" type="date" required></div>
-            <div class="field"><label for="blockReason">Motivo</label><input id="blockReason"></div>
-            <div class="field"><label for="blockStart">Início *</label><input id="blockStart" type="time" required></div>
-            <div class="field"><label for="blockEnd">Fim *</label><input id="blockEnd" type="time" required></div>
-          </div>
-          <button class="button" type="submit">Adicionar bloqueio</button>
-        </form>
-      </div>
-      <div class="panel">
-        <div class="panel-heading"><h3>Bloqueios cadastrados</h3><button class="button secondary small" id="reloadBlocks" type="button">Atualizar</button></div>
-        <div id="blocksTable"></div>
-      </div>
-    </section>
-
-    <section class="page" id="page-configuracoes">
-      <div class="page-heading"><div><h2>Link público</h2><p class="sub">Endereço para compartilhar com as clientes.</p></div></div>
-      <div class="panel">
-        <h3>Agendamento público</h3>
-        <div class="link-box" id="publicLink"></div>
-        <p class="hint">As configurações gerais do studio não são salvas localmente. A persistência desses dados exige uma rota e uma tabela próprias no servidor/Supabase; por isso não são simuladas neste HTML.</p>
-        <button class="button secondary" id="copyLink" type="button">Copiar link</button>
-      </div>
-    </section>
-  </main>
+<section class="page" id="page-configuracoes"><div class="page-heading"><div><h2>Configurações</h2><p class="sub">Personalize a experiência de agendamento.</p></div></div><div class="panel"><h3>Dados do studio</h3><form id="settingsForm"><div class="form-grid"><div class="field"><label for="studioName">Nome profissional</label><input id="studioName" value="Taiany Trindade"></div><div class="field"><label for="studioTitle">Especialidade</label><input id="studioTitle" value="Nail Designer"></div><div class="field"><label for="studioPhone">WhatsApp</label><input id="studioPhone"></div><div class="field"><label for="advanceDays">Dias à frente</label><input id="advanceDays" type="number" value="60"></div><div class="field"><label for="minNotice">Antecedência mínima (horas)</label><input id="minNotice" type="number" value="2"></div><div class="field"><label for="cancelPolicy">Política de cancelamento</label><input id="cancelPolicy"></div><div class="field full"><label for="welcomeMessage">Mensagem inicial</label><textarea id="welcomeMessage">Olá! Seja bem-vinda ao studio Taiany Trindade. 💅</textarea></div></div><button class="button" type="submit">Salvar configurações</button></form></div><div class="panel"><h3>Link para as clientes</h3><div class="link-box" id="publicLink"></div></div><div class="panel"><h3>Dados</h3><p class="hint">Todos os dados agora são salvos diretamente no Supabase na tabela <b>clientes_taiany</b>. Sem cache local.</p></div></section>
+</main>
 </div>
-
 <footer class="footer">TAIANY TRINDADE · NAIL DESIGNER</footer>
 
 <script>
-(() => {
-  'use strict';
+'use strict';
+const weekdays=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+const todayISO=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
+let state={services:[],clients:[],appointments:[],blocks:[],availability:weekdays.map((day,i)=>({day,enabled:i>=1&&i<=5,start:'09:00',end:'18:00'})),interval:30,settings:{studioName:'Taiany Trindade',title:'Nail Designer',phone:'',advanceDays:60,minNotice:2,cancelPolicy:'',welcomeMessage:'Olá! Seja bem-vinda ao studio Taiany Trindade. 💅'}};
 
-  const API = {
-    appointments: '/api/admin/agendamentos',
-    publicAppointments: '/api/agendamentos',
-    clients: '/api/admin/clientes',
-    services: '/api/admin/servicos',
-    availability: '/api/admin/disponibilidade',
-    blocks: '/api/admin/bloqueios',
-    session: '/api/sessao',
-    logout: '/api/logout'
-  };
+function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function serviceById(id){return state.services.find(s=>s.id==id);}
+function statusLabel(s){return({confirmed:'Confirmado',pending:'Pendente',cancelled:'Cancelado',completed:'Concluído',confirmado:'Confirmado',pendente:'Pendente',cancelado:'Cancelado',concluido:'Concluído'})[s]||s;}
 
-  const weekdays = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
-  const state = { appointments:[], clients:[], services:[], availability:[], blocks:[] };
-  const $ = id => document.getElementById(id);
+async function api(path,opts={}){
+  const res=await fetch(path,{headers:{'Content-Type':'application/json'},...opts,body:opts.body?JSON.stringify(opts.body):undefined});
+  const json=await res.json().catch(()=>({}));
+  if(!res.ok||json.ok===false) throw new Error(json.error||'Erro no servidor');
+  return json.data!==undefined?json.data:json;
+}
 
-  const todayISO = () => {
-    const d = new Date();
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().slice(0,10);
-  };
-
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-
-  const money = value => Number(value || 0).toLocaleString('pt-BR', {
-    style:'currency', currency:'BRL'
-  });
-
-  const pick = (obj, ...keys) => {
-    for (const key of keys) {
-      if (obj && obj[key] !== undefined && obj[key] !== null) return obj[key];
+async function loadFromServer(){
+  try{
+    const [servicos,clientes,agenda,bloqueios,disponibilidade]=await Promise.all([
+      api('/api/admin/servicos'),
+      api('/api/admin/clientes'),
+      api('/api/admin/agendamentos'),
+      api('/api/admin/bloqueios'),
+      api('/api/admin/disponibilidade')
+    ]);
+    state.services=(servicos||[]).map(s=>({id:s.id,name:s.nome,category:s.categoria||'Outro',price:Number(s.preco),duration:Number(s.duracao_minutos||s.duracao||60),description:s.descricao||'',active:s.ativo!==false}));
+    state.clients=(clientes||[]).map(c=>({id:c.id,name:c.nome,phone:c.telefone,email:c.email||'',birthday:c.data_nascimento||'',notes:c.observacoes||'',createdAt:c.created_at}));
+    state.appointments=(agenda||[]).map(a=>({id:a.id,client:a.nome_cliente,phone:a.telefone_cliente,serviceId:a.servico_id,date:a.data,time:(a.hora_inicio||'').slice(0,5),duration:(()=>{try{const si=a.hora_inicio.split(':').map(Number);const sf=a.hora_fim.split(':').map(Number);return (sf[0]*60+sf[1])-(si[0]*60+si[1]);}catch{return 60}})(),price:Number(a.preco),status:({pendente:'pending',confirmado:'confirmed',concluido:'completed',cancelado:'cancelled'}[String(a.status).toLowerCase()]||a.status||'pending'),notes:a.observacoes||''}));
+    state.blocks=(bloqueios||[]).map(b=>({id:b.id,date:b.data,start:b.hora_inicio.slice(0,5),end:b.hora_fim.slice(0,5),reason:b.motivo}));
+    if(disponibilidade&&disponibilidade.length){
+      const map=Array(7).fill(null).map((_,i)=>({day:weekdays[i],enabled:false,start:'09:00',end:'18:00'}));
+      disponibilidade.forEach(d=>{if(d.ativo!==false){map[d.dia_semana].enabled=true;map[d.dia_semana].start=d.hora_inicio.slice(0,5);map[d.dia_semana].end=d.hora_fim.slice(0,5);}});
+      state.availability=map;
     }
-    return '';
-  };
-
-  const dateVal = a => String(pick(a,'data','date')).slice(0,10);
-  const timeVal = a => String(pick(a,'hora_inicio','hora','time','horario')).slice(0,5);
-  const statusVal = a => String(pick(a,'status') || 'Agendado');
-  const statusClass = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-');
-  const appointmentName = a => pick(a,'nome_cliente','client','nome','cliente') || '—';
-  const appointmentPrice = a => Number(pick(a,'preco','price') || 0);
-  const appointmentId = a => pick(a,'id');
-
-  function showMessage(message, type='ok') {
-    const el = $('globalMessage');
-    el.textContent = message;
-    el.className = 'message show ' + (type === 'error' ? 'error' : 'ok');
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  function clearMessage() {
-    $('globalMessage').className = 'message';
-    $('globalMessage').textContent = '';
-  }
-
-  async function api(url, options={}) {
-    const opts = {
-      ...options,
-      headers: {'Content-Type':'application/json', ...(options.headers || {})},
-      credentials:'same-origin'
-    };
-
-    const response = await fetch(url, opts);
-    const raw = await response.text();
-    let data = null;
-
-    try { data = raw ? JSON.parse(raw) : null; }
-    catch { data = raw; }
-
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
-        throw new Error('Sessão administrativa não autorizada. Entre novamente no painel.');
-      }
-      throw new Error(
-        (data && (data.error || data.message)) ||
-        (typeof data === 'string' && data) ||
-        `Erro HTTP ${response.status} ao acessar ${url}`
-      );
-    }
-
-    return data;
-  }
-
-  function rows(data) {
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.data)) return data.data;
-    if (Array.isArray(data?.items)) return data.items;
-    return [];
-  }
-
-  async function loadAll() {
-    clearMessage();
-
-    try {
-      const [appointments, clients, services, availability, blocks] = await Promise.all([
-        api(API.appointments),
-        api(API.clients),
-        api(API.services),
-        api(API.availability),
-        api(API.blocks)
-      ]);
-
-      state.appointments = rows(appointments);
-      state.clients = rows(clients);
-      state.services = rows(services);
-      state.availability = rows(availability);
-      state.blocks = rows(blocks);
-
-      renderAll();
-    } catch (error) {
-      showMessage('Não foi possível carregar os dados do servidor: ' + error.message, 'error');
-
-      [
-        'dashboardAppointments','appointmentsTable','clientsTable',
-        'servicesTable','blocksTable'
-      ].forEach(id => {
-        $(id).innerHTML = '<p class="empty">Dados não carregados. Verifique a API e a conexão com o Supabase.</p>';
-      });
-    }
-  }
-
-  function showPage(name) {
-    document.querySelectorAll('.page').forEach(page => {
-      page.classList.toggle('active', page.id === 'page-' + name);
-    });
-    document.querySelectorAll('.nav-button').forEach(button => {
-      button.classList.toggle('active', button.dataset.page === name);
-    });
-    clearMessage();
-  }
-
-  document.querySelectorAll('.nav-button').forEach(button => {
-    button.addEventListener('click', () => showPage(button.dataset.page));
-  });
-
-  document.querySelectorAll('[data-goto]').forEach(button => {
-    button.addEventListener('click', () => showPage(button.dataset.goto));
-  });
-
-  function serviceId(s) { return pick(s,'id'); }
-  function serviceName(s) { return pick(s,'nome','name') || 'Serviço sem nome'; }
-  function serviceDuration(s) { return Number(pick(s,'duracao_minutos','duration','duracao') || 60); }
-  function servicePrice(s) { return Number(pick(s,'preco','price') || 0); }
-  function serviceActive(s) { return pick(s,'ativo','active') !== false; }
-
-  function clientName(c) { return pick(c,'nome','name') || '—'; }
-  function clientPhone(c) { return pick(c,'telefone','phone') || '—'; }
-  function clientEmail(c) { return pick(c,'email') || '—'; }
-
-  function appointmentService(a) {
-    return pick(a,'nome_servico','service_name','servico_nome') ||
-      state.services.find(s => String(s.id) === String(pick(a,'servico_id','serviceId')))?.nome ||
-      'Serviço';
-  }
-
-  function renderDashboard() {
-    const date = $('dashboardDate').value || todayISO();
-
-    const day = state.appointments.filter(a =>
-      dateVal(a) === date &&
-      !['cancelado','cancelled'].includes(statusVal(a).toLowerCase())
-    );
-
-    $('metricToday').textContent = day.length;
-    $('metricConfirmed').textContent = day.filter(a =>
-      ['confirmado','confirmed'].includes(statusVal(a).toLowerCase())
-    ).length;
-    $('metricClients').textContent = state.clients.length;
-    $('metricRevenue').textContent = money(
-      day.reduce((sum,a) => sum + appointmentPrice(a), 0)
-    );
-
-    const upcoming = state.appointments
-      .filter(a => dateVal(a) >= todayISO() &&
-        !['cancelado','cancelled'].includes(statusVal(a).toLowerCase()))
-      .sort((a,b) => (dateVal(a)+timeVal(a)).localeCompare(dateVal(b)+timeVal(b)))
-      .slice(0,6);
-
-    $('dashboardAppointments').innerHTML = appointmentTable(upcoming, false);
-  }
-
-  function appointmentTable(items, actions=true) {
-    if (!items.length) return '<p class="empty">Nenhum agendamento encontrado no Supabase.</p>';
-
-    return '<div class="table-wrap"><table><thead><tr>' +
-      '<th>Data</th><th>Hora</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Situação</th>' +
-      (actions ? '<th>Ações</th>' : '') +
-      '</tr></thead><tbody>' +
-      items.map(a => {
-        const id = appointmentId(a);
-        const status = statusVal(a);
-
-        return `<tr>
-          <td>${esc(dateVal(a))}</td>
-          <td>${esc(timeVal(a))}</td>
-          <td>${esc(appointmentName(a))}</td>
-          <td>${esc(appointmentService(a))}</td>
-          <td>${money(appointmentPrice(a))}</td>
-          <td><span class="status ${esc(statusClass(status))}">${esc(status)}</span></td>` +
-          (actions ? `<td>
-            <select aria-label="Alterar situação" onchange="window.__changeAppointment('${esc(id)}',this.value)">
-              ${['Agendado','Confirmado','Pendente','Concluído','Cancelado'].map(s =>
-                `<option value="${s}" ${s.toLowerCase() === status.toLowerCase() ? 'selected' : ''}>${s}</option>`
-              ).join('')}
-            </select>
-            <button class="button danger small" onclick="window.__deleteAppointment('${esc(id)}')">Excluir</button>
-          </td>` : '') +
-          '</tr>';
-      }).join('') +
-      '</tbody></table></div>';
-  }
-
-  function renderAppointments() {
-    const date = $('filterDate').value;
-    const status = $('filterStatus').value;
-
-    const list = state.appointments
-      .filter(a => (!date || dateVal(a) === date) &&
-        (!status || statusVal(a).toLowerCase() === status.toLowerCase()))
-      .sort((a,b) => (dateVal(a)+timeVal(a)).localeCompare(dateVal(b)+timeVal(b)));
-
-    $('appointmentsTable').innerHTML = appointmentTable(list, true);
-  }
-
-  function renderClients() {
-    const query = $('clientSearch').value.trim().toLowerCase();
-    const clients = state.clients.filter(c =>
-      (clientName(c) + ' ' + clientPhone(c) + ' ' + clientEmail(c)).toLowerCase().includes(query)
-    );
-
-    $('clientsTable').innerHTML = clients.length
-      ? '<div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Ação</th></tr></thead><tbody>' +
-        clients.map(c => `<tr>
-          <td>${esc(clientName(c))}</td><td>${esc(clientPhone(c))}</td><td>${esc(clientEmail(c))}</td>
-          <td><button class="button danger small" onclick="window.__deleteClient('${esc(c.id)}')">Excluir</button></td>
-        </tr>`).join('') +
-        '</tbody></table></div>'
-      : '<p class="empty">Nenhuma cliente cadastrada no Supabase.</p>';
-  }
-
-  function renderServices() {
-    $('appointmentService').innerHTML =
-      '<option value="">Selecione um serviço</option>' +
-      state.services.filter(serviceActive).map(s =>
-        `<option value="${esc(serviceId(s))}">${esc(serviceName(s))} · ${money(servicePrice(s))} · ${serviceDuration(s)} min</option>`
-      ).join('');
-
-    $('servicesTable').innerHTML = state.services.length
-      ? '<div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Duração</th><th>Preço</th><th>Ativo</th><th>Ações</th></tr></thead><tbody>' +
-        state.services.map(s => `<tr>
-          <td>${esc(serviceName(s))}</td><td>${serviceDuration(s)} min</td><td>${money(servicePrice(s))}</td>
-          <td>${serviceActive(s) ? 'Sim' : 'Não'}</td>
-          <td>
-            <button class="button secondary small" onclick="window.__toggleService('${esc(serviceId(s))}',${!serviceActive(s)})">${serviceActive(s) ? 'Desativar' : 'Ativar'}</button>
-            <button class="button danger small" onclick="window.__deleteService('${esc(serviceId(s))}')">Excluir</button>
-          </td>
-        </tr>`).join('') +
-        '</tbody></table></div>'
-      : '<p class="empty">Nenhum serviço cadastrado no Supabase.</p>';
-  }
-
-  function renderAvailability() {
-    const byDay = new Map(state.availability.map(a => [
-      Number(pick(a,'dia_semana','day_of_week')), a
-    ]));
-
-    $('availabilityRows').innerHTML = weekdays.map((day,i) => {
-      const a = byDay.get(i) || {};
-      const active = pick(a,'ativo','active') === true;
-      const start = String(pick(a,'hora_inicio','start') || '09:00').slice(0,5);
-      const end = String(pick(a,'hora_fim','end') || '18:00').slice(0,5);
-
-      return `<div class="availability-row">
-        <div class="field"><label><input type="checkbox" id="enabled${i}" ${active ? 'checked' : ''} style="width:auto"> ${day}</label></div>
-        <div class="field"><label for="start${i}">Início</label><input id="start${i}" type="time" value="${esc(start)}"></div>
-        <div class="field"><label for="end${i}">Fim</label><input id="end${i}" type="time" value="${esc(end)}"></div>
-        <div class="hint">${active ? 'Ativo' : 'Folga'}</div>
-      </div>`;
-    }).join('');
-  }
-
-  function renderBlocks() {
-    $('blocksTable').innerHTML = state.blocks.length
-      ? '<div class="table-wrap"><table><thead><tr><th>Data</th><th>Período</th><th>Motivo</th><th>Ação</th></tr></thead><tbody>' +
-        state.blocks.slice().sort((a,b) =>
-          (String(pick(a,'data','date')) + String(pick(a,'hora_inicio','start')))
-          .localeCompare(String(pick(b,'data','date')) + String(pick(b,'hora_inicio','start')))
-        ).map(b => `<tr>
-          <td>${esc(String(pick(b,'data','date')).slice(0,10))}</td>
-          <td>${esc(String(pick(b,'hora_inicio','start')).slice(0,5))}–${esc(String(pick(b,'hora_fim','end')).slice(0,5))}</td>
-          <td>${esc(pick(b,'motivo','reason') || '—')}</td>
-          <td><button class="button danger small" onclick="window.__deleteBlock('${esc(b.id)}')">Remover</button></td>
-        </tr>`).join('') +
-        '</tbody></table></div>'
-      : '<p class="empty">Nenhum bloqueio cadastrado no Supabase.</p>';
-  }
-
-  function renderSettings() {
-    $('publicLink').textContent = location.origin + '/agendar.html';
-  }
-
-  function renderAll() {
-    renderDashboard();
-    renderAppointments();
-    renderClients();
-    renderServices();
-    renderAvailability();
-    renderBlocks();
-    renderSettings();
-  }
-
-  async function refresh() {
-    await loadAll();
-  }
-
-  async function actionError(fn) {
-    try {
-      await fn();
-      await loadAll();
-    } catch (error) {
-      showMessage(error.message, 'error');
-    }
-  }
-
-  window.__changeAppointment = (id,status) => actionError(async () => {
-    await api(`${API.appointments}/${encodeURIComponent(id)}`, {
-      method:'PATCH',
-      body:JSON.stringify({status})
-    });
-    showMessage('Situação atualizada no banco.');
-  });
-
-  window.__deleteAppointment = id => {
-    if (confirm('Excluir este agendamento do banco?')) {
-      actionError(async () => {
-        await api(`${API.appointments}/${encodeURIComponent(id)}`, {method:'DELETE'});
-        showMessage('Agendamento excluído do banco.');
-      });
-    }
-  };
-
-  window.__deleteClient = id => {
-    if (confirm('Excluir o cadastro desta cliente do banco?')) {
-      actionError(async () => {
-        await api(`${API.clients}/${encodeURIComponent(id)}`, {method:'DELETE'});
-        showMessage('Cliente excluída do banco.');
-      });
-    }
-  };
-
-  window.__toggleService = (id,active) => actionError(async () => {
-    await api(`${API.services}/${encodeURIComponent(id)}`, {
-      method:'PATCH',
-      body:JSON.stringify({ativo:active})
-    });
-    showMessage('Serviço atualizado no banco.');
-  });
-
-  window.__deleteService = id => {
-    if (confirm('Excluir este serviço do banco?')) {
-      actionError(async () => {
-        await api(`${API.services}/${encodeURIComponent(id)}`, {method:'DELETE'});
-        showMessage('Serviço excluído do banco.');
-      });
-    }
-  };
-
-  window.__deleteBlock = id => {
-    if (confirm('Remover este bloqueio do banco?')) {
-      actionError(async () => {
-        await api(`${API.blocks}/${encodeURIComponent(id)}`, {method:'DELETE'});
-        showMessage('Bloqueio removido do banco.');
-      });
-    }
-  };
-
-  $('appointmentForm').addEventListener('submit', e => {
-    e.preventDefault();
-
-    actionError(async () => {
-      const service = state.services.find(s =>
-        String(serviceId(s)) === $('appointmentService').value
-      );
-
-      if (!service) throw new Error('Selecione um serviço válido.');
-
-      const date = $('appointmentDate').value;
-      const time = $('appointmentTime').value;
-
-      if (!date || !time) throw new Error('Informe data e horário.');
-
-      const start = new Date(`${date}T${time}:00`);
-      start.setMinutes(start.getMinutes() + serviceDuration(service));
-
-      const end = String(start.getHours()).padStart(2,'0') + ':' +
-        String(start.getMinutes()).padStart(2,'0');
-
-      await api(API.publicAppointments, {
-        method:'POST',
-        body:JSON.stringify({
-          nome_cliente:$('appointmentClient').value.trim(),
-          telefone_cliente:$('appointmentPhone').value.trim(),
-          servico_id:serviceId(service),
-          nome_servico:serviceName(service),
-          data:date,
-          hora_inicio:time,
-          hora_fim:end,
-          preco:servicePrice(service),
-          status:$('appointmentStatus').value,
-          observacoes:$('appointmentNotes').value.trim(),
-          origem:'painel_admin'
-        })
-      });
-
-      $('appointmentForm').reset();
-      $('appointmentDate').min = todayISO();
-      showMessage('Agendamento salvo no banco de dados.');
-    });
-  });
-
-  $('clientForm').addEventListener('submit', e => {
-    e.preventDefault();
-
-    actionError(async () => {
-      await api(API.clients, {
-        method:'POST',
-        body:JSON.stringify({
-          nome:$('clientName').value.trim(),
-          telefone:$('clientPhone').value.trim(),
-          email:$('clientEmail').value.trim() || null
-        })
-      });
-
-      $('clientForm').reset();
-      showMessage('Cliente cadastrada no banco de dados.');
-    });
-  });
-
-  $('serviceForm').addEventListener('submit', e => {
-    e.preventDefault();
-
-    actionError(async () => {
-      await api(API.services, {
-        method:'POST',
-        body:JSON.stringify({
-          nome:$('serviceName').value.trim(),
-          descricao:$('serviceDescription').value.trim() || null,
-          duracao_minutos:Number($('serviceDuration').value),
-          preco:Number($('servicePrice').value),
-          ativo:$('serviceActive').value === 'true'
-        })
-      });
-
-      $('serviceForm').reset();
-      $('serviceDuration').value = 60;
-      showMessage('Serviço cadastrado no banco de dados.');
-    });
-  });
-
-  $('availabilityForm').addEventListener('submit', e => {
-    e.preventDefault();
-
-    actionError(async () => {
-      const rows = weekdays.map((day,i) => ({
-        dia_semana:i,
-        hora_inicio:$('start'+i).value,
-        hora_fim:$('end'+i).value,
-        ativo:$('enabled'+i).checked
-      }));
-
-      for (const row of rows) {
-        if (row.ativo && (!row.hora_inicio || !row.hora_fim || row.hora_inicio >= row.hora_fim)) {
-          throw new Error('Em cada dia ativo, informe um início anterior ao fim.');
-        }
-      }
-
-      for (const item of state.availability) {
-        await api(`${API.availability}/${encodeURIComponent(item.id)}`, {method:'DELETE'});
-      }
-
-      for (const row of rows) {
-        if (row.ativo) {
-          await api(API.availability, {
-            method:'POST',
-            body:JSON.stringify(row)
-          });
-        }
-      }
-
-      showMessage('Disponibilidade salva no banco de dados.');
-    });
-  });
-
-  $('blockForm').addEventListener('submit', e => {
-    e.preventDefault();
-
-    actionError(async () => {
-      const start = $('blockStart').value;
-      const end = $('blockEnd').value;
-
-      if (start >= end) throw new Error('O horário final precisa ser depois do inicial.');
-
-      await api(API.blocks, {
-        method:'POST',
-        body:JSON.stringify({
-          data:$('blockDate').value,
-          hora_inicio:start,
-          hora_fim:end,
-          motivo:$('blockReason').value.trim() || null
-        })
-      });
-
-      $('blockForm').reset();
-      showMessage('Bloqueio salvo no banco de dados.');
-    });
-  });
-
-  $('dashboardDate').value = todayISO();
-  $('dashboardDate').addEventListener('change', renderDashboard);
-  $('filterDate').addEventListener('change', renderAppointments);
-  $('filterStatus').addEventListener('change', renderAppointments);
-  $('clientSearch').addEventListener('input', renderClients);
-
-  $('reloadAppointments').addEventListener('click', refresh);
-  $('reloadClients').addEventListener('click', refresh);
-  $('reloadServices').addEventListener('click', refresh);
-  $('reloadBlocks').addEventListener('click', refresh);
-
-  $('exportBtn').addEventListener('click', () => {
-    const data = {
-      exportado_em:new Date().toISOString(),
-      agendamentos:state.appointments,
-      clientes:state.clients,
-      servicos:state.services,
-      disponibilidade:state.availability,
-      bloqueios:state.blocks
-    };
-
-    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'taiany-dados-supabase.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  });
-
-  $('copyLink').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText($('publicLink').textContent);
-      showMessage('Link copiado.');
-    } catch {
-      showMessage('Não foi possível copiar automaticamente. Copie o link exibido.', 'error');
-    }
-  });
-
-  $('logoutBtn').addEventListener('click', async () => {
-    try {
-      await api(API.logout, {method:'POST',body:JSON.stringify({})});
-      location.href = '/';
-    } catch (error) {
-      showMessage(error.message, 'error');
-    }
-  });
-
-  async function checkSession() {
-    try {
-      await api(API.session);
-      await loadAll();
-    } catch (error) {
-      showMessage(error.message, 'error');
-      if (/sessão administrativa/i.test(error.message)) {
-        setTimeout(() => location.href='/', 900);
+    renderAll();
+  }catch(e){ console.error(e); alert('Erro ao carregar do Supabase: '+e.message); }
+}
+
+function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));document.querySelectorAll('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));renderAll();}
+document.querySelectorAll('.nav-button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+
+function toMinutes(t){const [h,m]=String(t||'00:00').split(':').map(Number);return h*60+m;}
+function fromMinutes(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+function overlaps(a,b,c,d){return a<d && c<b;}
+function localDateTime(date,time){return new Date(date+'T'+time+':00');}
+function getAvailability(date){const day=new Date(date+'T12:00:00').getDay();return state.availability[day];}
+function isWithinBookingWindow(date,time='23:59'){const now=new Date();const minNotice=Math.max(0,Number(state.settings.minNotice)||0);if(localDateTime(date,time).getTime()<now.getTime()+minNotice*3600000)return false;const maxDate=new Date();maxDate.setHours(23,59,59,999);maxDate.setDate(maxDate.getDate()+Math.max(1,Number(state.settings.advanceDays)||60));return localDateTime(date,'23:59').getTime()<=maxDate.getTime();}
+function isAvailable(date,time,duration,ignoreId=''){const av=getAvailability(date);if(!av||!av.enabled)return false;const start=toMinutes(time);const end=start+Number(duration);if(start<toMinutes(av.start)||end>toMinutes(av.end))return false;if(!isWithinBookingWindow(date,time))return false;for(const a of state.appointments){if(String(a.id)===String(ignoreId)||a.date!==date||a.status==='cancelled')continue;const svc=serviceById(a.serviceId);const otherDuration=Number(a.duration||(svc&&svc.duration)||60);if(overlaps(start,end,toMinutes(a.time),toMinutes(a.time)+otherDuration))return false;}for(const b of state.blocks){if(b.date===date&&overlaps(start,end,toMinutes(b.start),toMinutes(b.end)))return false;}return true;}
+function timeOptions(date,duration){if(!date||!duration)return[];const av=getAvailability(date);if(!av||!av.enabled)return[];const result=[];const interval=Math.max(5,Number(state.interval)||30);for(let m=toMinutes(av.start);m+Number(duration)<=toMinutes(av.end);m+=interval){const time=fromMinutes(m);if(isAvailable(date,time,duration))result.push(time);}return result;}
+function datesWithAvailability(duration){const dates=[];const maxDays=Math.max(1,Math.min(365,Number(state.settings.advanceDays)||60));for(let offset=0;offset<=maxDays;offset++){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+offset);const iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const av=getAvailability(iso);if(av&&av.enabled&&timeOptions(iso,duration).length)dates.push(iso);}return dates;}
+function formatDateChip(date){const d=new Date(date+'T12:00:00');return{weekday:d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.',''),day:d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','')};}
+function selectDate(date){document.getElementById('appointmentDate').value=date;document.getElementById('appointmentTime').value='';renderDateChoices();renderTimeChoices();updateSelectionSummary();}
+function selectTime(time){document.getElementById('appointmentTime').value=time;renderTimeChoices();updateSelectionSummary();}
+function renderDateChoices(){const holder=document.getElementById('appointmentDates');const message=document.getElementById('dateSelectionMessage');const service=serviceById(document.getElementById('appointmentService').value);const selected=document.getElementById('appointmentDate').value;holder.innerHTML='';if(!service){message.textContent='Selecione um serviço.';return;}const dates=datesWithAvailability(service.duration);if(!dates.length){message.textContent='Não há datas disponíveis.';return;}message.textContent='Mostrando datas com horário livre.';dates.forEach(date=>{const f=formatDateChip(date);const btn=document.createElement('button');btn.type='button';btn.className='choice-chip date-chip'+(String(selected)===String(date)?' selected':'');btn.innerHTML='<strong>'+esc(f.day)+'</strong><span>'+esc(f.weekday)+'</span>';btn.addEventListener('click',()=>selectDate(date));holder.appendChild(btn);});}
+function renderTimeChoices(){const holder=document.getElementById('appointmentTimes');const message=document.getElementById('timeSelectionMessage');const service=serviceById(document.getElementById('appointmentService').value);const date=document.getElementById('appointmentDate').value;const selected=document.getElementById('appointmentTime').value;holder.innerHTML='';if(!service||!date){message.textContent='Selecione serviço e data.';return;}const times=timeOptions(date,service.duration);if(!times.length){message.textContent='Sem horários nesta data.';return;}message.textContent='Selecione um horário:';times.forEach(time=>{const btn=document.createElement('button');btn.type='button';btn.className='choice-chip'+(selected===time?' selected':'');btn.textContent=time;btn.addEventListener('click',()=>selectTime(time));holder.appendChild(btn);});}
+function updateSelectionSummary(){const date=document.getElementById('appointmentDate').value;const time=document.getElementById('appointmentTime').value;const service=serviceById(document.getElementById('appointmentService').value);const el=document.getElementById('appointmentSelectionSummary');if(!date||!time||!service){el.textContent='';return;}const d=new Date(date+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});el.textContent=d+' às '+time+' · '+service.duration+' min · '+money(service.price);}
+function refreshChoices(keepDate=false){const oldDate=document.getElementById('appointmentDate').value;const oldTime=document.getElementById('appointmentTime').value;renderDateChoices();const service=serviceById(document.getElementById('appointmentService').value);const dates=service?datesWithAvailability(service.duration):[];const date=keepDate&&dates.includes(oldDate)?oldDate:'';document.getElementById('appointmentDate').value=date;const times=date&&service?timeOptions(date,service.duration):[];document.getElementById('appointmentTime').value=times.includes(oldTime)?oldTime:'';renderDateChoices();renderTimeChoices();updateSelectionSummary();}
+
+document.getElementById('appointmentService').addEventListener('change',()=>refreshChoices(false));
+document.getElementById('dashboardDate').value=todayISO();
+document.getElementById('dashboardDate').addEventListener('change',renderDashboard);
+document.getElementById('filterDate').addEventListener('change',renderAppointments);
+document.getElementById('filterStatus').addEventListener('change',renderAppointments);
+document.getElementById('clientSearch').addEventListener('input',renderClients);
+
+document.getElementById('appointmentForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const client=document.getElementById('appointmentClient').value.trim();
+  const phone=document.getElementById('appointmentPhone').value.trim();
+  const serviceId=document.getElementById('appointmentService').value;
+  const service=serviceById(serviceId);
+  const date=document.getElementById('appointmentDate').value;
+  const time=document.getElementById('appointmentTime').value;
+  if(!service||!date||!time||!isAvailable(date,time,service.duration)){alert('Horário indisponível.');refreshChoices(true);return;}
+  try{
+    await api('/api/agendamentos',{method:'POST',body:{nome_cliente:client,telefone_cliente:phone,servico_id:serviceId,data:date,hora_inicio:time,observacoes:document.getElementById('appointmentNotes').value}});
+    e.target.reset();document.getElementById('appointmentDate').value='';document.getElementById('appointmentTime').value='';
+    await loadFromServer();refreshChoices(false);alert('Agendamento salvo no Supabase!');
+  }catch(err){alert(err.message);}
+});
+
+document.getElementById('clientForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  try{
+    await api('/api/admin/clientes',{method:'POST',body:{nome:document.getElementById('clientName').value,telefone:document.getElementById('clientPhone').value,email:document.getElementById('clientEmail').value,observacoes:document.getElementById('clientNotes').value}});
+    e.target.reset();await loadFromServer();
+  }catch(err){alert(err.message);}
+});
+
+document.getElementById('serviceForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  try{
+    await api('/api/admin/servicos',{method:'POST',body:{nome:document.getElementById('serviceName').value,preco:Number(document.getElementById('servicePrice').value),duracao_minutos:Number(document.getElementById('serviceDuration').value),categoria:document.getElementById('serviceCategory').value,descricao:document.getElementById('serviceDescription').value}});
+    e.target.reset();document.getElementById('serviceDuration').value=60;await loadFromServer();
+  }catch(err){alert(err.message);}
+});
+
+document.getElementById('availabilityForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=e.target.querySelector('button'); const oldText=btn.textContent; btn.disabled=true; btn.textContent='Salvando...';
+  try{
+    const existentes=await api('/api/admin/disponibilidade');
+    for(const item of existentes){ try{ await api('/api/admin/disponibilidade/'+item.id,{method:'DELETE'}); }catch{} }
+    let salvou=0;
+    for(let i=0;i<7;i++){
+      const enabled=document.getElementById('enabled'+i)?.checked;
+      const start=document.getElementById('start'+i)?.value;
+      const end=document.getElementById('end'+i)?.value;
+      if(enabled){
+        if(!start||!end||toMinutes(start)>=toMinutes(end)){ alert('Horário inválido: '+weekdays[i]); btn.disabled=false; btn.textContent=oldText; return; }
+        await api('/api/admin/disponibilidade',{method:'POST',body:{dia_semana:i,hora_inicio:start,hora_fim:end,ativo:true}});
+        salvou++;
       }
     }
-  }
+    state.interval=Number(document.getElementById('slotInterval').value);
+    alert('Disponibilidade salva! '+salvou+' dias ativos.');
+    await loadFromServer();
+  }catch(err){ alert('Erro: '+err.message); } finally{ btn.disabled=false; btn.textContent=oldText; }
+});
 
-  $('appointmentDate').min = todayISO();
-  $('blockDate').min = todayISO();
+document.getElementById('blockForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const date=document.getElementById('blockDate').value;
+  const start=document.getElementById('blockStart').value;
+  const end=document.getElementById('blockEnd').value;
+  if(toMinutes(start)>=toMinutes(end)){alert('Fim deve ser depois do início.');return;}
+  try{
+    await api('/api/admin/bloqueios',{method:'POST',body:{data:date,hora_inicio:start,hora_fim:end,motivo:document.getElementById('blockReason').value}});
+    e.target.reset();await loadFromServer();refreshChoices(true);
+  }catch(err){alert(err.message);}
+});
 
-  checkSession();
-})();
+document.getElementById('settingsForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  state.settings={studioName:document.getElementById('studioName').value.trim(),title:document.getElementById('studioTitle').value.trim(),phone:document.getElementById('studioPhone').value.trim(),advanceDays:Number(document.getElementById('advanceDays').value),minNotice:Number(document.getElementById('minNotice').value),cancelPolicy:document.getElementById('cancelPolicy').value.trim(),welcomeMessage:document.getElementById('welcomeMessage').value.trim()};
+  alert('Configurações salvas localmente nesta sessão.');
+});
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='taiany-backup-supabase.json';a.click();URL.revokeObjectURL(url);
+});
+
+// CORREÇÕES PRINCIPAIS AQUI
+async function changeAppointment(id,status){
+  try{
+    const map={pending:'Pendente',confirmed:'Confirmado',completed:'Concluído',cancelled:'Cancelado'};
+    // ROTA CORRETA: PATCH /api/admin/agendamentos/:id com {status}
+    await api('/api/admin/agendamentos/'+id,{method:'PATCH',body:{status:map[status]||status}});
+    await loadFromServer();
+  }catch(err){alert(err.message);}
+}
+async function deleteAppointment(id){
+  if(!confirm('Excluir este agendamento do Supabase?'))return;
+  try{ await api('/api/admin/agendamentos/'+id,{method:'DELETE'}); await loadFromServer(); }catch(err){alert(err.message);}
+}
+async function deleteClient(id){
+  if(!confirm('Excluir esta cliente DEFINITIVAMENTE do Supabase?')) return;
+  try{
+    // AGORA CHAMA O SUPABASE DE VERDADE
+    await api('/api/admin/clientes/'+id,{method:'DELETE'});
+    await loadFromServer();
+    alert('Cliente excluída do banco com sucesso!');
+  }catch(err){ alert('Erro ao excluir: '+err.message); }
+}
+async function toggleService(id){
+  const s=serviceById(id);
+  if(!s) return;
+  try{ await api('/api/admin/servicos/'+id,{method:'PATCH',body:{ativo:!s.active}}); await loadFromServer(); }catch(err){alert(err.message);}
+}
+async function deleteService(id){
+  if(!confirm('Excluir este serviço do Supabase?'))return;
+  try{ await api('/api/admin/servicos/'+id,{method:'DELETE'}); await loadFromServer(); }catch(err){alert(err.message);}
+}
+async function deleteBlock(id){
+  try{ await api('/api/admin/bloqueios/'+id,{method:'DELETE'}); await loadFromServer(); }catch(err){alert(err.message);}
+}
+
+function renderDashboard(){const date=document.getElementById('dashboardDate').value||todayISO();const day=state.appointments.filter(a=>a.date===date&&a.status!=='cancelled');document.getElementById('metricToday').textContent=day.length;document.getElementById('metricConfirmed').textContent=day.filter(a=>a.status==='confirmed').length;document.getElementById('metricClients').textContent=state.clients.length;document.getElementById('metricRevenue').textContent=money(day.reduce((sum,a)=>sum+Number(a.price||0),0));const upcoming=state.appointments.filter(a=>a.date>=todayISO()&&a.status!=='cancelled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,6);document.getElementById('dashboardAppointments').innerHTML=upcoming.length?appointmentTable(upcoming,false):'<p class="empty">Nenhum atendimento futuro.</p>';}
+function appointmentTable(items,actions=true){if(!items.length)return'<p class="empty">Nenhum agendamento.</p>';return'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Situação</th>'+(actions?'<th>Ações</th>':'')+'</tr></thead><tbody>'+items.map(a=>{const svc=serviceById(a.serviceId);return'<tr><td>'+esc(a.date)+'</td><td>'+esc(a.time)+'</td><td>'+esc(a.client)+'</td><td>'+esc(svc?svc.name:'—')+'</td><td>'+money(a.price)+'</td><td><span class="status '+esc(a.status)+'">'+esc(statusLabel(a.status))+'</span></td>'+(actions?'<td><select onchange="changeAppointment(\''+a.id+'\',this.value)"><option value="'+esc(a.status)+'">'+esc(statusLabel(a.status))+'</option><option value="confirmed">Confirmado</option><option value="pending">Pendente</option><option value="completed">Concluído</option><option value="cancelled">Cancelado</option></select> <button class="button danger small" onclick="deleteAppointment(\''+a.id+'\')">Excluir</button></td>':'')+'</tr>';}).join('')+'</tbody></table></div>';}
+function renderAppointments(){const date=document.getElementById('filterDate').value;const status=document.getElementById('filterStatus').value;const list=state.appointments.filter(a=>(!date||a.date===date)&&(!status||a.status===status)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));document.getElementById('appointmentsTable').innerHTML=appointmentTable(list,true);}
+function renderClients(){const q=(document.getElementById('clientSearch').value||'').toLowerCase();const clients=state.clients.filter(c=>(c.name+' '+c.phone).toLowerCase().includes(q));document.getElementById('clientsTable').innerHTML=clients.length?'<div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Atendimentos</th><th>Ação</th></tr></thead><tbody>'+clients.map(c=>'<tr><td>'+esc(c.name)+'</td><td>'+esc(c.phone)+'</td><td>'+esc(c.email||'—')+'</td><td>'+state.appointments.filter(a=>a.phone===c.phone&&a.status!=='cancelled').length+'</td><td><button class="button danger small" onclick="deleteClient(\''+c.id+'\')">Excluir do Supabase</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhuma cliente no Supabase.</p>';}
+function renderServices(){const select=document.getElementById('appointmentService');const old=select.value;select.innerHTML='<option value="">Selecione um serviço</option>'+state.services.filter(s=>s.active!==false).map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' · '+money(s.price)+' · '+s.duration+' min</option>').join('');if(state.services.some(s=>String(s.id)===String(old))) select.value=old;document.getElementById('servicesTable').innerHTML=state.services.length?'<div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Duração</th><th>Preço</th><th>Disponível</th><th>Ações</th></tr></thead><tbody>'+state.services.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+esc(s.category)+'</td><td>'+s.duration+' min</td><td>'+money(s.price)+'</td><td>'+(s.active!==false?'Sim':'Não')+'</td><td><button class="button secondary small" onclick="toggleService(\''+s.id+'\')">'+(s.active!==false?'Desativar':'Ativar')+'</button> <button class="button danger small" onclick="deleteService(\''+s.id+'\')">Excluir</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhum serviço.</p>';}
+function renderAvailability(){document.getElementById('availabilityRows').innerHTML=state.availability.map((a,i)=>'<div class="availability-row"><div class="field"><label><input type="checkbox" id="enabled'+i+'" '+(a.enabled?'checked':'')+' style="width:auto"> '+esc(a.day)+'</label></div><div class="field"><label for="start'+i+'">Início</label><input id="start'+i+'" type="time" value="'+esc(a.start)+'"></div><div class="field"><label for="end'+i+'">Fim</label><input id="end'+i+'" type="time" value="'+esc(a.end)+'"></div><div class="hint">'+(a.enabled?'Ativo':'Folga')+'</div></div>').join('');document.getElementById('slotInterval').value=String(state.interval);}
+function renderBlocks(){document.getElementById('blocksTable').innerHTML=state.blocks.length?'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Período</th><th>Motivo</th><th>Ação</th></tr></thead><tbody>'+state.blocks.slice().sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).map(b=>'<tr><td>'+esc(b.date)+'</td><td>'+esc(b.start)+'–'+esc(b.end)+'</td><td>'+esc(b.reason||'—')+'</td><td><button class="button danger small" onclick="deleteBlock(\''+b.id+'\')">Remover</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhum bloqueio.</p>';}
+function renderSettings(){const s=state.settings;for(const [id,key] of [['studioName','studioName'],['studioTitle','title'],['studioPhone','phone'],['advanceDays','advanceDays'],['minNotice','minNotice'],['cancelPolicy','cancelPolicy'],['welcomeMessage','welcomeMessage']]){const el=document.getElementById(id);if(el&&document.activeElement!==el) el.value=s[key]??'';}document.getElementById('publicLink').textContent=location.origin+'/agendar';}
+function renderAll(){renderDashboard();renderAppointments();renderClients();renderServices();renderAvailability();renderBlocks();renderSettings();refreshChoices(true);}
+
+loadFromServer();
 </script>
 </body>
 </html>
