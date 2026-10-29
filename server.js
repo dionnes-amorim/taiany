@@ -1,14 +1,20 @@
-// ======================================================
-// SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
-// ======================================================
 
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const { createClient } = require('@supabase/supabase-js');
+ // ======================================================
+ // SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
+ // ======================================================
+
+import express from 'express';
+import session from 'express-session';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createClient } from '@supabase/supabase-js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 10000;
+
 
 // ======================================================
 // CONFIGURAÇÃO
