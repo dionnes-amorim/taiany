@@ -1,5 +1,4 @@
-
- // ======================================================
+// ======================================================
 // SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
 // ======================================================
 
@@ -30,7 +29,9 @@ app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 app.use(
   session({
     name: 'taiany.sid',
-    secret: process.env.SESSION_SECRET || 'troque-esta-chave-antes-de-publicar',
+    secret:
+      process.env.SESSION_SECRET ||
+      'troque-esta-chave-antes-de-publicar',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -65,6 +66,7 @@ function db() {
     const error = new Error(
       'Supabase não configurado. Verifique SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no Render.'
     );
+
     error.status = 503;
     throw error;
   }
@@ -84,7 +86,9 @@ function cleanText(value, maxLength = 500) {
 function validId(value) {
   return (
     typeof value === 'string' &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value
+    )
   );
 }
 
@@ -119,6 +123,7 @@ function timeToMinutes(value) {
   if (!validTime(value)) return NaN;
 
   const [hours, minutes] = value.split(':').map(Number);
+
   return hours * 60 + minutes;
 }
 
@@ -182,7 +187,10 @@ function admin(req, res, next) {
   });
 }
 
+// ======================================================
 // LOGIN
+// ======================================================
+
 app.post('/api/login', (req, res) => {
   const user = cleanText(req.body?.user, 100);
   const pass = String(req.body?.pass ?? '');
@@ -193,7 +201,8 @@ app.post('/api/login', (req, res) => {
   if (!configuredUser || !configuredPass) {
     return res.status(503).json({
       ok: false,
-      error: 'Configure AUTH_USER e AUTH_PASS nas variáveis de ambiente do Render.'
+      error:
+        'Configure AUTH_USER e AUTH_PASS nas variáveis de ambiente do Render.'
     });
   }
 
@@ -234,7 +243,10 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+// ======================================================
 // VERIFICAR SESSÃO
+// ======================================================
+
 app.get('/api/sessao', (req, res) => {
   res.json({
     ok: true,
@@ -242,7 +254,10 @@ app.get('/api/sessao', (req, res) => {
   });
 });
 
+// ======================================================
 // LOGOUT
+// ======================================================
+
 app.post('/api/logout', (req, res) => {
   if (!req.session) {
     return res.json({ ok: true });
@@ -289,7 +304,9 @@ app.get('/api/servicos', async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db().from('servicos').select('*').order('nome', { ascending: true })
+      db().from('servicos').select('*').order('nome', {
+        ascending: true
+      })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -353,11 +370,12 @@ app.get('/api/horarios', async (req, res) => {
         });
       }
 
-      const { data: servico, error: servicoError } = await supabaseClient
-        .from('servicos')
-        .select('*')
-        .eq('id', servicoId)
-        .maybeSingle();
+      const { data: servico, error: servicoError } =
+        await supabaseClient
+          .from('servicos')
+          .select('*')
+          .eq('id', servicoId)
+          .maybeSingle();
 
       if (servicoError) throw servicoError;
 
@@ -368,10 +386,14 @@ app.get('/api/horarios', async (req, res) => {
         });
       }
 
-      duracao = Number(servico.duracao_minutos || servico.duracao || 60);
+      duracao = Number(
+        servico.duracao_minutos || servico.duracao || 60
+      );
     }
 
-    if (!Number.isFinite(duracao) || duracao <= 0) duracao = 60;
+    if (!Number.isFinite(duracao) || duracao <= 0) {
+      duracao = 60;
+    }
 
     const [ano, mes, dia] = data.split('-').map(Number);
     const diaSemana = new Date(ano, mes - 1, dia, 12).getDay();
@@ -404,47 +426,65 @@ app.get('/api/horarios', async (req, res) => {
       const inicio = timeToMinutes(faixa.hora_inicio);
       const fim = timeToMinutes(faixa.hora_fim);
 
-      if (!Number.isFinite(inicio) || !Number.isFinite(fim) || fim <= inicio) {
+      if (
+        !Number.isFinite(inicio) ||
+        !Number.isFinite(fim) ||
+        fim <= inicio
+      ) {
         continue;
       }
 
-      for (let horario = inicio; horario + duracao <= fim; horario += 30) {
+      for (
+        let horario = inicio;
+        horario + duracao <= fim;
+        horario += 30
+      ) {
         const horarioFim = horario + duracao;
 
-        const bloqueado = (bloqueiosResult.data || []).some((bloqueio) => {
-          const bInicio = timeToMinutes(bloqueio.hora_inicio);
-          const bFim = timeToMinutes(bloqueio.hora_fim);
+        const bloqueado = (bloqueiosResult.data || []).some(
+          (bloqueio) => {
+            const bInicio = timeToMinutes(bloqueio.hora_inicio);
+            const bFim = timeToMinutes(bloqueio.hora_fim);
 
-          return (
-            Number.isFinite(bInicio) &&
-            Number.isFinite(bFim) &&
-            overlaps(horario, horarioFim, bInicio, bFim)
-          );
-        });
-
-        const ocupado = (agendamentosResult.data || []).some((agendamento) => {
-          const status = String(agendamento.status || '').toLowerCase();
-
-          if (['cancelado', 'cancelada', 'cancelled'].includes(status)) {
-            return false;
+            return (
+              Number.isFinite(bInicio) &&
+              Number.isFinite(bFim) &&
+              overlaps(horario, horarioFim, bInicio, bFim)
+            );
           }
+        );
 
-          const aInicio = timeToMinutes(agendamento.hora_inicio);
-          const aFim = timeToMinutes(agendamento.hora_fim);
+        const ocupado = (agendamentosResult.data || []).some(
+          (agendamento) => {
+            const status = String(
+              agendamento.status || ''
+            ).toLowerCase();
 
-          return (
-            Number.isFinite(aInicio) &&
-            Number.isFinite(aFim) &&
-            overlaps(horario, horarioFim, aInicio, aFim)
-          );
-        });
+            if (
+              ['cancelado', 'cancelada', 'cancelled'].includes(status)
+            ) {
+              return false;
+            }
+
+            const aInicio = timeToMinutes(agendamento.hora_inicio);
+            const aFim = timeToMinutes(agendamento.hora_fim);
+
+            return (
+              Number.isFinite(aInicio) &&
+              Number.isFinite(aFim) &&
+              overlaps(horario, horarioFim, aInicio, aFim)
+            );
+          }
+        );
 
         if (!bloqueado && !ocupado) {
-          const hora = `${String(Math.floor(horario / 60)).padStart(2, '0')}:${String(
-            horario % 60
-          ).padStart(2, '0')}`;
+          const hora = `${String(
+            Math.floor(horario / 60)
+          ).padStart(2, '0')}:${String(horario % 60).padStart(2, '0')}`;
 
-          if (!horarios.includes(hora)) horarios.push(hora);
+          if (!horarios.includes(hora)) {
+            horarios.push(hora);
+          }
         }
       }
     }
@@ -463,17 +503,32 @@ app.post('/api/agendamentos', async (req, res) => {
   try {
     const body = req.body || {};
 
-    const nomeCliente = cleanText(body.nome_cliente || body.nome, 150);
+    const nomeCliente = cleanText(
+      body.nome_cliente || body.nome,
+      150
+    );
+
     const telefoneCliente = cleanText(
       body.telefone_cliente || body.telefone,
       40
     );
+
     const servicoId = cleanText(body.servico_id, 50);
     const data = cleanText(body.data, 10);
-    const horaInicio = normalizeTime(body.hora_inicio || body.hora);
+
+    const horaInicio = normalizeTime(
+      body.hora_inicio || body.hora
+    );
+
     const observacoes = cleanText(body.observacoes, 1000);
 
-    if (!nomeCliente || !telefoneCliente || !servicoId || !data || !horaInicio) {
+    if (
+      !nomeCliente ||
+      !telefoneCliente ||
+      !servicoId ||
+      !data ||
+      !horaInicio
+    ) {
       return res.status(400).json({
         ok: false,
         error: 'Preencha nome, telefone, serviço, data e horário.'
@@ -489,11 +544,12 @@ app.post('/api/agendamentos', async (req, res) => {
 
     const supabaseClient = db();
 
-    const { data: servico, error: servicoError } = await supabaseClient
-      .from('servicos')
-      .select('*')
-      .eq('id', servicoId)
-      .maybeSingle();
+    const { data: servico, error: servicoError } =
+      await supabaseClient
+        .from('servicos')
+        .select('*')
+        .eq('id', servicoId)
+        .maybeSingle();
 
     if (servicoError) throw servicoError;
 
@@ -504,7 +560,9 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    const duracao = Number(servico.duracao_minutos || servico.duracao || 60);
+    const duracao = Number(
+      servico.duracao_minutos || servico.duracao || 60
+    );
 
     if (!Number.isFinite(duracao) || duracao <= 0) {
       return res.status(400).json({
@@ -531,9 +589,9 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    const horaFim = `${String(Math.floor(fimMinutos / 60)).padStart(2, '0')}:${String(
-      fimMinutos % 60
-    ).padStart(2, '0')}:00`;
+    const horaFim = `${String(
+      Math.floor(fimMinutos / 60)
+    ).padStart(2, '0')}:${String(fimMinutos % 60).padStart(2, '0')}:00`;
 
     const [ano, mes, dia] = data.split('-').map(Number);
     const diaSemana = new Date(ano, mes - 1, dia, 12).getDay();
@@ -560,7 +618,9 @@ app.post('/api/agendamentos', async (req, res) => {
     if (bloqueiosResult.error) throw bloqueiosResult.error;
     if (agendamentosResult.error) throw agendamentosResult.error;
 
-    const dentroDaDisponibilidade = (dispResult.data || []).some((faixa) => {
+    const dentroDaDisponibilidade = (
+      dispResult.data || []
+    ).some((faixa) => {
       const faixaInicio = timeToMinutes(faixa.hora_inicio);
       const faixaFim = timeToMinutes(faixa.hora_fim);
 
@@ -579,16 +639,18 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    const bloqueado = (bloqueiosResult.data || []).some((bloqueio) => {
-      const bInicio = timeToMinutes(bloqueio.hora_inicio);
-      const bFim = timeToMinutes(bloqueio.hora_fim);
+    const bloqueado = (bloqueiosResult.data || []).some(
+      (bloqueio) => {
+        const bInicio = timeToMinutes(bloqueio.hora_inicio);
+        const bFim = timeToMinutes(bloqueio.hora_fim);
 
-      return (
-        Number.isFinite(bInicio) &&
-        Number.isFinite(bFim) &&
-        overlaps(inicioMinutos, fimMinutos, bInicio, bFim)
-      );
-    });
+        return (
+          Number.isFinite(bInicio) &&
+          Number.isFinite(bFim) &&
+          overlaps(inicioMinutos, fimMinutos, bInicio, bFim)
+        );
+      }
+    );
 
     if (bloqueado) {
       return res.status(409).json({
@@ -597,22 +659,28 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    const ocupado = (agendamentosResult.data || []).some((agendamento) => {
-      const status = String(agendamento.status || '').toLowerCase();
+    const ocupado = (agendamentosResult.data || []).some(
+      (agendamento) => {
+        const status = String(
+          agendamento.status || ''
+        ).toLowerCase();
 
-      if (['cancelado', 'cancelada', 'cancelled'].includes(status)) {
-        return false;
+        if (
+          ['cancelado', 'cancelada', 'cancelled'].includes(status)
+        ) {
+          return false;
+        }
+
+        const aInicio = timeToMinutes(agendamento.hora_inicio);
+        const aFim = timeToMinutes(agendamento.hora_fim);
+
+        return (
+          Number.isFinite(aInicio) &&
+          Number.isFinite(aFim) &&
+          overlaps(inicioMinutos, fimMinutos, aInicio, aFim)
+        );
       }
-
-      const aInicio = timeToMinutes(agendamento.hora_inicio);
-      const aFim = timeToMinutes(agendamento.hora_fim);
-
-      return (
-        Number.isFinite(aInicio) &&
-        Number.isFinite(aFim) &&
-        overlaps(inicioMinutos, fimMinutos, aInicio, aFim)
-      );
-    });
+    );
 
     if (ocupado) {
       return res.status(409).json({
@@ -635,11 +703,12 @@ app.post('/api/agendamentos', async (req, res) => {
       origem: 'site'
     };
 
-    const { data: criado, error: insertError } = await supabaseClient
-      .from('agendamentos')
-      .insert(agendamento)
-      .select()
-      .single();
+    const { data: criado, error: insertError } =
+      await supabaseClient
+        .from('agendamentos')
+        .insert(agendamento)
+        .select()
+        .single();
 
     if (insertError) throw insertError;
 
@@ -749,14 +818,18 @@ app.delete('/api/admin/agendamentos/:id', admin, async (req, res) => {
 });
 
 // ======================================================
-// ADMIN — CLIENTES
+// ADMIN — CLIENTES TAIANY
+// IMPORTANTE: NÃO UTILIZAR A TABELA GENÉRICA "clientes"
 // ======================================================
 
 app.get('/api/admin/clientes', admin, async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db().from('clientes').select('*').order('nome', { ascending: true })
+      db()
+        .from('clientes_taiany')
+        .select('*')
+        .order('nome', { ascending: true })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -782,7 +855,7 @@ app.post('/api/admin/clientes', admin, async (req, res) => {
     if (email) cliente.email = email;
 
     const { data, error } = await db()
-      .from('clientes')
+      .from('clientes_taiany')
       .insert(cliente)
       .select()
       .single();
@@ -803,7 +876,9 @@ app.get('/api/admin/servicos', admin, async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db().from('servicos').select('*').order('nome', { ascending: true })
+      db().from('servicos').select('*').order('nome', {
+        ascending: true
+      })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -821,7 +896,10 @@ app.post('/api/admin/servicos', admin, async (req, res) => {
       });
     }
 
-    const duracao = Number(req.body?.duracao_minutos ?? req.body?.duracao ?? 60);
+    const duracao = Number(
+      req.body?.duracao_minutos ?? req.body?.duracao ?? 60
+    );
+
     const preco = Number(req.body?.preco ?? 0);
 
     if (!Number.isFinite(duracao) || duracao <= 0) {
@@ -884,8 +962,13 @@ app.patch('/api/admin/servicos/:id', admin, async (req, res) => {
       updates.descricao = cleanText(req.body.descricao, 1000);
     }
 
-    if (req.body?.duracao_minutos !== undefined || req.body?.duracao !== undefined) {
-      const duracao = Number(req.body.duracao_minutos ?? req.body.duracao);
+    if (
+      req.body?.duracao_minutos !== undefined ||
+      req.body?.duracao !== undefined
+    ) {
+      const duracao = Number(
+        req.body.duracao_minutos ?? req.body.duracao
+      );
 
       if (!Number.isFinite(duracao) || duracao <= 0) {
         return res.status(400).json({
@@ -968,7 +1051,10 @@ app.get('/api/admin/disponibilidade', admin, async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db().from('disponibilidade').select('*').order('dia_semana', { ascending: true })
+      db()
+        .from('disponibilidade')
+        .select('*')
+        .order('dia_semana', { ascending: true })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -1097,29 +1183,33 @@ app.patch('/api/admin/disponibilidade/:id', admin, async (req, res) => {
   }
 });
 
-app.delete('/api/admin/disponibilidade/:id', admin, async (req, res) => {
-  try {
-    const { id } = req.params;
+app.delete(
+  '/api/admin/disponibilidade/:id',
+  admin,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
 
-    if (!validId(id)) {
-      return res.status(400).json({
-        ok: false,
-        error: 'ID de disponibilidade inválido.'
-      });
+      if (!validId(id)) {
+        return res.status(400).json({
+          ok: false,
+          error: 'ID de disponibilidade inválido.'
+        });
+      }
+
+      const { error } = await db()
+        .from('disponibilidade')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      return res.json({ ok: true });
+    } catch (error) {
+      return sendDbError(res, error);
     }
-
-    const { error } = await db()
-      .from('disponibilidade')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
-
-    return res.json({ ok: true });
-  } catch (error) {
-    return sendDbError(res, error);
   }
-});
+);
 
 // ======================================================
 // ADMIN — BLOQUEIOS DE AGENDA
@@ -1165,7 +1255,12 @@ app.post('/api/admin/bloqueios', admin, async (req, res) => {
 
     const { data: bloqueio, error } = await db()
       .from('bloqueios')
-      .insert({ data, hora_inicio: inicio, hora_fim: fim, motivo })
+      .insert({
+        data,
+        hora_inicio: inicio,
+        hora_fim: fim,
+        motivo
+      })
       .select()
       .single();
 
