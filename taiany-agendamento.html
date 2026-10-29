@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fbf4f2">
   <meta name="description" content="Agende seu horário com Taiany Trindade Nail Designer.">
-  <title>Agendamento | Taiany Trindade Nail Designer</title>
+  <title>Secretária Virtual | Taiany Trindade Nail Designer</title>
 
   <style>
     :root {
@@ -23,7 +23,7 @@
       --green: #54866a;
       --red: #b94d5b;
       --shadow: 0 18px 50px rgba(100, 58, 67, .10);
-      --radius: 22px;
+      --radius: 24px;
     }
 
     * {
@@ -43,7 +43,7 @@
       line-height: 1.5;
     }
 
-    button, input, select, textarea {
+    button, input, textarea {
       font: inherit;
     }
 
@@ -52,103 +52,122 @@
     }
 
     button:disabled {
-      opacity: .5;
       cursor: not-allowed;
+      opacity: .55;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(183,110,121,.35);
+      outline-offset: 3px;
     }
 
     .page {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 18px;
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+      padding: 24px 0 14px;
     }
+
+    /* Cabeçalho e marcas */
 
     .topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 20px;
-      margin-bottom: 25px;
+      margin-bottom: 22px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 17px;
       min-width: 0;
     }
 
     .logo-frame {
-      width: 82px;
-      height: 82px;
-      flex: 0 0 82px;
+      width: 102px;
+      height: 102px;
+      flex: 0 0 102px;
+      padding: 5px;
       display: grid;
       place-items: center;
       overflow: hidden;
-      padding: 4px;
       border-radius: 50%;
-      background: linear-gradient(145deg, #f5e6bd, #bd9851, #f8e8b7);
-      box-shadow: 0 5px 18px rgba(151, 112, 48, .2);
+      background: linear-gradient(145deg, #f8e9bf, #bd9851, #f8e8b7);
+      box-shadow: 0 7px 24px rgba(151,112,48,.23);
     }
 
     .logo-inner {
       width: 100%;
       height: 100%;
       overflow: hidden;
+      display: grid;
+      place-items: center;
       border: 2px solid #fff7e4;
       border-radius: 50%;
       background: #fffaf7;
-      display: grid;
-      place-items: center;
     }
 
     .logo-inner img {
       width: 100%;
       height: 100%;
+      padding: 3px;
       object-fit: contain;
-      padding: 4px;
     }
 
     .brand-copy h1 {
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(20px, 3vw, 29px);
+      font-size: clamp(22px, 3vw, 32px);
+      line-height: 1.15;
       font-weight: 600;
       color: var(--rose-dark);
-      line-height: 1.15;
     }
 
     .brand-copy p {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 1.3px;
+      margin-top: 6px;
+      font-size: 12px;
+      letter-spacing: 1.8px;
       text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .developer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
     }
 
     .developer-logo {
-      width: 126px;
-      max-height: 62px;
+      display: block;
+      width: 155px;
+      max-height: 82px;
       object-fit: contain;
-      opacity: .85;
+      opacity: .92;
     }
+
+    /* Apresentação */
 
     .hero {
       position: relative;
       overflow: hidden;
-      padding: 35px;
-      border: 1px solid rgba(197,161,91,.35);
-      border-radius: 30px;
-      background: linear-gradient(120deg, rgba(255,255,255,.97), rgba(255,246,244,.94));
-      box-shadow: var(--shadow);
+      padding: 28px 32px;
       margin-bottom: 22px;
+      border: 1px solid rgba(197,161,91,.35);
+      border-radius: 28px;
+      background: linear-gradient(120deg, rgba(255,255,255,.98), rgba(255,246,244,.94));
+      box-shadow: var(--shadow);
     }
 
     .hero::after {
       content: "✦";
       position: absolute;
-      right: 35px;
-      top: 15px;
-      font-size: 100px;
-      color: rgba(197,161,91,.15);
+      top: 5px;
+      right: 25px;
+      font-size: 95px;
+      color: rgba(197,161,91,.14);
       pointer-events: none;
     }
 
@@ -156,9 +175,9 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       color: var(--rose-dark);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -166,17 +185,17 @@
 
     .eyebrow::before {
       content: "";
-      width: 24px;
+      width: 22px;
       height: 1px;
       background: var(--gold);
     }
 
     .hero h2 {
-      max-width: 700px;
+      max-width: 760px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(29px, 5vw, 46px);
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.15;
       font-weight: 500;
-      line-height: 1.13;
       color: #593b43;
     }
 
@@ -186,435 +205,546 @@
     }
 
     .hero p {
-      max-width: 630px;
-      margin-top: 14px;
+      max-width: 680px;
+      margin-top: 10px;
       color: var(--muted);
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .hero-pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 21px;
+      gap: 8px;
+      margin-top: 16px;
     }
 
     .pill {
-      padding: 8px 12px;
+      padding: 7px 11px;
       border: 1px solid #eed8d9;
       border-radius: 30px;
       color: #83515a;
-      background: #fff;
-      font-size: 12px;
-      font-weight: 600;
+      background: white;
+      font-size: 11px;
+      font-weight: 700;
     }
+
+    /* Layout principal */
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 310px;
+      grid-template-columns: minmax(0, 1fr) 300px;
       gap: 22px;
       align-items: start;
     }
 
-    .main-card, .side-card {
-      border: 1px solid rgba(197,161,91,.25);
+    .chat-card,
+    .side-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(197,161,91,.28);
       border-radius: var(--radius);
-      background: rgba(255,255,255,.95);
+      background: rgba(255,255,255,.97);
       box-shadow: var(--shadow);
     }
 
-    .main-card {
-      padding: 28px;
-      min-width: 0;
-    }
-
-    .side-card {
-      padding: 23px;
-      position: sticky;
-      top: 18px;
-    }
-
-    .section-heading {
+    .chat-header {
       display: flex;
-      gap: 13px;
-      align-items: flex-start;
-      margin-bottom: 21px;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 22px;
+      color: white;
+      background: linear-gradient(115deg, var(--rose), var(--rose-dark));
     }
 
-    .step-number {
+    .assistant-avatar {
       display: grid;
       place-items: center;
-      width: 37px;
-      height: 37px;
-      flex: 0 0 37px;
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 2px solid rgba(255,255,255,.65);
       border-radius: 50%;
-      color: #fff;
-      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: #80553b;
+      background: linear-gradient(145deg, #fff8e9, #ead3a0);
+      font-family: Georgia, serif;
+      font-size: 24px;
+    }
+
+    .chat-header-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .chat-header h3 {
+      font-size: 16px;
       font-weight: 800;
-      box-shadow: 0 5px 12px rgba(183,110,121,.2);
     }
 
-    .section-heading h3 {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 23px;
-      line-height: 1.25;
-      font-weight: 600;
-      color: #593b43;
+    .chat-header p {
+      margin-top: 2px;
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
     }
 
-    .section-heading p {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 13px;
+    .online-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      white-space: nowrap;
+      color: #fff6e9;
     }
 
-    .step {
-      display: none;
-      animation: fadeIn .35s ease both;
+    .online-indicator::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #a9edb6;
+      box-shadow: 0 0 0 3px rgba(169,237,182,.14);
     }
 
-    .step.active {
-      display: block;
+    .chat-notice {
+      padding: 10px 18px;
+      text-align: center;
+      color: #856d54;
+      background: #fff8eb;
+      border-bottom: 1px solid #f2e5d3;
+      font-size: 11px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+    .chat-body {
+      height: min(650px, 65vh);
+      min-height: 390px;
+      overflow-y: auto;
+      padding: 22px 20px 15px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(197,161,91,.055), transparent 32%),
+        #fffdfb;
+      scroll-behavior: smooth;
+      overscroll-behavior: contain;
+    }
+
+    .chat-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-body::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: #e8d5d7;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 16px;
+      animation: messageIn .25s ease both;
+    }
+
+    .message-row.bot {
+      justify-content: flex-start;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(7px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .field {
-      margin-bottom: 17px;
-    }
-
-    .field label {
-      display: block;
-      margin-bottom: 7px;
+    .bubble {
+      max-width: min(88%, 530px);
+      padding: 13px 15px;
+      border-radius: 17px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
       font-size: 13px;
-      font-weight: 700;
-      color: #65464e;
+      line-height: 1.65;
     }
 
-    .field input, .field select, .field textarea {
+    .bot .bubble {
+      color: #62464d;
+      border: 1px solid #f0e2e1;
+      border-top-left-radius: 5px;
+      background: #fff;
+      box-shadow: 0 4px 13px rgba(95,57,66,.035);
+    }
+
+    .user .bubble {
+      color: white;
+      border-top-right-radius: 5px;
+      background: linear-gradient(135deg, #bd7b85, #9d5864);
+      box-shadow: 0 4px 12px rgba(145,77,90,.12);
+    }
+
+    .bubble strong {
+      color: inherit;
+    }
+
+    .bubble-time {
       display: block;
+      margin-top: 5px;
+      opacity: .63;
+      font-size: 10px;
+      text-align: right;
+    }
+
+    .typing-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 15px 17px;
+      border: 1px solid #f0e2e1;
+      border-radius: 17px;
+      border-top-left-radius: 5px;
+      background: white;
+    }
+
+    .typing-bubble span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--rose);
+      animation: typing 1s infinite ease-in-out;
+    }
+
+    .typing-bubble span:nth-child(2) {
+      animation-delay: .15s;
+    }
+
+    .typing-bubble span:nth-child(3) {
+      animation-delay: .3s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* Opções enviadas pelo chatbot */
+
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: -3px 0 18px 2px;
+      animation: messageIn .25s ease both;
+    }
+
+    .quick-reply {
+      max-width: 100%;
+      padding: 11px 15px;
+      border: 1px solid #e7c7cc;
+      border-radius: 13px;
+      color: var(--rose-dark);
+      background: #fff;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .quick-reply:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--rose);
+      background: #fff4f5;
+      box-shadow: 0 5px 14px rgba(183,110,121,.1);
+    }
+
+    .quick-reply.gold {
+      border-color: #d9bd7b;
+      color: #674b1f;
+      background: linear-gradient(135deg, #fff9e9, #f7e9c6);
+    }
+
+    .quick-reply.selected {
+      border-color: var(--rose);
+      background: var(--rose-light);
+    }
+
+    .quick-reply:disabled {
+      cursor: default;
+      opacity: .45;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
       width: 100%;
-      padding: 13px 14px;
+      margin: -3px 0 18px;
+      animation: messageIn .25s ease both;
+    }
+
+    .option-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 0;
+      min-height: 105px;
+      padding: 14px;
+      text-align: left;
+      border: 1px solid #eadadd;
+      border-radius: 15px;
       color: var(--text);
+      background: white;
+      transition: .2s ease;
+    }
+
+    .option-card:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+      background: linear-gradient(145deg, #fff, #fff8f0);
+      box-shadow: 0 7px 17px rgba(197,161,91,.1);
+    }
+
+    .option-icon {
+      color: var(--gold);
+      font-size: 19px;
+    }
+
+    .option-card strong {
+      color: var(--rose-dark);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .option-card small {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .option-card .option-price {
+      margin-top: auto;
+      color: var(--rose-dark);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .option-card.selected {
+      border-color: var(--rose);
+      background: #fff4f5;
+      box-shadow: 0 0 0 1px var(--rose);
+    }
+
+    .option-card:disabled {
+      opacity: .45;
+    }
+
+    .date-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      margin: -3px 0 18px;
+    }
+
+    .date-option {
+      min-width: 0;
+      padding: 12px 5px;
       border: 1px solid #eadadd;
       border-radius: 13px;
+      color: #62464d;
+      background: white;
+      text-align: center;
+      transition: .2s ease;
+    }
+
+    .date-option:hover:not(:disabled),
+    .date-option.selected {
+      border-color: var(--rose);
+      background: #fff3f5;
+      box-shadow: 0 4px 12px rgba(183,110,121,.08);
+    }
+
+    .date-option strong,
+    .date-option span {
+      display: block;
+    }
+
+    .date-option strong {
+      font-size: 19px;
+    }
+
+    .date-option span {
+      font-size: 10px;
+      text-transform: capitalize;
+      color: var(--muted);
+    }
+
+    .date-option .date-month {
+      margin-top: 4px;
+      color: var(--rose-dark);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .date-group {
+      grid-column: 1 / -1;
+      margin-top: 5px;
+      color: #76515a;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .date-group::after {
+      content: "";
+      display: block;
+      height: 1px;
+      margin-top: 7px;
+      background: #f0e1df;
+    }
+
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      margin: -3px 0 18px;
+    }
+
+    .time-option {
+      padding: 11px 3px;
+      border: 1px solid #eadadd;
+      border-radius: 11px;
+      color: #704c55;
+      background: white;
+      font-size: 12px;
+      font-weight: 900;
+      transition: .2s ease;
+    }
+
+    .time-option:hover:not(:disabled),
+    .time-option.selected {
+      color: white;
+      border-color: var(--rose);
+      background: var(--rose);
+    }
+
+    /* Campo de conversa */
+
+    .chat-composer {
+      padding: 15px 18px 17px;
+      border-top: 1px solid #f0e4e3;
+      background: #fff;
+    }
+
+    .composer-form {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .composer-field {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .composer-field label {
+      display: block;
+      margin-bottom: 5px;
+      color: #79545d;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .composer-input {
+      display: block;
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid #eadadd;
+      border-radius: 14px;
       outline: none;
+      color: var(--text);
       background: #fffdfc;
       transition: border .2s, box-shadow .2s;
     }
 
-    .field textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .field input:focus, .field select:focus, .field textarea:focus {
+    .composer-input:focus {
       border-color: var(--rose);
-      box-shadow: 0 0 0 3px rgba(183,110,121,.12);
+      box-shadow: 0 0 0 3px rgba(183,110,121,.1);
     }
 
-    .field small {
-      display: block;
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 12px;
+    .composer-input:disabled {
+      background: #f8f3f2;
     }
 
-    .choice-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .choice-card {
-      padding: 17px 14px;
-      text-align: left;
-      border: 1px solid #eadadd;
-      border-radius: 15px;
-      background: #fff;
-      color: var(--text);
-      transition: .2s ease;
-    }
-
-    .choice-card:hover, .choice-card.selected {
-      border-color: var(--rose);
-      background: #fff6f6;
-      box-shadow: 0 5px 16px rgba(183,110,121,.09);
-      transform: translateY(-1px);
-    }
-
-    .choice-card strong {
-      display: block;
-      color: var(--rose-dark);
-      margin-bottom: 5px;
-    }
-
-    .choice-card span {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .service-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      min-height: 135px;
-      padding: 17px;
-      text-align: left;
-      border: 1px solid #eadadd;
-      border-radius: 16px;
-      background: #fff;
-      color: var(--text);
-      transition: .2s ease;
-    }
-
-    .service-card:hover, .service-card.selected {
-      border-color: var(--gold);
-      background: linear-gradient(145deg, #fff, #fff8f0);
-      box-shadow: 0 8px 22px rgba(197,161,91,.12);
-      transform: translateY(-2px);
-    }
-
-    .service-card.selected::after {
-      content: "✓";
-      position: absolute;
-      right: 12px;
-      top: 12px;
-      width: 23px;
-      height: 23px;
+    .send-button {
       display: grid;
       place-items: center;
-      color: white;
-      background: var(--rose);
-      border-radius: 50%;
-      font-size: 12px;
-    }
-
-    .service-icon {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-
-    .service-card strong {
-      padding-right: 13px;
-      color: #63444b;
-      font-size: 14px;
-    }
-
-    .service-card .service-meta {
-      margin-top: auto;
-      padding-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .service-card .price {
-      color: var(--rose-dark);
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .date-groups {
-      display: grid;
-      gap: 19px;
-    }
-
-    .date-group-title {
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      color: #76515a;
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .date-group-title::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #f0e1df;
-    }
-
-    .date-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 9px;
-    }
-
-    .date-button {
-      padding: 12px 5px;
-      border: 1px solid #ebdfe0;
-      border-radius: 13px;
-      text-align: center;
-      background: #fff;
-      color: #5f464c;
-      transition: .2s;
-    }
-
-    .date-button strong, .date-button span {
-      display: block;
-    }
-
-    .date-button strong {
-      font-size: 19px;
-      line-height: 1.3;
-    }
-
-    .date-button span {
-      margin-top: 3px;
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: capitalize;
-    }
-
-    .date-button:hover, .date-button.selected {
-      border-color: var(--rose);
-      color: var(--rose-dark);
-      background: #fff4f5;
-      box-shadow: 0 4px 12px rgba(183,110,121,.10);
-    }
-
-    .date-button.selected {
-      outline: 1px solid var(--rose);
-    }
-
-    .times-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 9px;
-    }
-
-    .time-button {
-      padding: 11px 5px;
-      border: 1px solid #eadadd;
-      border-radius: 11px;
-      color: #704c55;
-      background: #fff;
-      font-weight: 700;
-      font-size: 13px;
-      transition: .2s;
-    }
-
-    .time-button:hover, .time-button.selected {
-      color: #fff;
-      background: var(--rose);
-      border-color: var(--rose);
-    }
-
-    .empty-state {
-      padding: 20px;
-      border: 1px dashed #e4c9cc;
-      border-radius: 14px;
-      text-align: center;
-      color: var(--muted);
-      background: #fffafa;
-      font-size: 13px;
-    }
-
-    .info-box {
-      padding: 13px 15px;
-      margin-bottom: 17px;
-      border-radius: 12px;
-      color: #79545d;
-      background: #fff4f3;
-      border: 1px solid #f0dfe0;
-      font-size: 13px;
-    }
-
-    .message {
-      display: none;
-      padding: 13px 15px;
-      margin-bottom: 18px;
-      border-radius: 12px;
-      font-size: 13px;
-    }
-
-    .message.show {
-      display: block;
-      animation: fadeIn .2s ease;
-    }
-
-    .message.error {
-      color: #8b2f3c;
-      background: #fff0f1;
-      border: 1px solid #f2cdd2;
-    }
-
-    .message.success {
-      color: #356848;
-      background: #eff9f1;
-      border: 1px solid #cfe9d5;
-    }
-
-    .message.info {
-      color: #79545d;
-      background: #fff7f2;
-      border: 1px solid #f0dfd5;
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 23px;
-    }
-
-    .btn {
-      min-height: 46px;
-      padding: 12px 19px;
+      width: 47px;
+      height: 47px;
+      flex: 0 0 47px;
       border: 0;
-      border-radius: 13px;
-      font-weight: 800;
-      transition: transform .2s, box-shadow .2s, opacity .2s;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      box-shadow: 0 5px 12px rgba(145,77,90,.18);
+      font-size: 19px;
+      transition: .2s;
     }
 
-    .btn:hover:not(:disabled) {
+    .send-button:hover:not(:disabled) {
       transform: translateY(-1px);
     }
 
-    .btn-primary {
-      color: #fff;
-      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
-      box-shadow: 0 7px 17px rgba(145,77,90,.18);
+    .send-button:disabled {
+      opacity: .4;
     }
 
-    .btn-secondary {
-      color: #79545d;
-      border: 1px solid #eadadd;
-      background: #fff;
+    .composer-hint {
+      margin-top: 8px;
+      color: #a08e92;
+      font-size: 10px;
     }
 
-    .btn-gold {
-      color: #60451d;
-      background: linear-gradient(135deg, #f1dfad, #d1b16a);
+    .chat-tools {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
     }
 
-    .btn-full {
-      width: 100%;
+    .text-tool {
+      padding: 3px 0;
+      border: 0;
+      color: #94717a;
+      background: transparent;
+      font-size: 11px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
 
-    .summary-title {
+    .text-tool:hover {
+      color: var(--rose-dark);
+    }
+
+    /* Resumo lateral */
+
+    .side-card {
+      position: sticky;
+      top: 18px;
+      padding: 22px;
+    }
+
+    .side-title {
       display: flex;
       align-items: center;
       gap: 9px;
+      margin-bottom: 8px;
       font-family: Georgia, "Times New Roman", serif;
       color: #593b43;
       font-size: 22px;
-      margin-bottom: 17px;
+    }
+
+    .side-subtitle {
+      margin-bottom: 15px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .summary-item {
@@ -622,66 +752,49 @@
       border-bottom: 1px solid #f1e7e5;
     }
 
-    .summary-item:last-child {
-      border-bottom: 0;
-    }
-
     .summary-label {
       margin-bottom: 4px;
       color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 10px;
+      font-weight: 900;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
 
     .summary-value {
-      color: #62454c;
-      font-size: 14px;
-      font-weight: 700;
       overflow-wrap: anywhere;
+      color: #62454c;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     .summary-price {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding-top: 18px;
-      margin-top: 8px;
-      border-top: 1px solid #eadadd;
+      gap: 8px;
+      padding-top: 17px;
+      margin-top: 5px;
       color: var(--rose-dark);
       font-weight: 800;
     }
 
+    .summary-price span {
+      font-size: 12px;
+    }
+
     .summary-price strong {
-      font-size: 21px;
-    }
-
-    .progress {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 25px;
-    }
-
-    .progress span {
-      flex: 1;
-      height: 4px;
-      border-radius: 10px;
-      background: #f0e5e4;
-      transition: background .25s;
-    }
-
-    .progress span.done {
-      background: linear-gradient(90deg, var(--rose), var(--gold));
+      font-size: 20px;
     }
 
     .side-note {
-      margin-top: 18px;
       padding: 14px;
-      border-radius: 13px;
-      background: #fff8ef;
+      margin-top: 18px;
+      border: 1px solid #f0e4ce;
+      border-radius: 14px;
       color: #81643c;
-      font-size: 12px;
+      background: #fff8ef;
+      font-size: 11px;
     }
 
     .side-note strong {
@@ -689,115 +802,185 @@
       margin-bottom: 4px;
     }
 
-    .footer {
-      padding: 24px 8px 10px;
-      text-align: center;
-      color: #a08e92;
-      font-size: 11px;
-      letter-spacing: .5px;
+    .side-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 7px 10px;
+      border-radius: 20px;
+      color: #805b36;
+      background: #fff5e2;
+      font-size: 10px;
+      font-weight: 800;
     }
 
-    .footer span {
-      color: var(--rose);
+    .side-status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
     }
 
-    /* Modal de sucesso */
+    /* Modal de confirmação */
+
     .modal {
       position: fixed;
       inset: 0;
-      z-index: 999;
+      z-index: 1000;
       display: none;
       place-items: center;
+      overflow-y: auto;
       padding: 20px;
-      background: rgba(54, 34, 40, .57);
-      backdrop-filter: blur(7px);
+      background: rgba(54,34,40,.66);
+      backdrop-filter: blur(8px);
     }
 
     .modal.open {
       display: grid;
-      animation: backdropIn .25s ease;
-    }
-
-    @keyframes backdropIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      animation: fadeIn .25s ease;
     }
 
     .modal-card {
       position: relative;
-      width: min(470px, 100%);
+      width: min(590px, 100%);
       overflow: hidden;
-      padding: 36px 27px 28px;
+      padding: 38px 30px 30px;
       border: 1px solid #e6d0a0;
-      border-radius: 27px;
+      border-radius: 30px;
       text-align: center;
-      background: linear-gradient(160deg, #fff, #fff7f4);
-      box-shadow: 0 30px 100px rgba(0,0,0,.2);
-      animation: modalPop .5s cubic-bezier(.18,.89,.32,1.28);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(197,161,91,.14), transparent 42%),
+        linear-gradient(160deg, #fff, #fff7f4);
+      box-shadow: 0 30px 100px rgba(0,0,0,.25);
+      animation: modalPop .45s cubic-bezier(.18,.89,.32,1.15);
     }
 
     @keyframes modalPop {
-      from { opacity: 0; transform: scale(.75) translateY(25px); }
+      from { opacity: 0; transform: scale(.83) translateY(22px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .success-icon {
-      position: relative;
-      width: 88px;
-      height: 88px;
       display: grid;
       place-items: center;
-      margin: 0 auto 19px;
+      width: 94px;
+      height: 94px;
+      margin: 0 auto 23px;
       border-radius: 50%;
-      color: #fff;
-      font-size: 39px;
+      color: white;
       background: linear-gradient(145deg, #d6b56e, #b68a3d);
-      box-shadow: 0 0 0 9px #f8edda, 0 0 0 10px #e9d6ac;
-      animation: iconPulse 1.2s ease-in-out infinite alternate;
+      box-shadow: 0 0 0 9px #f8edda, 0 0 0 11px #e9d6ac;
+      font-size: 45px;
+      animation: iconPulse 1.3s ease-in-out infinite alternate;
     }
 
     @keyframes iconPulse {
-      from { box-shadow: 0 0 0 7px #f8edda, 0 0 0 8px #e9d6ac; }
-      to { box-shadow: 0 0 0 12px #f8edda, 0 0 0 13px #e9d6ac; }
+      from { box-shadow: 0 0 0 7px #f8edda, 0 0 0 9px #e9d6ac; }
+      to { box-shadow: 0 0 0 12px #f8edda, 0 0 0 14px #e9d6ac; }
+    }
+
+    .modal-kicker {
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
     .modal-card h2 {
-      margin-bottom: 9px;
+      margin-bottom: 12px;
       font-family: Georgia, "Times New Roman", serif;
       color: var(--rose-dark);
-      font-size: 31px;
+      font-size: clamp(28px, 5vw, 38px);
       font-weight: 600;
+      line-height: 1.15;
     }
 
-    .modal-card p {
+    .modal-card > p {
       color: var(--muted);
       font-size: 14px;
     }
 
     .modal-summary {
-      margin: 21px 0;
-      padding: 15px;
-      border-radius: 15px;
+      margin: 24px 0;
+      padding: 18px;
       border: 1px solid #efdfd6;
-      background: rgba(255,255,255,.8);
+      border-radius: 17px;
+      background: rgba(255,255,255,.86);
       text-align: left;
     }
 
-    .modal-summary div {
+    .modal-summary-row {
       display: flex;
       justify-content: space-between;
-      gap: 14px;
-      padding: 7px 0;
+      gap: 15px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f4eae7;
       font-size: 13px;
     }
 
-    .modal-summary span {
+    .modal-summary-row:last-child {
+      border-bottom: 0;
+    }
+
+    .modal-summary-row span {
       color: var(--muted);
     }
 
-    .modal-summary strong {
+    .modal-summary-row strong {
+      max-width: 65%;
+      overflow-wrap: anywhere;
       color: #65444c;
       text-align: right;
+    }
+
+    .protocol {
+      padding: 12px;
+      margin-top: 15px;
+      border: 1px dashed #d9bd7b;
+      border-radius: 13px;
+      color: #775b2f;
+      background: #fffaf0;
+      font-size: 12px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 47px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 13px;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      box-shadow: 0 7px 17px rgba(145,77,90,.18);
+    }
+
+    .btn-secondary {
+      color: #79545d;
+      border: 1px solid #eadadd;
+      background: white;
+    }
+
+    .btn-full {
+      flex: 1;
+      width: 100%;
     }
 
     .confetti {
@@ -807,34 +990,40 @@
       height: 14px;
       border-radius: 2px;
       opacity: 0;
-      animation: confettiFall 1.8s ease-out forwards;
+      pointer-events: none;
+      animation: confettiFall 2s ease-out forwards;
     }
 
     @keyframes confettiFall {
       0% { opacity: 1; transform: translateY(-10px) rotate(0); }
-      100% { opacity: 0; transform: translateY(420px) rotate(540deg); }
+      100% { opacity: 0; transform: translateY(450px) rotate(540deg); }
     }
 
-    .loading {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
+    .footer {
+      padding: 24px 8px 10px;
+      color: #a08e92;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: .5px;
     }
 
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,.5);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
+    .footer span {
+      color: var(--rose);
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
     }
 
-    @media (max-width: 850px) {
+    @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
       }
@@ -844,36 +1033,46 @@
         order: -1;
       }
 
-      .side-summary-content {
+      .side-card-content {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0 18px;
+        gap: 0 20px;
       }
 
       .summary-price {
         grid-column: 1 / -1;
       }
+
+      .side-note,
+      .side-status {
+        display: none;
+      }
+
+      .chat-body {
+        height: min(610px, 65vh);
+      }
     }
 
     @media (max-width: 600px) {
       .page {
-        width: min(100% - 20px, 1120px);
-        padding-top: 14px;
+        width: calc(100% - 18px);
+        padding-top: 12px;
       }
 
       .topbar {
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .logo-frame {
-        width: 61px;
-        height: 61px;
-        flex-basis: 61px;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 15px;
       }
 
       .brand {
-        gap: 10px;
+        gap: 9px;
+      }
+
+      .logo-frame {
+        width: 70px;
+        height: 70px;
+        flex-basis: 70px;
       }
 
       .brand-copy h1 {
@@ -881,67 +1080,178 @@
       }
 
       .brand-copy p {
-        font-size: 9px;
+        max-width: 180px;
+        font-size: 8px;
         letter-spacing: .7px;
       }
 
       .developer-logo {
-        width: 78px;
-        max-height: 45px;
+        width: 82px;
+        max-height: 48px;
       }
 
       .hero {
-        padding: 25px 20px;
-        border-radius: 23px;
+        padding: 22px 17px;
+        border-radius: 22px;
+        margin-bottom: 14px;
       }
 
       .hero::after {
-        right: 10px;
-        font-size: 70px;
+        right: 7px;
+        font-size: 65px;
       }
 
       .hero h2 {
-        font-size: 31px;
+        font-size: 29px;
       }
 
-      .main-card {
-        padding: 20px 16px;
+      .hero p {
+        max-width: 92%;
+        font-size: 12px;
+      }
+
+      .hero-pills {
+        gap: 6px;
+      }
+
+      .pill {
+        padding: 6px 8px;
+        font-size: 9px;
+      }
+
+      .layout {
+        gap: 13px;
+      }
+
+      .chat-header {
+        padding: 14px;
+      }
+
+      .assistant-avatar {
+        width: 43px;
+        height: 43px;
+        flex-basis: 43px;
+      }
+
+      .chat-header h3 {
+        font-size: 14px;
+      }
+
+      .chat-header p {
+        font-size: 10px;
+      }
+
+      .online-indicator {
+        font-size: 9px;
+      }
+
+      .chat-notice {
+        padding: 9px;
+        font-size: 10px;
+      }
+
+      .chat-body {
+        height: 57vh;
+        min-height: 360px;
+        max-height: 570px;
+        padding: 17px 12px 12px;
+      }
+
+      .bubble {
+        max-width: 94%;
+        padding: 11px 12px;
+        font-size: 12px;
+      }
+
+      .option-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .option-card {
+        min-height: 88px;
+      }
+
+      .date-options {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .time-options {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .quick-reply {
+        padding: 10px 12px;
+        font-size: 11px;
+      }
+
+      .chat-composer {
+        padding: 12px;
+      }
+
+      .composer-input {
+        min-height: 44px;
+        padding: 11px;
+        font-size: 13px;
+      }
+
+      .send-button {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
       }
 
       .side-card {
-        padding: 18px;
+        padding: 16px;
       }
 
-      .services-grid {
-        grid-template-columns: 1fr;
+      .side-title {
+        font-size: 20px;
       }
 
-      .date-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .times-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .side-summary-content {
+      .side-card-content {
         display: block;
       }
 
-      .choice-row {
-        grid-template-columns: 1fr;
+      .summary-item {
+        padding: 9px 0;
       }
 
-      .buttons .btn {
-        flex: 1 1 auto;
+      .summary-value {
+        font-size: 12px;
+      }
+
+      .summary-price strong {
+        font-size: 18px;
+      }
+
+      .modal {
+        padding: 12px;
       }
 
       .modal-card {
-        padding: 30px 19px 23px;
+        padding: 31px 17px 20px;
+        border-radius: 23px;
       }
 
-      .modal-card h2 {
-        font-size: 27px;
+      .success-icon {
+        width: 75px;
+        height: 75px;
+        font-size: 35px;
+      }
+
+      .modal-summary {
+        padding: 12px;
+      }
+
+      .modal-summary-row {
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
       }
     }
 
@@ -958,231 +1268,124 @@
 
 <body>
   <div class="page">
+
     <header class="topbar">
       <div class="brand">
         <div class="logo-frame">
           <div class="logo-inner">
-            <img src="/logo.png" alt="Logo Taiany Trindade"
-                 onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-family:Georgia;font-size:22px;color:#914d5a&quot;>TT</span>';">
+            <img
+              src="/logo.png"
+              alt="Logo Taiany Trindade"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<span style=&quot;font-family:Georgia;font-size:25px;color:#914d5a&quot;>TT</span>';"
+            >
           </div>
         </div>
+
         <div class="brand-copy">
           <h1>Taiany Trindade</h1>
           <p>Nail Designer · Agendamento</p>
         </div>
       </div>
 
-      <img
-        class="developer-logo"
-        src="/logo-desenvolvimento.png"
-        alt="Desenvolvimento"
-        onerror="this.style.display='none';"
-      >
+      <div class="developer-brand">
+        <img
+          class="developer-logo"
+          src="/logo-desenvolvimento.png"
+          alt="Logo de desenvolvimento"
+          onerror="this.style.display='none';"
+        >
+      </div>
     </header>
 
     <section class="hero">
       <div class="eyebrow">Seu momento de beleza</div>
       <h2>Unhas impecáveis,<br><span>cuidado em cada detalhe.</span></h2>
       <p>
-        Escolha seu procedimento, encontre o melhor horário e faça seu
-        agendamento de forma simples e prática. Será um prazer receber você!
+        Conheça nossa secretária virtual. Ela vai ajudar você a escolher seu
+        procedimento, consultar a agenda e solicitar seu horário de forma simples.
       </p>
+
       <div class="hero-pills">
         <span class="pill">✦ Atendimento personalizado</span>
-        <span class="pill">✧ Agendamento online</span>
-        <span class="pill">♡ Um momento para você</span>
+        <span class="pill">✧ Agenda online</span>
+        <span class="pill">♡ Cuidado em cada detalhe</span>
       </div>
     </section>
 
     <div class="layout">
-      <main class="main-card">
-        <div class="progress" aria-label="Progresso do agendamento">
-          <span class="done"></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
+
+      <main class="chat-card">
+        <header class="chat-header">
+          <div class="assistant-avatar" aria-hidden="true">TT</div>
+
+          <div class="chat-header-copy">
+            <h3>Secretária Virtual Taiany</h3>
+            <p>Agendamentos e informações</p>
+          </div>
+
+          <div class="online-indicator">Assistente virtual</div>
+        </header>
+
+        <div class="chat-notice">
+          ✦ Você está conversando com a assistente virtual de agendamento.
         </div>
 
-        <div id="message" class="message" role="status" aria-live="polite"></div>
+        <div
+          id="chatMessages"
+          class="chat-body"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions text"
+          aria-label="Conversa com a secretária virtual"
+        ></div>
 
-        <!-- ETAPA 1 -->
-        <section class="step active" data-step="1">
-          <div class="section-heading">
-            <div class="step-number">1</div>
-            <div>
-              <h3>Vamos começar?</h3>
-              <p>Primeiro, informe seu WhatsApp para identificarmos seu cadastro.</p>
+        <div class="chat-composer">
+          <form id="composerForm" class="composer-form">
+            <div class="composer-field">
+              <label id="inputLabel" for="chatInput">Sua mensagem</label>
+              <input
+                id="chatInput"
+                class="composer-input"
+                type="text"
+                placeholder="Selecione uma opção acima"
+                autocomplete="off"
+                maxlength="500"
+                disabled
+              >
             </div>
+
+            <button
+              id="sendButton"
+              class="send-button"
+              type="submit"
+              aria-label="Enviar mensagem"
+              disabled
+            >➤</button>
+          </form>
+
+          <div id="composerHint" class="composer-hint">
+            Para começar, selecione uma das opções da secretária.
           </div>
 
-          <div class="field">
-            <label for="telefone">WhatsApp com DDD</label>
-            <input id="telefone" type="tel" inputmode="tel"
-                   autocomplete="tel" placeholder="(17) 99999-9999"
-                   maxlength="16" required>
-            <small>Seu número será usado para identificar seu cadastro e evitar duplicidades.</small>
-          </div>
-
-          <div class="choice-row">
-            <button type="button" class="choice-card" id="existingClient">
-              <strong>♡ Já sou cliente</strong>
-              <span>Quero continuar com meu cadastro.</span>
+          <div class="chat-tools">
+            <button type="button" class="text-tool" id="restartChat">
+              Reiniciar conversa
             </button>
-            <button type="button" class="choice-card" id="newClient">
-              <strong>✦ Sou nova cliente</strong>
-              <span>Quero fazer meu primeiro agendamento.</span>
+            <button type="button" class="text-tool" id="backChat" hidden>
+              Voltar uma etapa
             </button>
           </div>
-
-          <div class="info-box">
-            Se você já tem cadastro, use o mesmo WhatsApp registrado anteriormente.
-          </div>
-
-          <div class="buttons">
-            <button type="button" class="btn btn-primary btn-full" id="continueClient">
-              Continuar
-            </button>
-          </div>
-        </section>
-
-        <!-- ETAPA 2 -->
-        <section class="step" data-step="2">
-          <div class="section-heading">
-            <div class="step-number">2</div>
-            <div>
-              <h3>Seus dados</h3>
-              <p>Precisamos de algumas informações para identificar seu agendamento.</p>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="nome">Nome completo</label>
-            <input id="nome" type="text" autocomplete="name"
-                   placeholder="Digite seu nome completo" maxlength="120" required>
-          </div>
-
-          <div class="field">
-            <label for="email">E-mail <span style="font-weight:400;color:#9b898e">(opcional)</span></label>
-            <input id="email" type="email" autocomplete="email"
-                   placeholder="voce@email.com" maxlength="160">
-          </div>
-
-          <div class="info-box">
-            Seu WhatsApp será o identificador principal. Se já existir cadastro com
-            esse número, o sistema deverá reutilizá-lo, em vez de criar outro cliente.
-          </div>
-
-          <div class="buttons">
-            <button type="button" class="btn btn-secondary" data-back="1">Voltar</button>
-            <button type="button" class="btn btn-primary" id="saveClientData">Continuar</button>
-          </div>
-        </section>
-
-        <!-- ETAPA 3 -->
-        <section class="step" data-step="3">
-          <div class="section-heading">
-            <div class="step-number">3</div>
-            <div>
-              <h3>Escolha seu procedimento</h3>
-              <p>Selecione o serviço desejado para consultar a agenda correta.</p>
-            </div>
-          </div>
-
-          <div id="services" class="services-grid">
-            <div class="empty-state">Carregando serviços disponíveis...</div>
-          </div>
-
-          <div class="buttons">
-            <button type="button" class="btn btn-secondary" data-back="2">Voltar</button>
-            <button type="button" class="btn btn-primary" id="continueService">Escolher data</button>
-          </div>
-        </section>
-
-        <!-- ETAPA 4 -->
-        <section class="step" data-step="4">
-          <div class="section-heading">
-            <div class="step-number">4</div>
-            <div>
-              <h3>Escolha o melhor dia</h3>
-              <p>As datas estão organizadas por período para facilitar sua escolha.</p>
-            </div>
-          </div>
-
-          <div id="dates" class="date-groups">
-            <div class="empty-state">Consultando a agenda...</div>
-          </div>
-
-          <div class="buttons">
-            <button type="button" class="btn btn-secondary" data-back="3">Voltar</button>
-            <button type="button" class="btn btn-primary" id="continueDate">Escolher horário</button>
-          </div>
-        </section>
-
-        <!-- ETAPA 5 -->
-        <section class="step" data-step="5">
-          <div class="section-heading">
-            <div class="step-number">5</div>
-            <div>
-              <h3>Horários disponíveis</h3>
-              <p id="selectedDateLabel">Selecione um horário para continuar.</p>
-            </div>
-          </div>
-
-          <div id="times" class="times-grid">
-            <div class="empty-state">Selecione uma data primeiro.</div>
-          </div>
-
-          <div class="field" style="margin-top:22px">
-            <label for="observacoes">Observações <span style="font-weight:400;color:#9b898e">(opcional)</span></label>
-            <textarea id="observacoes" maxlength="500"
-              placeholder="Deseja informar algum detalhe sobre o procedimento?"></textarea>
-          </div>
-
-          <div class="buttons">
-            <button type="button" class="btn btn-secondary" data-back="4">Voltar</button>
-            <button type="button" class="btn btn-primary" id="continueTime">Revisar agendamento</button>
-          </div>
-        </section>
-
-        <!-- ETAPA 6 -->
-        <section class="step" data-step="6">
-          <div class="section-heading">
-            <div class="step-number">6</div>
-            <div>
-              <h3>Está tudo certo?</h3>
-              <p>Confira os dados antes de confirmar sua solicitação.</p>
-            </div>
-          </div>
-
-          <div class="info-box">
-            A confirmação depende da validação final da disponibilidade no servidor.
-            Se outra pessoa reservar o horário antes de você, será necessário escolher outro.
-          </div>
-
-          <div id="review" class="modal-summary"></div>
-
-          <div class="field">
-            <label>
-              <input id="acceptTerms" type="checkbox" style="width:auto;display:inline-block;margin-right:7px">
-              Confirmo que os dados acima estão corretos.
-            </label>
-          </div>
-
-          <div class="buttons">
-            <button type="button" class="btn btn-secondary" data-back="5">Voltar</button>
-            <button type="button" class="btn btn-gold" id="confirmBooking">Confirmar agendamento</button>
-          </div>
-        </section>
+        </div>
       </main>
 
       <aside class="side-card">
-        <h3 class="summary-title">✧ Seu agendamento</h3>
+        <h3 class="side-title">✧ Seu agendamento</h3>
+        <p class="side-subtitle">A secretária atualiza este resumo durante a conversa.</p>
 
-        <div class="side-summary-content">
+        <div class="side-card-content">
           <div class="summary-item">
             <div class="summary-label">Cliente</div>
-            <div class="summary-value" id="summaryName">Aguardando seus dados</div>
+            <div class="summary-value" id="summaryName">Aguardando identificação</div>
           </div>
 
           <div class="summary-item">
@@ -1192,7 +1395,7 @@
 
           <div class="summary-item">
             <div class="summary-label">Procedimento</div>
-            <div class="summary-value" id="summaryService">Nenhum selecionado</div>
+            <div class="summary-value" id="summaryService">A escolher</div>
           </div>
 
           <div class="summary-item">
@@ -1213,34 +1416,57 @@
 
         <div class="side-note">
           <strong>♡ Um cuidado especial</strong>
-          Reserve alguns minutos para conferir as informações. A agenda apresenta
-          os horários disponibilizados pelo sistema.
+          Os horários são consultados no sistema. A solicitação só será considerada
+          registrada após a resposta positiva do servidor.
         </div>
+
+        <div class="side-status" id="sideStatus">Agendamento não confirmado</div>
       </aside>
+
     </div>
 
     <footer class="footer">
-      TA I A N Y   T R I N D A D E <span>✦</span> NAIL DESIGNER
+      T A I A N Y &nbsp; T R I N D A D E <span>✦</span> NAIL DESIGNER
       <br>
       <span>Agendamento online</span>
     </footer>
   </div>
 
-  <!-- POP-UP DE SUCESSO -->
-  <div class="modal" id="successModal" role="dialog"
-       aria-modal="true" aria-labelledby="successTitle">
+  <!-- CONFIRMAÇÃO FINAL -->
+  <div
+    class="modal"
+    id="successModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="successTitle"
+    aria-describedby="successMessage"
+  >
     <div class="modal-card" id="modalCard">
-      <div class="success-icon">✓</div>
-      <h2 id="successTitle">Agendamento enviado!</h2>
+      <div class="success-icon" aria-hidden="true">✓</div>
+
+      <div class="modal-kicker">Taiany Trindade · Nail Designer</div>
+
+      <h2 id="successTitle">Agendamento registrado!</h2>
+
       <p id="successMessage">
-        Sua solicitação foi registrada. Confira os detalhes abaixo.
+        Sua solicitação foi registrada com sucesso.
       </p>
 
       <div class="modal-summary" id="successDetails"></div>
 
-      <button type="button" class="btn btn-primary btn-full" id="closeSuccess">
-        Finalizar
-      </button>
+      <div class="protocol" id="successProtocol">
+        Guarde os detalhes do seu agendamento.
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary btn-full" id="closeSuccess">
+          Finalizar atendimento
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-full" id="newBooking">
+          Fazer outro agendamento
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1248,30 +1474,28 @@
     "use strict";
 
     /*
-      API esperada:
+      API utilizada:
       GET  /api/servicos
-      GET  /api/disponibilidade?dia=YYYY-MM-DD
+      GET  /api/cliente?telefone=DDDNUMERO
       GET  /api/horarios?data=YYYY-MM-DD&servico_id=ID
+      POST /api/clientes
       POST /api/agendamentos
 
-      Para consultar clientes existentes de forma segura, o servidor também
-      precisa disponibilizar uma rota pública de consulta por WhatsApp, ou
-      realizar essa validação dentro do POST /api/agendamentos.
-
-      O navegador não acessa o Supabase diretamente e não guarda cadastro
-      no localStorage.
+      A lista de datas é montada consultando /api/horarios para cada dia.
+      A disponibilidade definitiva precisa ser validada pelo servidor
+      novamente no momento de registrar o agendamento.
     */
 
     const API = {
       services: "/api/servicos",
-      availability: "/api/disponibilidade",
-      times: "/api/horarios",
       clients: "/api/cliente",
+      createClient: "/api/clientes",
+      times: "/api/horarios",
       bookings: "/api/agendamentos"
     };
 
     const state = {
-      step: 1,
+      step: "welcome",
       clientType: null,
       clientExists: false,
       clientId: null,
@@ -1283,7 +1507,12 @@
       horario: "",
       observacoes: "",
       services: [],
-      bookingInProgress: false
+      dates: [],
+      times: [],
+      bookingInProgress: false,
+      clientSaved: false,
+      history: [],
+      requestToken: 0
     };
 
     const $ = (selector) => document.querySelector(selector);
@@ -1291,6 +1520,7 @@
 
     const money = (value) => {
       const number = Number(value || 0);
+
       return number.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL"
@@ -1314,28 +1544,50 @@
     function formatPhone(value) {
       let number = digits(value);
 
-      if (number.length > 11) number = number.slice(-11);
+      if (number.length > 11) {
+        number = number.slice(0, 11);
+      }
 
       if (number.length <= 2) return number;
+
       if (number.length <= 6) {
         return `(${number.slice(0, 2)}) ${number.slice(2)}`;
       }
+
       if (number.length <= 10) {
         return `(${number.slice(0, 2)}) ${number.slice(2, 6)}-${number.slice(6)}`;
       }
+
       return `(${number.slice(0, 2)}) ${number.slice(2, 7)}-${number.slice(7)}`;
     }
 
-    $("#telefone").addEventListener("input", (event) => {
-      event.target.value = formatPhone(event.target.value);
-    });
+    function saoPauloNowParts() {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+      }).formatToParts(new Date());
+
+      const values = {};
+
+      parts.forEach((part) => {
+        if (part.type !== "literal") {
+          values[part.type] = part.value;
+        }
+      });
+
+      return {
+        date: `${values.year}-${values.month}-${values.day}`,
+        minutes: Number(values.hour) * 60 + Number(values.minute)
+      };
+    }
 
     function todayISO() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const day = String(now.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
+      return saoPauloNowParts().date;
     }
 
     function dateFromISO(iso) {
@@ -1347,6 +1599,7 @@
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
+
       return `${year}-${month}-${day}`;
     }
 
@@ -1358,6 +1611,7 @@
 
     function formatDate(iso, includeYear = true) {
       if (!iso) return "A escolher";
+
       return dateFromISO(iso).toLocaleDateString("pt-BR", {
         weekday: "long",
         day: "2-digit",
@@ -1367,66 +1621,47 @@
     }
 
     function shortWeekday(iso) {
-      return dateFromISO(iso).toLocaleDateString("pt-BR", {
-        weekday: "short"
-      }).replace(".", "");
+      return dateFromISO(iso)
+        .toLocaleDateString("pt-BR", { weekday: "short" })
+        .replace(".", "");
     }
 
-    function isToday(iso) {
-      return iso === todayISO();
+    function dateOffset(iso) {
+      const start = dateFromISO(todayISO());
+      const target = dateFromISO(iso);
+
+      return Math.round((target - start) / 86400000);
     }
 
-    function showMessage(text, type = "info") {
-      const box = $("#message");
-      box.textContent = text;
-      box.className = `message show ${type}`;
-      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    function dateGroupTitle(iso) {
+      const offset = dateOffset(iso);
+
+      if (offset === 0) return "Hoje";
+      if (offset === 1) return "Amanhã";
+      if (offset <= 6) return "Próximos dias";
+      if (offset <= 13) return "Próxima semana";
+      if (offset <= 30) return "Próximas semanas";
+
+      return "Datas futuras";
     }
 
-    function clearMessage() {
-      const box = $("#message");
-      box.textContent = "";
-      box.className = "message";
-    }
+    function isTimeInPastToday(iso, time) {
+      if (iso !== todayISO()) return false;
 
-    async function apiRequest(url, options = {}) {
-      let response;
+      const parts = String(time).slice(0, 5).split(":");
 
-      try {
-        response = await fetch(url, {
-          ...options,
-          headers: {
-            "Accept": "application/json",
-            ...(options.body ? { "Content-Type": "application/json" } : {}),
-            ...(options.headers || {})
-          },
-          cache: "no-store"
-        });
-      } catch (error) {
-        throw new Error("Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.");
+      if (parts.length !== 2) return false;
+
+      const hours = Number(parts[0]);
+      const minutes = Number(parts[1]);
+
+      if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+        return false;
       }
 
-      const contentType = response.headers.get("content-type") || "";
-      let data;
+      const now = saoPauloNowParts();
 
-      if (contentType.includes("application/json")) {
-        data = await response.json().catch(() => ({}));
-      } else {
-        const raw = await response.text().catch(() => "");
-        data = { message: raw };
-      }
-
-      if (!response.ok) {
-        const message =
-          data?.message ||
-          data?.error ||
-          data?.erro ||
-          "Não foi possível concluir a operação.";
-
-        throw new Error(message);
-      }
-
-      return data;
+      return hours * 60 + minutes <= now.minutes;
     }
 
     function normalizeList(data) {
@@ -1436,6 +1671,7 @@
       if (Array.isArray(data?.horarios)) return data.horarios;
       if (Array.isArray(data?.disponibilidade)) return data.disponibilidade;
       if (Array.isArray(data?.results)) return data.results;
+
       return [];
     }
 
@@ -1454,528 +1690,1166 @@
       };
     }
 
+    function normalizeClientResponse(result) {
+      if (!result) {
+        return { exists: false, client: null };
+      }
+
+      if (
+        result.existe === false ||
+        result.encontrado === false ||
+        result.exists === false
+      ) {
+        return { exists: false, client: null };
+      }
+
+      const client = result.cliente ?? result.data ?? result;
+
+      if (
+        result.existe === true ||
+        result.encontrado === true ||
+        result.exists === true
+      ) {
+        return {
+          exists: true,
+          client: client || null
+        };
+      }
+
+      if (
+        client &&
+        typeof client === "object" &&
+        (client.id || client.nome || client.telefone)
+      ) {
+        return { exists: true, client };
+      }
+
+      return { exists: false, client: null };
+    }
+
+    function extractTime(item) {
+      if (typeof item === "string") return item;
+
+      return (
+        item.hora_inicio ??
+        item.horario ??
+        item.hora ??
+        item.inicio ??
+        ""
+      );
+    }
+
+    function isUnavailableResponse(error) {
+      return error.status === 400 || error.status === 404;
+    }
+
+    async function apiRequest(url, options = {}) {
+      let response;
+
+      try {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            Accept: "application/json",
+            ...(options.body ? { "Content-Type": "application/json" } : {}),
+            ...(options.headers || {})
+          },
+          cache: "no-store"
+        });
+      } catch {
+        throw new Error(
+          "Não consegui conectar ao servidor. Verifique sua internet e tente novamente."
+        );
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      let data;
+
+      if (contentType.includes("application/json")) {
+        data = await response.json().catch(() => ({}));
+      } else {
+        const raw = await response.text().catch(() => "");
+        data = { message: raw };
+      }
+
+      if (!response.ok) {
+        const message =
+          data?.message ||
+          data?.error ||
+          data?.erro ||
+          data?.details ||
+          "Não foi possível concluir essa etapa.";
+
+        const error = new Error(String(message).replace(/<[^>]*>/g, "").slice(0, 500));
+        error.status = response.status;
+        error.data = data;
+
+        throw error;
+      }
+
+      return data;
+    }
+
+    /* Interface de conversa */
+
+    function scrollChatToBottom() {
+      const chat = $("#chatMessages");
+
+      requestAnimationFrame(() => {
+        chat.scrollTop = chat.scrollHeight;
+      });
+    }
+
+    function addBubble(text, sender = "bot") {
+      const row = document.createElement("div");
+      row.className = `message-row ${sender}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      const time = document.createElement("span");
+      time.className = "bubble-time";
+      time.textContent = new Intl.DateTimeFormat("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "America/Sao_Paulo"
+      }).format(new Date());
+
+      bubble.appendChild(time);
+      row.appendChild(bubble);
+      $("#chatMessages").appendChild(row);
+
+      scrollChatToBottom();
+
+      return row;
+    }
+
+    function addTyping() {
+      const row = document.createElement("div");
+      row.className = "message-row bot";
+      row.id = "typingIndicator";
+
+      row.innerHTML = `
+        <div class="typing-bubble" aria-label="A secretária está respondendo">
+          <span></span><span></span><span></span>
+        </div>
+      `;
+
+      $("#chatMessages").appendChild(row);
+      scrollChatToBottom();
+    }
+
+    function removeTyping() {
+      $("#typingIndicator")?.remove();
+    }
+
+    function botSay(text) {
+      removeTyping();
+      addBubble(text, "bot");
+    }
+
+    function userSay(text) {
+      addBubble(text, "user");
+    }
+
+    function clearQuickReplies() {
+      $$(".quick-replies, .option-grid, .date-options, .time-options").forEach((element) => {
+        element.remove();
+      });
+    }
+
+    function renderQuickReplies(options, extraClass = "") {
+      clearQuickReplies();
+
+      const container = document.createElement("div");
+      container.className = `quick-replies ${extraClass}`.trim();
+
+      options.forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `quick-reply ${option.gold ? "gold" : ""}`.trim();
+        button.textContent = option.label;
+
+        button.addEventListener("click", async () => {
+          if (button.disabled) return;
+
+          $$(".quick-reply").forEach((item) => {
+            item.disabled = true;
+          });
+
+          userSay(option.label);
+
+          if (typeof option.action === "function") {
+            await option.action();
+          }
+        });
+
+        container.appendChild(button);
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+    }
+
+    function renderOptionCards(options, onSelect) {
+      clearQuickReplies();
+
+      const container = document.createElement("div");
+      container.className = "option-grid";
+
+      options.forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option-card";
+
+        const icon = document.createElement("span");
+        icon.className = "option-icon";
+        icon.textContent = option.icon || "✧";
+
+        const title = document.createElement("strong");
+        title.textContent = option.title;
+
+        const description = document.createElement("small");
+        description.textContent = option.description || "";
+
+        button.append(icon, title, description);
+
+        if (option.price !== undefined) {
+          const price = document.createElement("span");
+          price.className = "option-price";
+          price.textContent = money(option.price);
+          button.appendChild(price);
+        }
+
+        button.addEventListener("click", async () => {
+          $$(".option-card").forEach((item) => {
+            item.disabled = true;
+          });
+
+          button.classList.add("selected");
+          userSay(option.title);
+
+          await onSelect(option);
+        });
+
+        container.appendChild(button);
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+    }
+
+    function configureInput({
+      label = "Sua mensagem",
+      placeholder = "Digite aqui...",
+      type = "text",
+      enabled = true,
+      hint = ""
+    } = {}) {
+      const input = $("#chatInput");
+
+      $("#inputLabel").textContent = label;
+      input.type = type;
+      input.placeholder = placeholder;
+      input.disabled = !enabled;
+      input.value = "";
+      input.autocomplete = type === "tel"
+        ? "tel"
+        : type === "email"
+          ? "email"
+          : "off";
+
+      input.inputMode = type === "tel" ? "tel" : "text";
+      $("#sendButton").disabled = !enabled;
+      $("#composerHint").textContent = hint;
+
+      if (enabled) {
+        setTimeout(() => input.focus({ preventScroll: true }), 50);
+      }
+    }
+
     function updateSummary() {
-      $("#summaryName").textContent = state.nome || "Aguardando seus dados";
+      $("#summaryName").textContent = state.nome || "Aguardando identificação";
       $("#summaryPhone").textContent = state.telefone || "—";
-      $("#summaryService").textContent = state.servico?.nome || "Nenhum selecionado";
+      $("#summaryService").textContent = state.servico?.nome || "A escolher";
       $("#summaryDate").textContent = state.data ? formatDate(state.data) : "A escolher";
       $("#summaryTime").textContent = state.horario || "A escolher";
       $("#summaryPrice").textContent = money(state.servico?.preco || 0);
+
+      $("#sideStatus").textContent = state.bookingInProgress
+        ? "Registrando agendamento..."
+        : "Agendamento não confirmado";
     }
 
-    function goToStep(stepNumber) {
-      state.step = stepNumber;
+    function setStep(step) {
+      state.step = step;
+      $("#backChat").hidden = ![
+        "phone",
+        "clientChoice",
+        "name",
+        "email",
+        "services",
+        "dates",
+        "times",
+        "observations",
+        "review"
+      ].includes(step);
 
-      $$(".step").forEach((step) => {
-        step.classList.toggle("active", Number(step.dataset.step) === stepNumber);
+      configureInput({
+        enabled: false,
+        placeholder: "Selecione uma opção acima",
+        hint: "A secretária vai orientar você durante todo o atendimento."
       });
 
-      $$(".progress span").forEach((bar, index) => {
-        bar.classList.toggle("done", index < stepNumber);
-      });
+      updateSummary();
+    }
 
-      clearMessage();
+    /* Início e identificação */
+
+    function startChat() {
+      $("#chatMessages").innerHTML = "";
+
+      state.step = "welcome";
+      state.clientType = null;
+      state.clientExists = false;
+      state.clientId = null;
+      state.nome = "";
+      state.telefone = "";
+      state.email = "";
+      state.servico = null;
+      state.data = "";
+      state.horario = "";
+      state.observacoes = "";
+      state.services = [];
+      state.dates = [];
+      state.times = [];
+      state.bookingInProgress = false;
+      state.clientSaved = false;
+      state.history = [];
+      state.requestToken++;
+
       updateSummary();
 
-      const mainCard = $(".main-card");
-      if (mainCard) {
-        window.scrollTo({
-          top: Math.max(0, mainCard.getBoundingClientRect().top + window.scrollY - 12),
-          behavior: "smooth"
-        });
-      }
+      botSay(
+        "Olá! Seja muito bem-vinda ao espaço Taiany Trindade Nail Designer. ♡\n\nSou a secretária virtual e vou ajudar você a agendar seu procedimento.\n\nVamos encontrar o melhor horário para você?"
+      );
+
+      renderQuickReplies([
+        {
+          label: "✦ Quero agendar",
+          gold: true,
+          action: askPhone
+        },
+        {
+          label: "Como funciona?",
+          action: explainBooking
+        }
+      ]);
+
+      setStep("welcome");
     }
 
-    $$("[data-back]").forEach((button) => {
-      button.addEventListener("click", () => {
-        goToStep(Number(button.dataset.back));
+    function explainBooking() {
+      botSay(
+        "É simples! Vou identificar seu cadastro pelo WhatsApp, mostrar os procedimentos disponíveis e consultar os dias e horários livres. No final, você revisa tudo e confirma a solicitação."
+      );
+
+      renderQuickReplies([
+        {
+          label: "Vamos agendar",
+          gold: true,
+          action: askPhone
+        },
+        {
+          label: "Voltar ao início",
+          action: startChat
+        }
+      ]);
+    }
+
+    function askPhone() {
+      setStep("phone");
+
+      botSay(
+        "Perfeito! ✨ Para começar, me informe seu WhatsApp com DDD. Vou verificar se já existe um cadastro com esse número."
+      );
+
+      configureInput({
+        label: "WhatsApp com DDD",
+        placeholder: "(17) 99999-9999",
+        type: "tel",
+        enabled: true,
+        hint: "Digite apenas o número com DDD. Usaremos o WhatsApp para localizar seu cadastro."
       });
-    });
-
-    $("#existingClient").addEventListener("click", () => {
-      state.clientType = "existing";
-      $("#existingClient").classList.add("selected");
-      $("#newClient").classList.remove("selected");
-    });
-
-    $("#newClient").addEventListener("click", () => {
-      state.clientType = "new";
-      $("#newClient").classList.add("selected");
-      $("#existingClient").classList.remove("selected");
-    });
+    }
 
     async function checkExistingClient(phone) {
-      /*
-        Essa rota precisa existir no backend.
-        Ela deve consultar clientes_taiany pelo telefone normalizado.
-        Se ainda não existir, o servidor precisa implementar essa consulta.
-      */
-      try {
-        const result = await apiRequest(
-          `${API.clients}?telefone=${encodeURIComponent(phone)}`
-        );
+      const result = await apiRequest(
+        `${API.clients}?telefone=${encodeURIComponent(phone)}`
+      );
 
-        const client = result?.cliente || result?.data || result;
-
-        if (result?.encontrado === false || result?.exists === false) {
-          return { exists: false, client: null };
-        }
-
-        if (result?.encontrado === true || result?.exists === true) {
-          return { exists: true, client };
-        }
-
-        if (client && (client.id || client.nome || client.telefone)) {
-          return { exists: true, client };
-        }
-
-        return { exists: false, client: null };
-      } catch (error) {
-        if (/404|não encontrado|not found/i.test(error.message)) {
-          throw new Error(
-            "A consulta de clientes ainda não está disponível no servidor. É necessário habilitar a rota de consulta por WhatsApp para validar cadastros existentes."
-          );
-        }
-        throw error;
-      }
+      return normalizeClientResponse(result);
     }
 
-    $("#continueClient").addEventListener("click", async () => {
-      clearMessage();
-
-      const phone = digits($("#telefone").value);
+    async function handlePhone(value) {
+      const phone = digits(value);
 
       if (phone.length < 10 || phone.length > 11) {
-        showMessage("Informe um WhatsApp válido com DDD.", "error");
-        $("#telefone").focus();
-        return;
-      }
+        botSay("Esse número parece incompleto. Confira o DDD e o WhatsApp e tente novamente.");
 
-      if (!state.clientType) {
-        showMessage("Selecione se você já é cliente ou se é sua primeira visita.", "error");
+        configureInput({
+          label: "WhatsApp com DDD",
+          placeholder: "(17) 99999-9999",
+          type: "tel",
+          enabled: true,
+          hint: "Informe um número com 10 ou 11 dígitos, incluindo o DDD."
+        });
+
         return;
       }
 
       state.telefone = formatPhone(phone);
+      updateSummary();
 
-      const button = $("#continueClient");
-      button.disabled = true;
-      button.innerHTML = '<span class="loading"><span class="spinner"></span>Verificando...</span>';
+      setStep("checkingClient");
+      botSay("Só um instante, estou verificando seu cadastro...");
+      addTyping();
 
       try {
         const result = await checkExistingClient(phone);
 
-        if (state.clientType === "existing" && !result.exists) {
-          showMessage(
-            "Não encontramos um cadastro com esse WhatsApp. Confira o número ou selecione “Sou nova cliente” para continuar.",
-            "error"
-          );
-          return;
-        }
+        removeTyping();
 
-        if (state.clientType === "new" && result.exists) {
-          state.clientExists = true;
-          state.clientId = result.client?.id || null;
+        state.clientExists = result.exists;
+        state.clientId = result.client?.id || null;
+
+        if (result.exists) {
           state.nome = result.client?.nome || "";
           state.email = result.client?.email || "";
 
-          $("#nome").value = state.nome;
-          $("#email").value = state.email;
+          updateSummary();
 
-          showMessage(
-            "Esse WhatsApp já possui cadastro. Vamos utilizar o cadastro existente para evitar duplicidade.",
-            "info"
+          botSay(
+            `Encontrei um cadastro${state.nome ? ` em nome de ${state.nome}` : ""}! ♡\n\nVamos utilizar os dados existentes para evitar um cadastro duplicado.`
           );
 
-          goToStep(2);
-          return;
+          renderQuickReplies([
+            {
+              label: "Continuar com esse cadastro",
+              gold: true,
+              action: () => continueWithExistingClient(result.client)
+            },
+            {
+              label: "Corrigir WhatsApp",
+              action: askPhone
+            }
+          ]);
+
+          setStep("clientChoice");
+        } else {
+          botSay(
+            "Ainda não encontrei um cadastro com esse WhatsApp. Se for sua primeira visita, podemos cadastrar seus dados rapidinho."
+          );
+
+          renderQuickReplies([
+            {
+              label: "Sou nova cliente",
+              gold: true,
+              action: startNewClient
+            },
+            {
+              label: "Tentar outro número",
+              action: askPhone
+            }
+          ]);
+
+          setStep("clientChoice");
         }
-
-        state.clientExists = Boolean(result.exists);
-        state.clientId = result.client?.id || null;
-        state.nome = result.client?.nome || "";
-        state.email = result.client?.email || "";
-
-        $("#nome").value = state.nome;
-        $("#email").value = state.email;
-
-        goToStep(2);
       } catch (error) {
-        showMessage(error.message, "error");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Continuar";
+        removeTyping();
+
+        botSay(
+          `Não consegui consultar o cadastro neste momento.\n\n${error.message}\n\nVocê pode tentar novamente.`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: () => handlePhone(phone)
+          },
+          {
+            label: "Corrigir WhatsApp",
+            action: askPhone
+          }
+        ]);
       }
-    });
+    }
 
-    $("#saveClientData").addEventListener("click", () => {
-      clearMessage();
-
-      const nome = $("#nome").value.trim();
-      const email = $("#email").value.trim();
-
-      if (nome.length < 3) {
-        showMessage("Informe seu nome completo.", "error");
-        $("#nome").focus();
-        return;
-      }
-
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showMessage("Confira o formato do e-mail informado.", "error");
-        $("#email").focus();
-        return;
-      }
-
-      state.nome = nome;
-      state.email = email;
+    function continueWithExistingClient(client) {
+      state.clientExists = true;
+      state.clientId = client?.id || state.clientId;
+      state.nome = client?.nome || state.nome;
+      state.email = client?.email || state.email;
 
       updateSummary();
-      goToStep(3);
+
+      botSay(
+        `Tudo certo${state.nome ? `, ${state.nome.split(" ")[0]}` : ""}! Vamos escolher seu procedimento.`
+      );
+
       loadServices();
-    });
+    }
+
+    function startNewClient() {
+      state.clientType = "new";
+      state.clientExists = false;
+      state.clientId = null;
+      state.clientSaved = false;
+
+      botSay("Que bom ter você por aqui! ♡ Como posso chamar você? Informe seu nome completo.");
+
+      setStep("name");
+
+      configureInput({
+        label: "Nome completo",
+        placeholder: "Digite seu nome completo",
+        enabled: true,
+        hint: "Informe seu nome para o cadastro."
+      });
+    }
+
+    async function saveNewClient() {
+      if (state.clientExists || state.clientSaved) {
+        return;
+      }
+
+      const payload = {
+        nome: state.nome,
+        telefone: digits(state.telefone),
+        email: state.email || null
+      };
+
+      try {
+        const result = await apiRequest(API.createClient, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        const client = result?.cliente || result?.data || result;
+
+        state.clientId = client?.id || state.clientId;
+        state.clientSaved = true;
+      } catch (error) {
+        // Se o número foi cadastrado em outra sessão, tentamos recuperar
+        // o cadastro existente, sem criar um segundo registro.
+        if (
+          error.status === 409 ||
+          /duplicad|já existe|ja existe|23505|duplicate key|unique constraint/i.test(error.message)
+        ) {
+          const result = await checkExistingClient(digits(state.telefone));
+
+          if (result.exists) {
+            state.clientExists = true;
+            state.clientId = result.client?.id || null;
+            state.nome = result.client?.nome || state.nome;
+            state.email = result.client?.email || state.email;
+            state.clientSaved = true;
+            updateSummary();
+            return;
+          }
+        }
+
+        throw error;
+      }
+    }
+
+    /* Coleta de dados do cadastro */
+
+    async function handleName(value) {
+      const name = value.trim();
+
+      if (name.length < 3) {
+        botSay("Pode me informar seu nome completo? Preciso de pelo menos 3 caracteres.");
+        configureInput({
+          label: "Nome completo",
+          placeholder: "Digite seu nome completo",
+          enabled: true
+        });
+        return;
+      }
+
+      state.nome = name;
+      updateSummary();
+
+      botSay(`Prazer em receber você, ${name.split(" ")[0]}! ♡\n\nSe quiser, informe seu e-mail. Essa informação é opcional.`);
+
+      setStep("email");
+
+      renderQuickReplies([
+        {
+          label: "Pular esta etapa",
+          action: () => handleEmail("")
+        }
+      ]);
+
+      configureInput({
+        label: "E-mail (opcional)",
+        placeholder: "voce@email.com",
+        type: "email",
+        enabled: true,
+        hint: "Você também pode selecionar “Pular esta etapa”."
+      });
+    }
+
+    async function handleEmail(value) {
+      const email = value.trim();
+
+      if (
+        email &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      ) {
+        botSay("Esse e-mail parece estar incorreto. Confira o endereço ou escolha pular esta etapa.");
+
+        renderQuickReplies([
+          {
+            label: "Pular esta etapa",
+            action: () => handleEmail("")
+          }
+        ]);
+
+        configureInput({
+          label: "E-mail (opcional)",
+          placeholder: "voce@email.com",
+          type: "email",
+          enabled: true
+        });
+
+        return;
+      }
+
+      state.email = email;
+
+      try {
+        botSay("Vou registrar seus dados para que possamos seguir com o agendamento.");
+        addTyping();
+
+        await saveNewClient();
+
+        removeTyping();
+        updateSummary();
+
+        botSay("Cadastro pronto! Agora vamos escolher o procedimento ideal para você. ✨");
+
+        await loadServices();
+      } catch (error) {
+        removeTyping();
+
+        botSay(
+          `Não consegui salvar o cadastro neste momento.\n\n${error.message}\n\nSeus dados ainda não foram confirmados no sistema. Vamos tentar novamente.`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: () => handleEmail(state.email)
+          },
+          {
+            label: "Recomeçar",
+            action: startChat
+          }
+        ]);
+      }
+    }
+
+    /* Serviços */
 
     async function loadServices() {
-      const container = $("#services");
-      container.innerHTML = '<div class="empty-state">Carregando serviços...</div>';
+      setStep("services");
+
+      botSay("Estes são os procedimentos disponíveis no sistema. Escolha aquele que deseja realizar.");
+
+      addTyping();
 
       try {
         const data = await apiRequest(API.services);
-        state.services = normalizeList(data).map(normalizeService);
+
+        removeTyping();
+
+        state.services = normalizeList(data)
+          .map(normalizeService)
+          .filter((service) => service.id !== undefined && service.id !== null);
 
         if (!state.services.length) {
-          container.innerHTML =
-            '<div class="empty-state">Nenhum serviço está disponível no momento. Entre em contato para mais informações.</div>';
+          botSay("No momento, não encontrei serviços disponíveis para agendamento.");
+          renderQuickReplies([
+            {
+              label: "Tentar novamente",
+              gold: true,
+              action: loadServices
+            },
+            {
+              label: "Voltar ao início",
+              action: startChat
+            }
+          ]);
           return;
         }
 
-        container.innerHTML = "";
-
-        state.services.forEach((service, index) => {
-          const card = document.createElement("button");
-          card.type = "button";
-          card.className = "service-card";
-          card.dataset.index = String(index);
-
-          card.innerHTML = `
-            <span class="service-icon">✧</span>
-            <strong>${escapeHTML(service.nome)}</strong>
-            <span style="margin-top:5px;color:#8d7b80;font-size:12px">${escapeHTML(service.descricao)}</span>
-            <span class="service-meta">
-              <span>${service.duracao > 0 ? `${service.duracao} min` : "A consultar"}</span>
-              <span class="price">${money(service.preco)}</span>
-            </span>
-          `;
-
-          card.addEventListener("click", () => {
-            state.servico = service;
+        renderOptionCards(
+          state.services.map((service) => ({
+            title: service.nome,
+            description: [
+              service.duracao > 0 ? `${service.duracao} minutos` : "",
+              service.descricao || ""
+            ].filter(Boolean).join(" · "),
+            price: service.preco,
+            icon: "✧",
+            service
+          })),
+          async (option) => {
+            state.servico = option.service;
             state.data = "";
             state.horario = "";
-
-            $$(".service-card").forEach((item) => item.classList.remove("selected"));
-            card.classList.add("selected");
+            state.dates = [];
+            state.times = [];
 
             updateSummary();
-          });
 
-          container.appendChild(card);
-        });
+            botSay(
+              `Ótima escolha! ✨\n\nProcedimento: ${state.servico.nome}\nValor: ${money(state.servico.preco)}\nDuração prevista: ${state.servico.duracao} minutos.`
+            );
 
-        if (state.servico) {
-          const chosen = state.services.findIndex(
-            (service) => String(service.id) === String(state.servico.id)
-          );
-
-          if (chosen >= 0) {
-            state.servico = state.services[chosen];
-            $(`.service-card[data-index="${chosen}"]`)?.classList.add("selected");
+            await loadDates();
           }
-        }
+        );
       } catch (error) {
-        container.innerHTML = `
-          <div class="empty-state">
-            Não foi possível carregar os serviços.<br>
-            <button type="button" class="btn btn-secondary" id="retryServices" style="margin-top:12px">Tentar novamente</button>
-          </div>
-        `;
+        removeTyping();
 
-        $("#retryServices")?.addEventListener("click", loadServices);
+        botSay(`Não consegui carregar os procedimentos.\n\n${error.message}`);
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: loadServices
+          },
+          {
+            label: "Voltar ao início",
+            action: startChat
+          }
+        ]);
       }
     }
 
-    $("#continueService").addEventListener("click", () => {
-      clearMessage();
+    /* Consulta real da agenda */
 
-      if (!state.servico) {
-        showMessage("Selecione um procedimento para continuar.", "error");
-        return;
-      }
+    async function fetchTimesForDate(iso, serviceId) {
+      const url =
+        `${API.times}?data=${encodeURIComponent(iso)}` +
+        `&servico_id=${encodeURIComponent(serviceId)}`;
 
-      state.data = "";
-      state.horario = "";
-      goToStep(4);
-      loadDates();
-    });
+      const result = await apiRequest(url);
+      const list = normalizeList(result);
 
-    function groupTitleForDate(iso, offset) {
-      if (offset === 0) return "Hoje";
-      if (offset === 1) return "Amanhã";
-      if (offset <= 6) return "Próximos dias";
-      if (offset <= 13) return "Próxima semana";
-      if (offset <= 30) return "Próximas semanas";
-      return "Datas futuras";
+      const times = [...new Set(
+        list
+          .filter((item) => {
+            if (typeof item === "string") return true;
+
+            if (item.disponivel === false || item.available === false) {
+              return false;
+            }
+
+            if (
+              item.status &&
+              /ocupado|indisponível|indisponivel|reservado/i.test(item.status)
+            ) {
+              return false;
+            }
+
+            return true;
+          })
+          .map(extractTime)
+          .filter(Boolean)
+          .map((time) => String(time).slice(0, 5))
+          .filter((time) => /^\d{2}:\d{2}$/.test(time))
+          .filter((time) => !isTimeInPastToday(iso, time))
+      )].sort();
+
+      return times;
     }
 
     async function loadDates() {
-      const container = $("#dates");
-      container.innerHTML = '<div class="empty-state">Consultando a agenda...</div>';
+      setStep("dates");
+
+      botSay("Agora vou consultar a agenda para encontrar os dias com horários livres. Pode levar alguns segundos.");
+
+      addTyping();
+
+      const serviceId = state.servico?.id;
+
+      if (!serviceId) {
+        removeTyping();
+        botSay("Não encontrei o procedimento selecionado. Vamos escolher novamente.");
+        await loadServices();
+        return;
+      }
+
+      const token = ++state.requestToken;
+      const candidates = Array.from({ length: 30 }, (_, index) => addDays(todayISO(), index));
+      const availableDates = [];
+      let completed = 0;
+      let errors = 0;
 
       try {
-        /*
-          A API /api/disponibilidade deve retornar as datas com disponibilidade.
-          Formatos aceitos: ["2026-10-29", ...] ou
-          [{data:"2026-10-29", disponivel:true}, ...].
-        */
-        const data = await apiRequest(API.availability);
-        const list = normalizeList(data);
-        const today = todayISO();
+        // Consultas em pequenos grupos para evitar sobrecarregar a API.
+        for (let index = 0; index < candidates.length; index += 4) {
+          if (token !== state.requestToken) return;
 
-        const dates = list.map((item) => {
-          if (typeof item === "string") return item;
-          return item.data || item.dia || item.date || item.data_agendamento || "";
-        }).filter(Boolean).filter((iso) => {
-          return /^\d{4}-\d{2}-\d{2}$/.test(iso) && iso >= today;
-        });
+          const batch = candidates.slice(index, index + 4);
 
-        const uniqueDates = [...new Set(dates)].sort();
+          const results = await Promise.all(
+            batch.map(async (iso) => {
+              try {
+                const times = await fetchTimesForDate(iso, serviceId);
+                return { iso, times, error: false };
+              } catch (error) {
+                if (isUnavailableResponse(error)) {
+                  return { iso, times: [], error: false };
+                }
 
-        if (!uniqueDates.length) {
-          container.innerHTML =
-            '<div class="empty-state">Não encontramos datas disponíveis no momento. Tente novamente mais tarde.</div>';
-          return;
-        }
-
-        const groups = new Map();
-
-        uniqueDates.forEach((iso) => {
-          const offset = Math.round(
-            (dateFromISO(iso) - dateFromISO(today)) / 86400000
+                return { iso, times: [], error: true };
+              }
+            })
           );
 
-          const title = groupTitleForDate(iso, offset);
-          if (!groups.has(title)) groups.set(title, []);
-          groups.get(title).push(iso);
-        });
+          results.forEach((result) => {
+            completed++;
 
-        const orderedTitles = [
-          "Hoje",
-          "Amanhã",
-          "Próximos dias",
-          "Próxima semana",
-          "Próximas semanas",
-          "Datas futuras"
-        ];
-
-        container.innerHTML = "";
-
-        orderedTitles.forEach((title) => {
-          const groupDates = groups.get(title);
-          if (!groupDates?.length) return;
-
-          const section = document.createElement("div");
-          section.innerHTML = `
-            <div class="date-group-title">${escapeHTML(title)}</div>
-            <div class="date-grid"></div>
-          `;
-
-          const grid = section.querySelector(".date-grid");
-
-          groupDates.forEach((iso) => {
-            const date = dateFromISO(iso);
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "date-button";
-            button.dataset.date = iso;
-
-            button.innerHTML = `
-              <strong>${String(date.getDate()).padStart(2, "0")}</strong>
-              <span>${escapeHTML(shortWeekday(iso))}</span>
-              <span>${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}</span>
-            `;
-
-            if (state.data === iso) button.classList.add("selected");
-
-            button.addEventListener("click", async () => {
-              state.data = iso;
-              state.horario = "";
-
-              $$(".date-button").forEach((item) => item.classList.remove("selected"));
-              button.classList.add("selected");
-
-              updateSummary();
-              await loadTimes();
-            });
-
-            grid.appendChild(button);
+            if (result.error) {
+              errors++;
+            } else if (result.times.length > 0) {
+              availableDates.push(result.iso);
+            }
           });
 
-          container.appendChild(section);
-        });
-      } catch (error) {
-        container.innerHTML = `
-          <div class="empty-state">
-            Não foi possível consultar a agenda.<br>
-            <button type="button" class="btn btn-secondary" id="retryDates" style="margin-top:12px">Tentar novamente</button>
-          </div>
-        `;
-
-        $("#retryDates")?.addEventListener("click", loadDates);
-      }
-    }
-
-    $("#continueDate").addEventListener("click", () => {
-      clearMessage();
-
-      if (!state.data) {
-        showMessage("Selecione uma data disponível.", "error");
-        return;
-      }
-
-      goToStep(5);
-      loadTimes();
-    });
-
-    function extractTime(item) {
-      if (typeof item === "string") return item;
-      return item.hora_inicio || item.horario || item.hora || item.inicio || "";
-    }
-
-    function isTimeInPastToday(time) {
-      if (!isToday(state.data)) return false;
-
-      const parts = String(time).slice(0, 5).split(":");
-      if (parts.length !== 2) return false;
-
-      const hours = Number(parts[0]);
-      const minutes = Number(parts[1]);
-
-      if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return false;
-
-      const now = new Date();
-      const selectedMinutes = hours * 60 + minutes;
-      const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-      return selectedMinutes <= currentMinutes;
-    }
-
-    async function loadTimes() {
-      const container = $("#times");
-
-      if (!state.data || !state.servico) {
-        container.innerHTML = '<div class="empty-state">Selecione um serviço e uma data.</div>';
-        return;
-      }
-
-      $("#selectedDateLabel").textContent = formatDate(state.data);
-
-      container.innerHTML = '<div class="empty-state">Buscando horários...</div>';
-
-      try {
-        const url = `${API.times}?data=${encodeURIComponent(state.data)}&servico_id=${encodeURIComponent(state.servico.id)}`;
-        const data = await apiRequest(url);
-
-        let list = normalizeList(data);
-
-        /*
-          Se a API já retorna apenas horários livres, estes são apresentados.
-          Se retornar objetos com disponivel=false, eles são removidos.
-        */
-        list = list.filter((item) => {
-          if (typeof item === "string") return true;
-          if (item.disponivel === false || item.available === false) return false;
-          if (item.status && /ocupado|indisponível|indisponivel|reservado/i.test(item.status)) {
-            return false;
+          // Se o servidor estiver falhando em todas as consultas,
+          // não apresentamos isso como se a agenda estivesse vazia.
+          if (completed >= 4 && errors === completed) {
+            throw new Error("O servidor não conseguiu consultar a agenda.");
           }
-          return true;
-        });
+        }
 
-        const times = [...new Set(list.map(extractTime).filter(Boolean))]
-          .map((time) => String(time).slice(0, 5))
-          .filter((time) => /^\d{2}:\d{2}$/.test(time))
-          .filter((time) => !isTimeInPastToday(time))
-          .sort();
+        if (token !== state.requestToken) return;
 
-        if (!times.length) {
-          container.innerHTML = `
-            <div class="empty-state" style="grid-column:1/-1">
-              Não há horários disponíveis para esta data${isToday(state.data) ? " a partir do horário atual" : ""}.<br>
-              Escolha outro dia para consultar a agenda.
-            </div>
-          `;
+        removeTyping();
+
+        state.dates = [...new Set(availableDates)].sort();
+
+        if (!state.dates.length) {
+          if (errors > 0) {
+            botSay(
+              "Não consegui confirmar as datas disponíveis agora. Isso pode ser uma instabilidade temporária do sistema."
+            );
+          } else {
+            botSay(
+              "Não encontrei horários livres para esse procedimento nos próximos 30 dias. Você pode tentar novamente mais tarde ou escolher outro procedimento."
+            );
+          }
+
+          renderQuickReplies([
+            {
+              label: "Consultar novamente",
+              gold: true,
+              action: loadDates
+            },
+            {
+              label: "Escolher outro procedimento",
+              action: loadServices
+            }
+          ]);
+
           return;
         }
 
-        container.innerHTML = "";
+        botSay(
+          `Encontrei ${state.dates.length} ${state.dates.length === 1 ? "data com horários disponíveis" : "datas com horários disponíveis"}! ♡\n\nEscolha o dia que funciona melhor para você.`
+        );
 
-        times.forEach((time) => {
+        renderDates();
+      } catch (error) {
+        removeTyping();
+
+        botSay(
+          `Não consegui consultar a agenda com segurança.\n\n${error.message}\n\nVamos tentar novamente.`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: loadDates
+          },
+          {
+            label: "Escolher outro procedimento",
+            action: loadServices
+          }
+        ]);
+      }
+    }
+
+    function renderDates() {
+      clearQuickReplies();
+
+      const container = document.createElement("div");
+      container.className = "date-options";
+
+      const orderedTitles = [
+        "Hoje",
+        "Amanhã",
+        "Próximos dias",
+        "Próxima semana",
+        "Próximas semanas"
+      ];
+
+      orderedTitles.forEach((title) => {
+        const datesForGroup = state.dates.filter((iso) => dateGroupTitle(iso) === title);
+
+        if (!datesForGroup.length) return;
+
+        const heading = document.createElement("div");
+        heading.className = "date-group";
+        heading.textContent = title;
+        container.appendChild(heading);
+
+        datesForGroup.forEach((iso) => {
+          const date = dateFromISO(iso);
           const button = document.createElement("button");
+
           button.type = "button";
-          button.className = "time-button";
-          button.textContent = time;
+          button.className = "date-option";
 
-          if (state.horario === time) button.classList.add("selected");
+          if (state.data === iso) button.classList.add("selected");
 
-          button.addEventListener("click", () => {
-            if (isTimeInPastToday(time)) {
-              state.horario = "";
-              showMessage("Esse horário já passou. Escolha um horário futuro.", "error");
-              loadTimes();
-              return;
-            }
+          button.innerHTML = `
+            <strong>${String(date.getDate()).padStart(2, "0")}</strong>
+            <span>${escapeHTML(shortWeekday(iso))}</span>
+            <span class="date-month">${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}</span>
+          `;
 
-            state.horario = time;
+          button.addEventListener("click", async () => {
+            $$(".date-option").forEach((item) => {
+              item.disabled = true;
+            });
 
-            $$(".time-button").forEach((item) => item.classList.remove("selected"));
-            button.classList.add("selected");
+            userSay(formatDate(iso));
+
+            state.data = iso;
+            state.horario = "";
+            state.times = [];
 
             updateSummary();
-            clearMessage();
+
+            botSay(`Vou conferir os horários livres para ${formatDate(iso)}.`);
+            await loadTimes();
           });
 
           container.appendChild(button);
         });
-      } catch (error) {
-        container.innerHTML = `
-          <div class="empty-state" style="grid-column:1/-1">
-            Não foi possível consultar os horários.<br>
-            <button type="button" class="btn btn-secondary" id="retryTimes" style="margin-top:12px">Tentar novamente</button>
-          </div>
-        `;
+      });
 
-        $("#retryTimes")?.addEventListener("click", loadTimes);
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+
+      renderQuickReplies([
+        {
+          label: "Escolher outro procedimento",
+          action: loadServices
+        },
+        {
+          label: "Voltar ao início",
+          action: startChat
+        }
+      ]);
+    }
+
+    async function loadTimes() {
+      setStep("times");
+
+      addTyping();
+
+      const token = ++state.requestToken;
+
+      try {
+        const times = await fetchTimesForDate(state.data, state.servico.id);
+
+        if (token !== state.requestToken) return;
+
+        removeTyping();
+
+        state.times = times;
+
+        if (!times.length) {
+          state.data = "";
+          state.horario = "";
+
+          updateSummary();
+
+          botSay(
+            "Essa data acabou de ficar sem horários disponíveis. Vou ajudar você a escolher outro dia."
+          );
+
+          await loadDates();
+          return;
+        }
+
+        botSay(
+          `Para ${formatDate(state.data)}, estes são os horários que o sistema informa como disponíveis. Qual você prefere?`
+        );
+
+        renderTimes();
+      } catch (error) {
+        removeTyping();
+
+        if (isUnavailableResponse(error)) {
+          state.data = "";
+          state.horario = "";
+          updateSummary();
+
+          botSay("Não há horários disponíveis nessa data. Vamos consultar outro dia.");
+          await loadDates();
+          return;
+        }
+
+        botSay(
+          `Não consegui consultar os horários agora.\n\n${error.message}`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Consultar novamente",
+            gold: true,
+            action: loadTimes
+          },
+          {
+            label: "Escolher outra data",
+            action: loadDates
+          }
+        ]);
       }
     }
 
-    $("#continueTime").addEventListener("click", () => {
-      clearMessage();
+    function renderTimes() {
+      clearQuickReplies();
 
-      if (!state.horario) {
-        showMessage("Escolha um horário disponível para continuar.", "error");
-        return;
-      }
+      const container = document.createElement("div");
+      container.className = "time-options";
 
-      if (isTimeInPastToday(state.horario)) {
-        showMessage("Esse horário já passou. Escolha um horário futuro.", "error");
-        loadTimes();
-        return;
-      }
+      state.times.forEach((time) => {
+        const button = document.createElement("button");
 
-      state.observacoes = $("#observacoes").value.trim();
-      renderReview();
-      goToStep(6);
-    });
+        button.type = "button";
+        button.className = "time-option";
+        button.textContent = time;
+
+        if (state.horario === time) {
+          button.classList.add("selected");
+        }
+
+        button.addEventListener("click", async () => {
+          if (isTimeInPastToday(state.data, time)) {
+            botSay("Esse horário já passou. Vou atualizar as opções disponíveis.");
+            await loadTimes();
+            return;
+          }
+
+          $$(".time-option").forEach((item) => {
+            item.disabled = true;
+          });
+
+          userSay(time);
+
+          state.horario = time;
+          updateSummary();
+
+          botSay(`Horário selecionado: ${time}. ✨`);
+
+          renderQuickReplies([
+            {
+              label: "Continuar",
+              gold: true,
+              action: askObservations
+            },
+            {
+              label: "Escolher outro horário",
+              action: loadTimes
+            },
+            {
+              label: "Escolher outra data",
+              action: loadDates
+            }
+          ]);
+
+          setStep("observations");
+        });
+
+        container.appendChild(button);
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+
+      renderQuickReplies([
+        {
+          label: "Escolher outra data",
+          action: loadDates
+        },
+        {
+          label: "Escolher outro procedimento",
+          action: loadServices
+        }
+      ]);
+    }
+
+    /* Observações e revisão */
+
+    function askObservations() {
+      botSay(
+        "Deseja deixar alguma observação sobre o procedimento? É opcional. Se não precisar, pode pular."
+      );
+
+      setStep("observations");
+
+      renderQuickReplies([
+        {
+          label: "Não, pode continuar",
+          gold: true,
+          action: () => {
+            state.observacoes = "";
+            renderReview();
+          }
+        }
+      ]);
+
+      configureInput({
+        label: "Observações (opcional)",
+        placeholder: "Digite uma observação...",
+        enabled: true,
+        hint: "Se não houver observações, selecione a opção acima."
+      });
+    }
 
     function renderReview() {
-      const items = [
+      state.observacoes = state.observacoes || "";
+
+      botSay(
+        "Perfeito! Antes de enviar sua solicitação, confira o resumo abaixo."
+      );
+
+      const rows = [
         ["Cliente", state.nome],
         ["WhatsApp", state.telefone],
         ["Procedimento", state.servico?.nome || "—"],
@@ -1985,177 +2859,415 @@
         ["Observações", state.observacoes || "Nenhuma"]
       ];
 
-      $("#review").innerHTML = items.map(([label, value]) => `
-        <div>
-          <span>${escapeHTML(label)}</span>
-          <strong>${escapeHTML(value)}</strong>
-        </div>
-      `).join("");
+      const review = document.createElement("div");
+      review.className = "modal-summary";
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement("div");
+        row.className = "modal-summary-row";
+
+        const labelElement = document.createElement("span");
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("strong");
+        valueElement.textContent = value;
+
+        row.append(labelElement, valueElement);
+        review.appendChild(row);
+      });
+
+      $("#chatMessages").appendChild(review);
+      scrollChatToBottom();
+
+      setStep("review");
+
+      renderQuickReplies([
+        {
+          label: "Confirmar agendamento",
+          gold: true,
+          action: confirmBooking
+        },
+        {
+          label: "Alterar horário",
+          action: loadTimes
+        },
+        {
+          label: "Alterar data",
+          action: loadDates
+        },
+        {
+          label: "Alterar procedimento",
+          action: loadServices
+        }
+      ]);
+    }
+
+    /* Registro definitivo */
+
+    function isDuplicateError(message) {
+      return /duplicad|já existe|ja existe|telefone.*cadastrad|whatsapp.*cadastrad|unique constraint|duplicate key|23505/i.test(message);
+    }
+
+    function isSlotUnavailableError(message) {
+      return /horário.*indisponível|horario.*indisponivel|já foi reservado|ja foi reservado|conflito|slot.*unavailable|agenda.*ocupada|não está mais disponível|nao esta mais disponivel/i.test(message);
     }
 
     function calculateEndTime(start, duration) {
       const [hours, minutes] = start.split(":").map(Number);
       const total = hours * 60 + minutes + Number(duration || 60);
+
       const endHours = Math.floor(total / 60) % 24;
       const endMinutes = total % 60;
+
       return `${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`;
     }
 
-    function isDuplicateError(errorMessage) {
-      return /duplicad|já existe|ja existe|telefone.*cadastrad|whatsapp.*cadastrad|unique constraint|duplicate key|23505/i.test(errorMessage);
-    }
-
-    function isSlotUnavailableError(errorMessage) {
-      return /horário.*indisponível|horario.*indisponivel|já foi reservado|ja foi reservado|conflito|slot.*unavailable|agenda.*ocupada/i.test(errorMessage);
-    }
-
-    $("#confirmBooking").addEventListener("click", async () => {
-      clearMessage();
-
+    async function confirmBooking() {
       if (state.bookingInProgress) return;
 
-      if (!$("#acceptTerms").checked) {
-        showMessage("Marque a confirmação de que seus dados estão corretos.", "error");
+      if (
+        !state.nome ||
+        digits(state.telefone).length < 10 ||
+        !state.servico ||
+        !state.data ||
+        !state.horario
+      ) {
+        botSay("Falta alguma informação para concluir. Vamos revisar os dados antes de continuar.");
+        renderQuickReplies([
+          {
+            label: "Revisar agendamento",
+            gold: true,
+            action: renderReview
+          }
+        ]);
         return;
       }
 
-      if (!state.nome || digits(state.telefone).length < 10 ||
-          !state.servico || !state.data || !state.horario) {
-        showMessage("Confira os dados e selecione todos os campos obrigatórios.", "error");
-        return;
-      }
-
-      if (isTimeInPastToday(state.horario)) {
-        showMessage("Esse horário já passou. Selecione outro horário disponível.", "error");
-        goToStep(5);
+      if (isTimeInPastToday(state.data, state.horario)) {
+        botSay("Esse horário já passou. Vou atualizar a agenda para você.");
         await loadTimes();
         return;
       }
 
       state.bookingInProgress = true;
+      updateSummary();
 
-      const button = $("#confirmBooking");
-      button.disabled = true;
-      button.innerHTML = '<span class="loading"><span class="spinner"></span>Confirmando...</span>';
+      botSay(
+        "Estou validando a disponibilidade novamente e enviando seu agendamento ao sistema. Aguarde um instante, por favor. ♡"
+      );
 
-      const payload = {
-        nome_cliente: state.nome,
-        telefone_cliente: digits(state.telefone),
-        email: state.email || null,
-        cliente_id: state.clientId || undefined,
-        servico_id: state.servico.id,
-        nome_servico: state.servico.nome,
-        data: state.data,
-        hora_inicio: state.horario,
-        hora_fim: calculateEndTime(state.horario, state.servico.duracao),
-        preco: state.servico.preco,
-        status: "Pendente",
-        observacoes: state.observacoes || "",
-        origem: "site"
-      };
+      addTyping();
 
       try {
         /*
-          O backend deve verificar o WhatsApp existente e a disponibilidade
-          dentro desta mesma operação, antes de inserir o agendamento.
+          O servidor deve verificar novamente a disponibilidade antes
+          de inserir o agendamento. Não confiamos apenas na consulta visual.
         */
+        const payload = {
+          nome_cliente: state.nome,
+          telefone_cliente: digits(state.telefone),
+          email: state.email || null,
+          ...(state.clientId ? { cliente_id: state.clientId } : {}),
+          servico_id: state.servico.id,
+          nome_servico: state.servico.nome,
+          data: state.data,
+          hora_inicio: state.horario,
+          hora_fim: calculateEndTime(
+            state.horario,
+            state.servico.duracao
+          ),
+          preco: state.servico.preco,
+          status: "Pendente",
+          observacoes: state.observacoes || "",
+          origem: "site"
+        };
+
         const result = await apiRequest(API.bookings, {
           method: "POST",
           body: JSON.stringify(payload)
         });
 
-        const booking = result?.agendamento || result?.data || result;
+        removeTyping();
 
-        $("#successDetails").innerHTML = [
+        const booking =
+          result?.agendamento ||
+          result?.data ||
+          result;
+
+        // Sucesso só é exibido após resposta HTTP bem-sucedida do servidor.
+        $("#successDetails").innerHTML = "";
+
+        const details = [
           ["Cliente", state.nome],
           ["Procedimento", state.servico.nome],
           ["Data", formatDate(state.data)],
           ["Horário", state.horario],
-          ["Valor", money(state.servico.preco)],
-          ["Protocolo", booking?.id || booking?.codigo || booking?.protocolo || "Registrado"]
-        ].map(([label, value]) => `
-          <div>
-            <span>${escapeHTML(label)}</span>
-            <strong>${escapeHTML(value)}</strong>
-          </div>
-        `).join("");
+          ["Valor", money(state.servico.preco)]
+        ];
 
-        const status = String(booking?.status || result?.status || "").toLowerCase();
+        details.forEach(([label, value]) => {
+          const row = document.createElement("div");
+          row.className = "modal-summary-row";
+
+          const labelElement = document.createElement("span");
+          labelElement.textContent = label;
+
+          const valueElement = document.createElement("strong");
+          valueElement.textContent = value;
+
+          row.append(labelElement, valueElement);
+          $("#successDetails").appendChild(row);
+        });
+
+        const protocol =
+          booking?.id ||
+          booking?.codigo ||
+          booking?.protocolo ||
+          "";
+
+        $("#successProtocol").textContent = protocol
+          ? `Protocolo do agendamento: ${protocol}`
+          : "Sua solicitação foi registrada pelo sistema. Guarde os detalhes acima.";
+
+        const status = String(
+          booking?.status ||
+          result?.status ||
+          ""
+        ).toLowerCase();
 
         if (/confirmad/.test(status)) {
+          $("#successTitle").textContent = "Horário confirmado!";
           $("#successMessage").textContent =
-            "Seu horário foi confirmado! Guarde os detalhes do agendamento.";
+            "Seu agendamento foi confirmado. Será um prazer receber você!";
         } else {
+          $("#successTitle").textContent = "Agendamento registrado!";
           $("#successMessage").textContent =
-            "Sua solicitação foi registrada. Se o atendimento depender de aprovação, aguarde a confirmação.";
+            "Sua solicitação foi registrada com sucesso. Caso o atendimento dependa de aprovação, aguarde a confirmação.";
         }
 
         $("#successModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+
         createConfetti();
+
+        state.bookingInProgress = false;
+        $("#sideStatus").textContent = "Agendamento registrado";
+        $("#sideStatus").style.color = "#356848";
+        $("#sideStatus").style.background = "#eff9f1";
       } catch (error) {
+        removeTyping();
+
         if (isDuplicateError(error.message)) {
-          showMessage(
-            "Esse WhatsApp já possui cadastro. Não é necessário criar outro. Volte à primeira etapa e selecione “Já sou cliente”.",
-            "error"
+          botSay(
+            "Parece que esse WhatsApp já possui cadastro. Não vamos criar outro registro. Vou consultar novamente seu cadastro."
           );
-          goToStep(1);
+
+          renderQuickReplies([
+            {
+              label: "Consultar cadastro",
+              gold: true,
+              action: () => handlePhone(digits(state.telefone))
+            },
+            {
+              label: "Voltar à revisão",
+              action: renderReview
+            }
+          ]);
         } else if (isSlotUnavailableError(error.message)) {
-          showMessage(
-            "Esse horário acabou de ficar indisponível. Escolha outra data ou horário para concluir seu agendamento.",
-            "error"
-          );
           state.horario = "";
-          goToStep(5);
+          updateSummary();
+
+          botSay(
+            "Esse horário acabou de ficar indisponível. Não registrei a solicitação com esse horário. Vamos consultar as opções atualizadas."
+          );
+
           await loadTimes();
         } else {
-          showMessage(
-            error.message || "Não foi possível concluir seu agendamento. Tente novamente.",
-            "error"
+          botSay(
+            `Não consegui confirmar o agendamento.\n\n${error.message}\n\nNão vou apresentar uma confirmação enquanto o sistema não confirmar o registro. Você pode tentar novamente.`
           );
+
+          renderQuickReplies([
+            {
+              label: "Tentar confirmar novamente",
+              gold: true,
+              action: confirmBooking
+            },
+            {
+              label: "Revisar dados",
+              action: renderReview
+            }
+          ]);
         }
       } finally {
         state.bookingInProgress = false;
-        button.disabled = false;
-        button.textContent = "Confirmar agendamento";
+        updateSummary();
       }
-    });
+    }
 
     function createConfetti() {
       const card = $("#modalCard");
+
       card.querySelectorAll(".confetti").forEach((item) => item.remove());
 
-      const colors = ["#c5a15b", "#b76e79", "#e8c9cc", "#f0dca8", "#d49ba3"];
+      const colors = [
+        "#c5a15b",
+        "#b76e79",
+        "#e8c9cc",
+        "#f0dca8",
+        "#d49ba3"
+      ];
 
-      for (let i = 0; i < 32; i++) {
+      for (let i = 0; i < 38; i++) {
         const piece = document.createElement("span");
+
         piece.className = "confetti";
         piece.style.left = `${Math.random() * 100}%`;
         piece.style.background = colors[i % colors.length];
-        piece.style.animationDelay = `${Math.random() * .8}s`;
-        piece.style.animationDuration = `${1.2 + Math.random() * 1.2}s`;
+        piece.style.animationDelay = `${Math.random() * .7}s`;
+        piece.style.animationDuration = `${1.2 + Math.random() * 1.3}s`;
+
         card.appendChild(piece);
       }
     }
 
-    $("#closeSuccess").addEventListener("click", () => {
+    /* Campo de entrada e navegação */
+
+    $("#composerForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const input = $("#chatInput");
+      const value = input.value.trim();
+
+      if (!value || input.disabled || state.bookingInProgress) return;
+
+      input.value = "";
+
+      userSay(value);
+
+      switch (state.step) {
+        case "phone":
+          await handlePhone(value);
+          break;
+
+        case "name":
+          await handleName(value);
+          break;
+
+        case "email":
+          await handleEmail(value);
+          break;
+
+        case "observations":
+          state.observacoes = value.slice(0, 500);
+          renderReview();
+          break;
+
+        default:
+          botSay(
+            "Para continuar, selecione uma das opções apresentadas na conversa. Assim consigo consultar a agenda corretamente."
+          );
+          break;
+      }
+    });
+
+    $("#restartChat").addEventListener("click", () => {
+      if (state.bookingInProgress) return;
+
+      startChat();
+    });
+
+    $("#backChat").addEventListener("click", () => {
+      if (state.bookingInProgress) return;
+
+      switch (state.step) {
+        case "clientChoice":
+          askPhone();
+          break;
+
+        case "name":
+        case "email":
+          askPhone();
+          break;
+
+        case "services":
+          botSay("Vamos conferir seu cadastro novamente.");
+          renderQuickReplies([
+            {
+              label: "Continuar com esse WhatsApp",
+              gold: true,
+              action: () => continueWithExistingClient({
+                id: state.clientId,
+                nome: state.nome,
+                email: state.email
+              })
+            },
+            {
+              label: "Voltar ao início",
+              action: startChat
+            }
+          ]);
+          break;
+
+        case "dates":
+        case "times":
+          loadServices();
+          break;
+
+        case "observations":
+          loadTimes();
+          break;
+
+        case "review":
+          askObservations();
+          break;
+
+        default:
+          askPhone();
+          break;
+      }
+    });
+
+    function closeSuccessModal() {
       $("#successModal").classList.remove("open");
-      window.location.reload();
+      document.body.style.overflow = "";
+    }
+
+    $("#closeSuccess").addEventListener("click", () => {
+      closeSuccessModal();
+
+      botSay(
+        "Obrigada por agendar com Taiany Trindade Nail Designer! ♡ Esperamos você. Tenha um excelente dia!"
+      );
+
+      renderQuickReplies([
+        {
+          label: "Fazer outro agendamento",
+          gold: true,
+          action: startChat
+        }
+      ]);
+    });
+
+    $("#newBooking").addEventListener("click", () => {
+      closeSuccessModal();
+      startChat();
     });
 
     $("#successModal").addEventListener("click", (event) => {
       if (event.target === $("#successModal")) {
-        $("#successModal").classList.remove("open");
+        closeSuccessModal();
       }
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        $("#successModal").classList.remove("open");
+      if (event.key === "Escape" && $("#successModal").classList.contains("open")) {
+        closeSuccessModal();
       }
     });
 
     // Inicialização
-    updateSummary();
+    startChat();
   </script>
 </body>
 </html>
