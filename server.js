@@ -1,7 +1,7 @@
 
  // ======================================================
- // SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
- // ======================================================
+// SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
+// ======================================================
 
 import express from 'express';
 import session from 'express-session';
@@ -15,6 +15,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// Render utiliza um proxy HTTPS à frente da aplicação.
+app.set('trust proxy', 1);
 
 // ======================================================
 // CONFIGURAÇÃO
@@ -35,6 +37,7 @@ app.use(
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 1000 * 60 * 60 * 8
     }
   })
@@ -42,8 +45,6 @@ app.use(
 
 // ======================================================
 // SUPABASE
-// A chave de serviço fica somente no servidor.
-// Configure as variáveis no Render.
 // ======================================================
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -83,15 +84,14 @@ function cleanText(value, maxLength = 500) {
 function validId(value) {
   return (
     typeof value === 'string' &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      value
-    )
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
   );
 }
 
 function validDate(value) {
-  if (typeof value !== 'string') return false;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
 
   const [year, month, day] = value.split('-').map(Number);
   const date = new Date(year, month - 1, day, 12);
@@ -146,6 +146,7 @@ async function executeQuery(res, query) {
 
     if (error) {
       console.error('Erro Supabase:', error);
+
       return res.status(500).json({
         ok: false,
         error: 'Erro ao consultar o banco de dados.'
@@ -162,18 +163,16 @@ async function executeQuery(res, query) {
 // AUTENTICAÇÃO
 // ======================================================
 
-// Protege as páginas administrativas.
 function requireAuth(req, res, next) {
-  if (req.session && req.session.auth === true) {
+  if (req.session?.auth === true) {
     return next();
   }
 
   return res.redirect('/');
 }
 
-// Protege todas as APIs administrativas.
 function admin(req, res, next) {
-  if (req.session && req.session.auth === true) {
+  if (req.session?.auth === true) {
     return next();
   }
 
@@ -183,7 +182,7 @@ function admin(req, res, next) {
   });
 }
 
-// Login
+// LOGIN
 app.post('/api/login', (req, res) => {
   const user = cleanText(req.body?.user, 100);
   const pass = String(req.body?.pass ?? '');
@@ -235,7 +234,7 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// Verifica se a sessão está ativa.
+// VERIFICAR SESSÃO
 app.get('/api/sessao', (req, res) => {
   res.json({
     ok: true,
@@ -243,7 +242,7 @@ app.get('/api/sessao', (req, res) => {
   });
 });
 
-// Logout
+// LOGOUT
 app.post('/api/logout', (req, res) => {
   if (!req.session) {
     return res.json({ ok: true });
@@ -262,7 +261,8 @@ app.post('/api/logout', (req, res) => {
     res.clearCookie('taiany.sid', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      sameSite: 'lax',
+      path: '/'
     });
 
     return res.json({ ok: true });
@@ -289,10 +289,7 @@ app.get('/api/servicos', async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db()
-        .from('servicos')
-        .select('*')
-        .order('nome', { ascending: true })
+      db().from('servicos').select('*').order('nome', { ascending: true })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -346,8 +343,6 @@ app.get('/api/horarios', async (req, res) => {
     }
 
     const supabaseClient = db();
-
-    // Busca o serviço para identificar sua duração.
     let duracao = 60;
 
     if (servicoId) {
@@ -373,14 +368,10 @@ app.get('/api/horarios', async (req, res) => {
         });
       }
 
-      duracao = Number(
-        servico.duracao_minutos || servico.duracao || 60
-      );
+      duracao = Number(servico.duracao_minutos || servico.duracao || 60);
     }
 
-    if (!Number.isFinite(duracao) || duracao <= 0) {
-      duracao = 60;
-    }
+    if (!Number.isFinite(duracao) || duracao <= 0) duracao = 60;
 
     const [ano, mes, dia] = data.split('-').map(Number);
     const diaSemana = new Date(ano, mes - 1, dia, 12).getDay();
@@ -407,13 +398,9 @@ app.get('/api/horarios', async (req, res) => {
     if (bloqueiosResult.error) throw bloqueiosResult.error;
     if (agendamentosResult.error) throw agendamentosResult.error;
 
-    const disponibilidade = dispResult.data || [];
-    const bloqueios = bloqueiosResult.data || [];
-    const agendamentos = agendamentosResult.data || [];
-
     const horarios = [];
 
-    for (const faixa of disponibilidade) {
+    for (const faixa of dispResult.data || []) {
       const inicio = timeToMinutes(faixa.hora_inicio);
       const fim = timeToMinutes(faixa.hora_fim);
 
@@ -421,15 +408,10 @@ app.get('/api/horarios', async (req, res) => {
         continue;
       }
 
-      // Gera horários em intervalos de 30 minutos.
-      for (
-        let horario = inicio;
-        horario + duracao <= fim;
-        horario += 30
-      ) {
+      for (let horario = inicio; horario + duracao <= fim; horario += 30) {
         const horarioFim = horario + duracao;
 
-        const bloqueado = bloqueios.some((bloqueio) => {
+        const bloqueado = (bloqueiosResult.data || []).some((bloqueio) => {
           const bInicio = timeToMinutes(bloqueio.hora_inicio);
           const bFim = timeToMinutes(bloqueio.hora_fim);
 
@@ -440,12 +422,10 @@ app.get('/api/horarios', async (req, res) => {
           );
         });
 
-        const ocupado = agendamentos.some((agendamento) => {
+        const ocupado = (agendamentosResult.data || []).some((agendamento) => {
           const status = String(agendamento.status || '').toLowerCase();
 
-          if (
-            ['cancelado', 'cancelada', 'cancelled'].includes(status)
-          ) {
+          if (['cancelado', 'cancelada', 'cancelled'].includes(status)) {
             return false;
           }
 
@@ -464,17 +444,12 @@ app.get('/api/horarios', async (req, res) => {
             horario % 60
           ).padStart(2, '0')}`;
 
-          if (!horarios.includes(hora)) {
-            horarios.push(hora);
-          }
+          if (!horarios.includes(hora)) horarios.push(hora);
         }
       }
     }
 
-    return res.json({
-      ok: true,
-      data: horarios.sort()
-    });
+    return res.json({ ok: true, data: horarios.sort() });
   } catch (error) {
     return sendDbError(res, error);
   }
@@ -493,7 +468,6 @@ app.post('/api/agendamentos', async (req, res) => {
       body.telefone_cliente || body.telefone,
       40
     );
-
     const servicoId = cleanText(body.servico_id, 50);
     const data = cleanText(body.data, 10);
     const horaInicio = normalizeTime(body.hora_inicio || body.hora);
@@ -506,7 +480,7 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    if (!validId(servicoId) || !validDate(data) || !horaInicio) {
+    if (!validId(servicoId) || !validDate(data)) {
       return res.status(400).json({
         ok: false,
         error: 'Os dados do agendamento são inválidos.'
@@ -530,9 +504,7 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    const duracao = Number(
-      servico.duracao_minutos || servico.duracao || 60
-    );
+    const duracao = Number(servico.duracao_minutos || servico.duracao || 60);
 
     if (!Number.isFinite(duracao) || duracao <= 0) {
       return res.status(400).json({
@@ -784,10 +756,7 @@ app.get('/api/admin/clientes', admin, async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db()
-        .from('clientes')
-        .select('*')
-        .order('nome', { ascending: true })
+      db().from('clientes').select('*').order('nome', { ascending: true })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -834,10 +803,7 @@ app.get('/api/admin/servicos', admin, async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db()
-        .from('servicos')
-        .select('*')
-        .order('nome', { ascending: true })
+      db().from('servicos').select('*').order('nome', { ascending: true })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -855,10 +821,7 @@ app.post('/api/admin/servicos', admin, async (req, res) => {
       });
     }
 
-    const duracao = Number(
-      req.body?.duracao_minutos ?? req.body?.duracao ?? 60
-    );
-
+    const duracao = Number(req.body?.duracao_minutos ?? req.body?.duracao ?? 60);
     const preco = Number(req.body?.preco ?? 0);
 
     if (!Number.isFinite(duracao) || duracao <= 0) {
@@ -921,13 +884,8 @@ app.patch('/api/admin/servicos/:id', admin, async (req, res) => {
       updates.descricao = cleanText(req.body.descricao, 1000);
     }
 
-    if (
-      req.body?.duracao_minutos !== undefined ||
-      req.body?.duracao !== undefined
-    ) {
-      const duracao = Number(
-        req.body.duracao_minutos ?? req.body.duracao
-      );
+    if (req.body?.duracao_minutos !== undefined || req.body?.duracao !== undefined) {
+      const duracao = Number(req.body.duracao_minutos ?? req.body.duracao);
 
       if (!Number.isFinite(duracao) || duracao <= 0) {
         return res.status(400).json({
@@ -1010,10 +968,7 @@ app.get('/api/admin/disponibilidade', admin, async (req, res) => {
   try {
     return await executeQuery(
       res,
-      db()
-        .from('disponibilidade')
-        .select('*')
-        .order('dia_semana', { ascending: true })
+      db().from('disponibilidade').select('*').order('dia_semana', { ascending: true })
     );
   } catch (error) {
     return sendDbError(res, error);
@@ -1210,21 +1165,13 @@ app.post('/api/admin/bloqueios', admin, async (req, res) => {
 
     const { data: bloqueio, error } = await db()
       .from('bloqueios')
-      .insert({
-        data,
-        hora_inicio: inicio,
-        hora_fim: fim,
-        motivo
-      })
+      .insert({ data, hora_inicio: inicio, hora_fim: fim, motivo })
       .select()
       .single();
 
     if (error) throw error;
 
-    return res.status(201).json({
-      ok: true,
-      data: bloqueio
-    });
+    return res.status(201).json({ ok: true, data: bloqueio });
   } catch (error) {
     return sendDbError(res, error);
   }
@@ -1263,21 +1210,15 @@ app.get('/', (req, res) => {
 });
 
 app.get('/taiany-painel-admin.html', requireAuth, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'taiany-painel-admin.html')
-  );
+  res.sendFile(path.join(__dirname, 'taiany-painel-admin.html'));
 });
 
 app.get('/taiany-agendamento.html', (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'taiany-agendamento.html')
-  );
+  res.sendFile(path.join(__dirname, 'taiany-agendamento.html'));
 });
 
 app.get('/agendar', (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'taiany-agendamento.html')
-  );
+  res.sendFile(path.join(__dirname, 'taiany-agendamento.html'));
 });
 
 // ======================================================
