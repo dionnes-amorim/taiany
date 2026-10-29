@@ -382,7 +382,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
   let cliente = null;
 
   const buscaTelefone = await db
-    .from('clientes')
+    .from('clientes_taiany')
     .select('id,nome,telefone,email')
     .eq('telefone', telefone)
     .limit(1)
@@ -396,7 +396,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
 
   if (!cliente && email) {
     const buscaEmail = await db
-      .from('clientes')
+      .from('clientes_taiany')
       .select('id,nome,telefone,email')
       .eq('email', email)
       .limit(1)
@@ -411,7 +411,7 @@ app.post('/api/agendamentos', route(async (req, res) => {
 
   if (!cliente) {
     const { data: clienteCriado, error: erroCliente } = await db
-      .from('clientes')
+      .from('clientes_taiany')
       .insert({
         nome,
         telefone,
@@ -576,7 +576,7 @@ app.get('/api/admin/clientes', admin, route(async (req, res) => {
   if (!db) return;
 
   const { data, error } = await db
-    .from('clientes')
+    .from('clientes_taiany')
     .select('*')
     .order('nome')
     .limit(1000);
@@ -618,7 +618,7 @@ app.post('/api/admin/clientes', admin, route(async (req, res) => {
   if (!db) return;
 
   const { data, error } = await db
-    .from('clientes')
+    .from('clientes_taiany')
     .insert({
       nome,
       telefone,
