@@ -93,6 +93,57 @@ function db() {
 }
 
 // ======================================================
+// CLIENTE PÚBLICO - WHATSAPP É O ID
+// ======================================================
+
+// VERIFICAR SE CLIENTE JÁ EXISTE PELO WHATSAPP
+app.get('/api/cliente', async (req, res) => {
+  try {
+    const telefone = cleanText(req.query.telefone, 20).replace(/\D/g,'');
+    if(!telefone || telefone.length < 10){
+      return res.status(400).json({ok:false, error:'Informe um WhatsApp válido.'});
+    }
+    const { data, error } = await db().from('clientes_taiany').select('*').ilike('telefone', `%${telefone}%`).maybeSingle();
+    if(error) throw error;
+    if(!data){
+      return res.json({ok:true, existe:false});
+    }
+    return res.json({ok:true, existe:true, data});
+  } catch (e){ return sendDbError(res,e); }
+});
+
+// CADASTRAR CLIENTE PÚBLICO - WHATSAPP É ÚNICO
+app.post('/api/clientes', async (req, res) => {
+  try {
+    const nome = cleanText(req.body?.nome, 150);
+    const telefone = cleanText(req.body?.telefone, 20).replace(/\D/g,'');
+    const email = cleanText(req.body?.email, 200);
+    if(!nome || !telefone){
+      return res.status(400).json({ok:false, error:'Nome e WhatsApp são obrigatórios.'});
+    }
+    // Verifica se já existe
+    const { data: existe } = await db().from('clientes_taiany').select('id').ilike('telefone', `%${telefone}%`).maybeSingle();
+    if(existe){
+      return res.status(409).json({ok:false, error:'Já existe cadastro com esse WhatsApp. Faça login.'});
+    }
+    const { data, error } = await db().from('clientes_taiany').insert({nome, telefone, email}).select().single();
+    if(error) throw error;
+    return res.status(201).json({ok:true, data});
+  } catch (e){ return sendDbError(res,e); }
+});
+
+// MEUS AGENDAMENTOS POR WHATSAPP
+app.get('/api/meus-agendamentos', async (req, res) => {
+  try {
+    const telefone = cleanText(req.query.telefone, 20).replace(/\D/g,'');
+    if(!telefone) return res.status(400).json({ok:false, error:'Informe o telefone.'});
+    const { data, error } = await db().from('agendamentos').select('*').ilike('telefone_cliente', `%${telefone}%`).order('data',{ascending:false}).order('hora_inicio',{ascending:true});
+    if(error) throw error;
+    return res.json({ok:true, data});
+  } catch (e){ return sendDbError(res,e); }
+});
+
+// ======================================================
 // RESPOSTAS E VALIDAÇÕES
 // ======================================================
 
