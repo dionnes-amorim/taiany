@@ -8,8 +8,35 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+import session from 'express-session';
+
 app.disable('x-powered-by');
 app.use(express.json({ limit: '100kb' }));
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'taiany-2024',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 8 }
+}));
+
+// ROTA DE LOGIN QUE SUA PÁGINA ESTÁ CHAMANDO
+app.post('/api/login', (req, res) => {
+  const { user, pass } = req.body;
+  const AUTH_USER = process.env.AUTH_USER || 'taiany';
+  const AUTH_PASS = process.env.AUTH_PASS || '123456';
+  
+  console.log('Tentativa login:', user);
+  
+  if(user === AUTH_USER && pass === AUTH_PASS){
+    req.session.auth = true;
+    return res.json({ ok: true });
+  }
+  return res.status(401).json({ ok: false, error: 'Usuário ou senha incorretos' });
+});
+
+app.post('/api/logout', (req,res)=>{
+  req.session.destroy(()=>res.json({ok:true}));
+});
 
 // A chave privilegiada permanece exclusivamente no servidor.
 const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
