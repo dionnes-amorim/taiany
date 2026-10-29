@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,1089 +5,235 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#fffaf8">
 <title>Taiany Trindade | Agendamento Inteligente</title>
-
 <style>
 :root {
-  --pink:#bd7896;
-  --pink-dark:#985674;
-  --pink-light:#fbeaf1;
-  --cream:#fffaf8;
-  --ink:#34262d;
-  --muted:#887780;
-  --line:#f0e1e8;
-  --white:#fff;
-  --green:#2e7d5a;
-  --copper:#9b5c43;
+  --pink:#bd7896; --pink-dark:#985674; --cream:#fffaf8; --ink:#34262d; --muted:#887780; --line:#f0e1e8; --white:#fff; --green:#2e7d5a; --copper:#9b5c43;
 }
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:var(--cream);
-  color:var(--ink);
-  font-family:Inter,system-ui,Arial,sans-serif;
-}
-.topbar {
-  padding:14px;
-  background:#fff;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:center;
-  position:sticky;
-  top:0;
-  z-index:10;
-}
-.brand { display:flex; align-items:center; gap:12px; }
-.brand-mark {
-  width:72px;
-  height:72px;
-  border-radius:14px;
-  background:var(--pink);
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-  color:#fff;
-  font-size:28px;
-  font-weight:800;
-}
-.brand-mark img {
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  padding:4px;
-  background:#fff;
-  border-radius:10px;
-}
-.chat-wrap {
-  width:min(calc(100% - 16px),740px);
-  margin:0 auto;
-  min-height:100dvh;
-  display:flex;
-  flex-direction:column;
-}
-.progress {
-  height:4px;
-  background:var(--line);
-  border-radius:99px;
-  margin:10px 0;
-  overflow:hidden;
-  flex-shrink:0;
-}
-.progress i {
-  display:block;
-  height:100%;
-  background:var(--pink);
-  width:0;
-  transition:width .3s;
-}
-.chat {
-  flex:1;
-  min-height:260px;
-  overflow-y:auto;
-  padding:16px 6px 20px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.bubble {
-  max-width:85%;
-  padding:14px 16px;
-  border-radius:20px;
-  font-size:14.5px;
-  line-height:1.5;
-  overflow-wrap:anywhere;
-  animation:pop .18s;
-}
-.bubble.bot {
-  background:#fff;
-  border:1px solid var(--line);
-  border-bottom-left-radius:6px;
-  align-self:flex-start;
-  box-shadow:0 4px 20px rgba(0,0,0,.04);
-}
-.bubble.user {
-  background:var(--pink);
-  color:#fff;
-  border-bottom-right-radius:6px;
-  align-self:flex-end;
-}
-.quick {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:4px 0;
-}
-.qbtn {
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:650;
-  font-size:13px;
-  cursor:pointer;
-}
-.qbtn.primary { background:var(--ink); color:#fff; border-color:var(--ink); }
-.qbtn:disabled,button:disabled { opacity:.55; cursor:not-allowed; }
-.cards {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:8px;
-  width:100%;
-}
-.card {
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:16px;
-  padding:14px;
-  text-align:left;
-  cursor:pointer;
-  transition:.15s;
-  color:var(--ink);
-}
-.card:hover { border-color:var(--pink); transform:translateY(-1px); }
-.card b { display:block; font-size:14px; }
-.card small { color:var(--muted); }
-.card .price { margin-top:8px; color:var(--pink-dark); font-weight:800; }
-.time-group { margin-top:10px; width:100%; }
-.time-group label {
-  font-size:11px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin:10px 0 6px;
-  display:block;
-}
-.chips { display:flex; flex-wrap:wrap; gap:8px; }
-.chip {
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:700;
-  cursor:pointer;
-  color:var(--ink);
-}
-.chip:disabled { text-decoration:line-through; opacity:.35; }
-.chip.sel { background:var(--copper); color:#fff; border-color:var(--copper); }
-.summary {
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
-  font-size:13px;
-  line-height:1.6;
-  overflow-wrap:anywhere;
-}
-.inputbar {
-  display:flex;
-  gap:8px;
-  padding:12px;
-  background:#fff;
-  border-top:1px solid var(--line);
-  border-radius:0 0 20px 20px;
-  position:sticky;
-  bottom:0;
-}
-.inputbar input {
-  flex:1;
-  min-width:0;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:12px 16px;
-  outline:none;
-  font:inherit;
-}
-.inputbar input:focus { border-color:var(--pink); }
-.inputbar button {
-  border:0;
-  background:var(--pink);
-  color:#fff;
-  border-radius:999px;
-  padding:0 18px;
-  font-weight:800;
-  min-height:44px;
-  cursor:pointer;
-}
-.inputbar button:disabled { opacity:.6; }
-.modal-overlay {
-  position:fixed;
-  inset:0;
-  background:rgba(20,12,16,.55);
-  backdrop-filter:blur(8px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  padding:18px;
-}
-.modal-overlay.show { display:flex; }
-.modal {
-  width:min(100%,480px);
-  max-height:90dvh;
-  overflow:auto;
-  background:#fff;
-  border-radius:28px;
-  padding:30px;
-  text-align:center;
-  box-shadow:0 30px 90px rgba(0,0,0,.25);
-}
-.modal-icon {
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  background:#eaf7ef;
-  color:var(--green);
-  display:grid;
-  place-items:center;
-  font-size:38px;
-  margin:0 auto 14px;
-}
-.modal-button {
-  width:100%;
-  min-height:50px;
-  border:0;
-  border-radius:12px;
-  background:var(--pink);
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
-}
-.appointment {
-  width:100%;
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:16px;
-  padding:14px;
-  text-align:left;
-}
-.appointment b { display:block; margin-bottom:5px; }
-.appointment small { color:var(--muted); }
-@keyframes pop {
-  from { transform:translateY(6px); opacity:0; }
-  to { transform:translateY(0); opacity:1; }
-}
-@media(max-width:600px) {
-  .cards { grid-template-columns:1fr; }
-  .bubble { max-width:92%; }
-  .modal { padding:24px 18px; }
-}
+*{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif}
+.topbar{padding:14px;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:center;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:72px;height:72px;border-radius:14px;background:var(--pink);display:grid;place-items:center;overflow:hidden;color:#fff;font-size:28px;font-weight:800}
+.brand-mark img{width:100%;height:100%;object-fit:contain;padding:4px;background:#fff;border-radius:10px}
+.chat-wrap{width:min(calc(100% - 16px),740px);margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+.progress{height:4px;background:var(--line);border-radius:99px;margin:10px 0;overflow:hidden;flex-shrink:0}
+.progress i{display:block;height:100%;background:var(--pink);width:0;transition:width .3s}
+.chat{flex:1;min-height:260px;overflow-y:auto;padding:16px 6px 20px;display:flex;flex-direction:column;gap:12px}
+.bubble{max-width:85%;padding:14px 16px;border-radius:20px;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere;animation:pop .18s}
+.bubble.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start;box-shadow:0 4px 20px rgba(0,0,0,.04)}
+.bubble.user{background:var(--pink);color:#fff;border-bottom-right-radius:6px;align-self:flex-end}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0}
+.qbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:650;font-size:13px;cursor:pointer}
+.qbtn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;width:100%}
+.card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px;text-align:left;cursor:pointer;color:var(--ink)}
+.card:hover{border-color:var(--pink);transform:translateY(-1px)}
+.card b{display:block;font-size:14px} .card small{color:var(--muted)} .card .price{margin-top:8px;color:var(--pink-dark);font-weight:800}
+.time-group{margin-top:10px;width:100%} .time-group label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:10px 0 6px;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:8px} .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer;color:var(--ink)}
+.chip.sel{background:var(--copper);color:#fff;border-color:var(--copper)}
+.summary{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;font-size:13px;line-height:1.6}
+.inputbar{display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid var(--line);border-radius:0 0 20px 20px;position:sticky;bottom:0}
+.inputbar input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:12px 16px;outline:none;font:inherit}
+.inputbar button{border:0;background:var(--pink);color:#fff;border-radius:999px;padding:0 18px;font-weight:800;min-height:44px;cursor:pointer}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,12,16,.55);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:9999;padding:18px}
+.modal-overlay.show{display:flex}
+.modal{width:min(100%,480px);max-height:90dvh;overflow:auto;background:#fff;border-radius:28px;padding:30px;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.25)}
+.modal-icon{width:80px;height:80px;border-radius:50%;background:#eaf7ef;color:var(--green);display:grid;place-items:center;font-size:38px;margin:0 auto 14px}
+.modal-button{width:100%;min-height:50px;border:0;border-radius:12px;background:var(--pink);color:#fff;font-weight:800;cursor:pointer}
+@keyframes pop{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:600px){.cards{grid-template-columns:1fr} .bubble{max-width:92%} .modal{padding:24px 18px}}
 </style>
 </head>
-
 <body>
 <div class="chat-wrap">
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-mark" id="brandMark">
-        <img src="/logo.png" alt="Logo Taiany Trindade"
-          onerror="this.remove();document.getElementById('brandMark').textContent='TT'">
-      </div>
-      <div>
-        <div style="font-family:Georgia,serif;font-size:18px">Taiany Trindade</div>
-        <div style="font-size:10px;letter-spacing:2px;color:#887780">
-          Nail Designer • Online agora
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <div class="topbar"><div class="brand"><div class="brand-mark" id="brandMark"><img src="/logo.png" alt="Logo" onerror="this.remove();document.getElementById('brandMark').textContent='TT'"></div><div><div style="font-family:Georgia,serif;font-size:18px">Taiany Trindade</div><div style="font-size:10px;letter-spacing:2px;color:#887780">Nail Designer • Online agora</div></div></div></div>
   <div class="progress"><i id="progress"></i></div>
-  <div id="chat" class="chat" aria-live="polite"></div>
-
-  <form id="inputForm" class="inputbar">
-    <input id="input" placeholder="Digite seu WhatsApp para começar..."
-      autocomplete="tel" aria-label="Sua resposta">
-    <button id="send" type="submit">Enviar</button>
-  </form>
+  <div id="chat" class="chat"></div>
+  <form id="inputForm" class="inputbar"><input id="input" placeholder="Digite seu WhatsApp para começar..." autocomplete="tel"><button id="send" type="submit">Enviar</button></form>
 </div>
-
-<div id="successModal" class="modal-overlay" role="dialog" aria-modal="true"
-  aria-labelledby="modalTitle">
-  <div class="modal">
-    <div class="modal-icon">✓</div>
-    <h2 id="modalTitle" style="font-family:Georgia,serif;font-size:28px;margin:0 0 6px">
-      Agendamento Confirmado!
-    </h2>
-    <p style="color:#887780">Seu horário foi registrado no sistema da Taiany.</p>
-    <div id="modalDetails" class="summary" style="text-align:left;margin:14px 0"></div>
-    <button id="closeModal" class="modal-button" type="button">Fechar</button>
-  </div>
-</div>
-
+<div id="successModal" class="modal-overlay"><div class="modal"><div class="modal-icon">✓</div><h2 style="font-family:Georgia,serif;font-size:28px;margin:0 0 6px">Agendamento Confirmado!</h2><p style="color:#887780">Seu horário foi registrado.</p><div id="modalDetails" class="summary" style="text-align:left;margin:14px 0"></div><button id="closeModal" class="modal-button" type="button">Fechar</button></div></div>
 <script>
 (() => {
 'use strict';
+const $=id=>document.getElementById(id);
+const chat=$('chat'), input=$('input'), send=$('send'), progress=$('progress');
+const S={services:[],avail:[],service:null,date:null,time:null,name:'',phone:'',email:'',notes:'',busy:false,step:0};
+const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const digits=v=>String(v??'').replace(/\D/g,'');
+const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
+const isoDate=o=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+o);const l=new Date(d.getTime()-d.getTimezoneOffset()*60000);return l.toISOString().slice(0,10);};
+const mins=v=>{const p=String(v||'0:0').split(':').map(Number);return (p[0]||0)*60+(p[1]||0);};
+const dateBR=iso=>{if(!iso) return '';const p=String(iso).slice(0,10).split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;};
 
-const $ = id => document.getElementById(id);
-const chat = $('chat');
-const input = $('input');
-const send = $('send');
-const progress = $('progress');
-
-const S = {
-  step:0,
-  services:[],
-  avail:[],
-  clients:[],
-  service:null,
-  date:null,
-  time:null,
-  name:'',
-  phone:'',
-  email:'',
-  notes:'',
-  lookup:false,
-  busy:false
-};
-
-const money = value => Number(value || 0).toLocaleString('pt-BR', {
-  style:'currency',
-  currency:'BRL'
-});
-
-const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
-})[char]);
-
-function digits(value) {
-  return String(value ?? '').replace(/\D/g,'');
+async function api(url,opts={}){
+  const h={...(opts.headers||{})};
+  if(opts.body&&!h['Content-Type']) h['Content-Type']='application/json';
+  const r=await fetch(url,{...opts,headers:h});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok||j.ok===false) throw new Error(j.error||`Erro ${r.status}`);
+  return j;
 }
-
-function phoneOf(client) {
-  return digits(
-    client?.telefone ??
-    client?.telefone_cliente ??
-    client?.whatsapp ??
-    client?.celular ??
-    ''
-  );
+function bubble(t,type='bot',html=false){
+  const d=document.createElement('div');d.className='bubble '+type;
+  if(html) d.innerHTML=t; else d.textContent=t;
+  chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;
 }
-
-function today() {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0,10);
-}
-
-function isoDate(offset) {
-  const d = new Date();
-  d.setHours(12,0,0,0);
-  d.setDate(d.getDate() + offset);
-  const local = new Date(d.getTime() - d.getTimezoneOffset()*60000);
-  return local.toISOString().slice(0,10);
-}
-
-function mins(value) {
-  const parts = String(value ?? '0:0').split(':').map(Number);
-  return (parts[0] || 0)*60 + (parts[1] || 0);
-}
-
-function conflict(start,end,list) {
-  return (Array.isArray(list) ? list : []).some(item => {
-    const a = item?.hora_inicio ?? item?.inicio;
-    const b = item?.hora_fim ?? item?.fim;
-    if (!a || !b) return false;
-    return start < mins(b) && end > mins(a);
+function quickBtns(items,cb){
+  const w=document.createElement('div');w.className='quick';
+  items.forEach(it=>{
+    const b=document.createElement('button');b.type='button';b.className='qbtn '+(it.primary?'primary':'');b.textContent=it.label;
+    b.onclick=()=>{if(S.busy) return;bubble(it.label,'user');w.remove();cb(it);};
+    w.appendChild(b);
   });
+  chat.appendChild(w);chat.scrollTop=chat.scrollHeight;
 }
+function setProgress(v){progress.style.width=Math.max(0,Math.min(100,v))+'%';}
+function setInput(ph,ac='off'){input.placeholder=ph;input.autocomplete=ac;input.focus();}
+function setBusy(v){S.busy=v;send.disabled=v;input.disabled=v;send.textContent=v?'Aguarde…':'Enviar';}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
 
-function dateBR(iso) {
-  if (!iso) return '';
-  const parts = String(iso).slice(0,10).split('-');
-  return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : iso;
-}
-
-async function api(url, options={}) {
-  const headers = { ...(options.headers || {}) };
-  if (options.body && !headers['Content-Type']) {
-    headers['Content-Type'] = 'application/json';
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
-
-  const result = await response.json().catch(() => ({}));
-
-  if (!response.ok || result.ok === false) {
-    throw new Error(
-      result.error ||
-      result.message ||
-      (response.status === 401 || response.status === 403
-        ? 'A consulta precisa de autorização no servidor.'
-        : `Não foi possível concluir a solicitação (${response.status}).`)
-    );
-  }
-
-  return result;
-}
-
-function bubble(text,type='bot',html=false) {
-  const div = document.createElement('div');
-  div.className = 'bubble ' + type;
-  if (html) div.innerHTML = text;
-  else div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-  return div;
-}
-
-function quickBtns(items,callback) {
-  const wrap = document.createElement('div');
-  wrap.className = 'quick';
-
-  items.forEach(item => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'qbtn ' + (item.primary ? 'primary' : '');
-    button.textContent = item.label;
-    button.onclick = () => {
-      if (S.busy) return;
-      bubble(item.label,'user');
-      wrap.remove();
-      callback(item);
-    };
-    wrap.appendChild(button);
-  });
-
-  chat.appendChild(wrap);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function setProgress(value) {
-  progress.style.width = Math.max(0,Math.min(100,value)) + '%';
-}
-
-function setInput(placeholder,autocomplete='off') {
-  input.placeholder = placeholder;
-  input.autocomplete = autocomplete;
-  input.focus();
-}
-
-function setBusy(value) {
-  S.busy = value;
-  send.disabled = value;
-  input.disabled = value;
-  send.textContent = value ? 'Aguarde…' : 'Enviar';
-}
-
-async function start() {
+async function start(){
   bubble('Olá! Eu sou a secretária virtual da Taiany 💅');
   await wait(300);
   bubble('Consigo te atender em poucos segundos, sem precisar esperar a Taiany parar o atendimento.');
-
-  try {
-    const results = await Promise.allSettled([
+  try{
+    // CORRIGIDO: só rotas públicas, sem /api/admin
+    const [servRes, dispRes] = await Promise.all([
       api('/api/servicos'),
-      api('/api/disponibilidade'),
-      api('/api/admin/clientes')
+      api('/api/disponibilidade')
     ]);
-
-    if (results[0].status === 'fulfilled') {
-      S.services = normalizeArray(results[0].value.data);
-    }
-    if (results[1].status === 'fulfilled') {
-      S.avail = normalizeArray(results[1].value.data);
-    }
-    if (results[2].status === 'fulfilled') {
-      S.clients = normalizeArray(results[2].value.data);
-    }
-  } catch (error) {
-    console.error('Erro ao carregar dados iniciais:',error);
-  }
-
+    S.services = servRes.data || servRes || [];
+    S.avail = dispRes.data || dispRes || [];
+  }catch(e){console.error(e); bubble('Tive um problema ao carregar os serviços, mas pode tentar mesmo assim.');}
   quickBtns([
     {label:'📅 Quero agendar',value:'book',primary:true},
-    {label:'🔍 Ver meus horários',value:'my'},
     {label:'💅 Ver serviços e valores',value:'services'}
   ],handleQuick);
-
   setProgress(10);
 }
-
-function normalizeArray(value) {
-  if (Array.isArray(value)) return value;
-  if (Array.isArray(value?.data)) return value.data;
-  if (Array.isArray(value?.clientes)) return value.clientes;
-  if (Array.isArray(value?.servicos)) return value.servicos;
-  return [];
+function handleQuick(c){if(c.value==='book') askPhone(); if(c.value==='services') showServices();}
+function askPhone(){
+  S.step=1; S.name=''; S.email=''; S.service=null; S.date=null; S.time=null; S.notes='';
+  bubble('Perfeito! Para começar, me informe seu WhatsApp com DDD.');
+  setInput('(00) 00000-0000','tel'); setProgress(20);
 }
-
-function handleQuick(choice) {
-  if (choice.value === 'book') askPhone(false);
-  if (choice.value === 'my') askPhone(true);
-  if (choice.value === 'services') showServices();
-}
-
-function askPhone(isLookup=false) {
-  S.lookup = isLookup;
-  S.step = 1;
-  S.name = '';
-  S.email = '';
-  S.service = null;
-  S.date = null;
-  S.time = null;
-  S.notes = '';
-
-  bubble(isLookup
-    ? 'Me informe o WhatsApp com DDD usado no agendamento para eu procurar seus horários.'
-    : 'Perfeito! Para começar, me informe seu WhatsApp com DDD.');
-
-  setInput('(00) 00000-0000','tel');
-  setProgress(20);
-}
-
-function showServices() {
-  S.step = 0;
-
-  if (!S.services.length) {
-    bubble('Não consegui carregar os serviços agora. Tente novamente em instantes ou entre em contato com a Taiany.');
-    quickBtns([{label:'Tentar novamente',value:'services',primary:true}],handleQuick);
-    return;
-  }
-
-  bubble('Esses são os serviços disponíveis. Qual você deseja?');
-
-  const wrap = document.createElement('div');
-  wrap.className = 'cards';
-
-  S.services.forEach(service => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'card';
-
-    const name = esc(service.nome || 'Serviço');
-    const description = esc(service.descricao || service.categoria || 'Atendimento personalizado');
-    const duration = Number(service.duracao_minutos || 0);
-
-    button.innerHTML =
-      `<b>${name}</b>` +
-      `<small>${description}</small>` +
-      `<div class="price">${money(service.preco)} • ${duration} min</div>`;
-
-    button.onclick = () => {
-      S.service = service;
-      bubble(`${service.nome} - ${money(service.preco)}`,'user');
-      wrap.remove();
-      askDate();
-    };
-
-    wrap.appendChild(button);
+function showServices(){
+  S.step=0;
+  if(!S.services.length){bubble('Não consegui carregar os serviços agora.');return;}
+  bubble('Esses são os serviços disponíveis:');
+  const wrap=document.createElement('div');wrap.className='cards';
+  S.services.forEach(s=>{
+    const b=document.createElement('button');b.type='button';b.className='card';
+    b.innerHTML=`<b>${esc(s.nome)}</b><small>${esc(s.descricao||s.categoria||'')}</small><div class="price">${money(s.preco)} • ${Number(s.duracao_minutos||60)} min</div>`;
+    b.onclick=()=>{S.service=s;bubble(`${s.nome} - ${money(s.preco)}`,'user');wrap.remove();askDate();};
+    wrap.appendChild(b);
   });
-
-  chat.appendChild(wrap);
-  chat.scrollTop = chat.scrollHeight;
+  chat.appendChild(wrap);chat.scrollTop=chat.scrollHeight;
 }
-
-async function handleInput() {
-  if (S.busy) return;
-
-  const value = input.value.trim();
-  if (!value) return;
-
-  bubble(value,'user');
-  input.value = '';
-
-  try {
-    if (S.step === 1) {
-      await handlePhone(value);
-    } else if (S.step === 2) {
-      S.name = value;
-      S.step = 3;
+async function handleInput(){
+  if(S.busy) return;
+  const v=input.value.trim(); if(!v) return;
+  bubble(v,'user'); input.value='';
+  try{
+    if(S.step===1){
+      const phone=digits(v);
+      if(phone.length<10){bubble('Envie o WhatsApp com DDD, ex: 17 99123-4567');return;}
+      S.phone=phone;
+      S.step=2; bubble('Qual seu nome completo?'); setInput('Seu nome','name'); setProgress(35);
+    }else if(S.step===2){
+      S.name=v; S.step=3;
       bubble('Qual seu e-mail? Se preferir não informar, escreva "pular".');
-      setInput('E-mail ou pular','email');
-      setProgress(40);
-    } else if (S.step === 3) {
-      S.email = value.toLowerCase() === 'pular' ? '' : value;
-
-      if (S.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.email)) {
-        bubble('Esse e-mail parece inválido. Digite novamente ou escreva "pular".');
-        return;
-      }
-
+      setInput('E-mail ou pular','email'); setProgress(45);
+    }else if(S.step===3){
+      S.email=v.toLowerCase()==='pular'?'':v;
+      if(S.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.email)){bubble('E-mail inválido. Digite novamente ou "pular".');return;}
       showServices();
-    } else if (S.step === 5) {
-      S.notes = value.toLowerCase() === 'pular' ? '' : value;
+    }else if(S.step===5){
+      S.notes=v.toLowerCase()==='pular'?'':v;
       await confirmBooking();
-    } else {
-      bubble('Escolha uma das opções acima para continuar.');
     }
-  } catch (error) {
-    console.error(error);
-    bubble(error.message || 'Ocorreu um erro. Tente novamente.');
-  }
+  }catch(e){bubble(e.message);}
 }
-
-async function handlePhone(value) {
-  const phone = digits(value);
-
-  if (phone.length < 10 || phone.length > 13) {
-    bubble('Esse número parece incompleto. Envie o WhatsApp com DDD, por exemplo: 17 99123-4567.');
-    return;
+async function askDate(){
+  if(!S.service) return;
+  S.step=4; setProgress(60);
+  bubble('Verificando os dias com horário livre…');
+  const dates=[];
+  for(let off=0; off<=60; off++){
+    const iso=isoDate(off);
+    try{
+      const res=await api(`/api/horarios?data=${encodeURIComponent(iso)}&servico_id=${encodeURIComponent(S.service.id)}`);
+      const horarios=res.data||res.horarios||res||[];
+      const list=Array.isArray(horarios)?horarios:horarios.data||[];
+      if(list.length>0) dates.push(iso);
+    }catch{}
+    if(dates.length>=14) break;
   }
-
-  S.phone = phone;
-
-  const matchingClients = S.clients.filter(client => {
-    const registeredPhone = phoneOf(client);
-    return registeredPhone && (
-      registeredPhone === phone ||
-      registeredPhone.endsWith(phone) ||
-      phone.endsWith(registeredPhone)
-    );
+  if(!dates.length){bubble('Sem datas livres nos próximos 60 dias para esse serviço.'); quickBtns([{label:'Outro serviço',value:'services',primary:true}],()=>showServices()); return;}
+  const groups={'Hoje':[],'Amanhã':[],'Essa semana':[],'Próximas':[]};
+  dates.forEach(iso=>{
+    const diff=Math.round((new Date(iso+'T12:00:00')-new Date(today()+'T12:00:00'))/864e5);
+    if(diff===0) groups['Hoje'].push(iso); else if(diff===1) groups['Amanhã'].push(iso); else if(diff<=7) groups['Essa semana'].push(iso); else groups['Próximas'].push(iso);
   });
-
-  if (S.lookup) {
-    await lookupAppointments();
-    return;
-  }
-
-  if (matchingClients.length) {
-    const client = matchingClients[0];
-    S.name = client.nome || client.nome_cliente || '';
-    S.email = client.email || '';
-
-    if (S.name) {
-      bubble(`Achei seu cadastro, ${S.name}! 💖`);
-      showServices();
-      return;
-    }
-  }
-
-  S.step = 2;
-  bubble('Qual seu nome completo?');
-  setInput('Seu nome completo','name');
-  setProgress(30);
-}
-
-async function lookupAppointments() {
-  bubble('Estou consultando seus agendamentos…');
-
-  try {
-    /*
-      Mantida a rota de consulta que já existia no HTML.
-      Se ela exigir autenticação administrativa, o servidor deverá
-      disponibilizar uma rota de consulta de cliente por telefone.
-    */
-    const response = await api('/api/admin/agendamentos');
-    const appointments = normalizeArray(response.data);
-
-    const mine = appointments.filter(appointment => {
-      const registeredPhone = phoneOf(appointment);
-      return registeredPhone && (
-        registeredPhone === S.phone ||
-        registeredPhone.endsWith(S.phone) ||
-        S.phone.endsWith(registeredPhone)
-      );
+  for(const [label,items] of Object.entries(groups)){
+    if(!items.length) continue;
+    const g=document.createElement('div');g.className='time-group';
+    const h=document.createElement('label');h.textContent=label;g.appendChild(h);
+    const chips=document.createElement('div');chips.className='chips';
+    items.forEach(iso=>{
+      const d=new Date(iso+'T12:00:00');
+      const wd=d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');
+      const disp=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+      const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=`${disp} (${wd})`;
+      b.onclick=()=>{S.date=iso;S.time=null;bubble(`${dateBR(iso)}`,'user');document.querySelectorAll('.time-group').forEach(el=>el.remove());askTime();};
+      chips.appendChild(b);
     });
-
-    if (!mine.length) {
-      bubble('Não encontrei agendamentos associados a esse WhatsApp. Quer agendar agora?');
-      quickBtns([
-        {label:'Sim, quero agendar',value:'book',primary:true},
-        {label:'Voltar ao início',value:'home'}
-      ],choice => {
-        if (choice.value === 'book') askPhone(false);
-        else showHomeOptions();
+    g.appendChild(chips);chat.appendChild(g);
+  }
+  chat.scrollTop=chat.scrollHeight;
+}
+async function askTime(){
+  if(!S.date||!S.service) return;
+  setProgress(75); bubble(`Horários do dia ${dateBR(S.date)}…`);
+  try{
+    const res=await api(`/api/horarios?data=${encodeURIComponent(S.date)}&servico_id=${encodeURIComponent(S.service.id)}`);
+    const horarios=res.data||res.horarios||res||[];
+    const list=Array.isArray(horarios)?horarios:horarios.data||[];
+    if(!list.length){bubble('Essa data lotou. Vamos ver outra?');askDate();return;}
+    const groups={'Manhã':list.filter(t=>mins(t)<12*60),'Tarde':list.filter(t=>{const m=mins(t);return m>=12*60&&m<18*60}),'Noite':list.filter(t=>mins(t)>=18*60)};
+    for(const [label,times] of Object.entries(groups)){
+      if(!times.length) continue;
+      const g=document.createElement('div');g.className='time-group';
+      const h=document.createElement('label');h.textContent=label;g.appendChild(h);
+      const chips=document.createElement('div');chips.className='chips';
+      times.forEach(time=>{
+        const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=time;
+        b.onclick=()=>{S.time=time;bubble(time,'user');document.querySelectorAll('.time-group').forEach(el=>el.remove());askNotes();};
+        chips.appendChild(b);
       });
-      return;
+      g.appendChild(chips);chat.appendChild(g);
     }
-
-    bubble(`Encontrei ${mine.length} agendamento(s) associado(s) a esse WhatsApp:`);
-
-    mine.forEach(appointment => {
-      const card = document.createElement('div');
-      card.className = 'appointment';
-
-      const service = appointment.nome_servico || appointment.servico_nome || 'Serviço';
-      const date = dateBR(appointment.data);
-      const time = String(appointment.hora_inicio || '').slice(0,5);
-      const status = appointment.status || 'Registrado';
-
-      card.innerHTML =
-        `<b>${esc(service)}</b>` +
-        `<div>📅 ${esc(date)} às ${esc(time)}</div>` +
-        `<small>Status: ${esc(status)}</small>`;
-
-      chat.appendChild(card);
-    });
-
-    bubble('Se precisar fazer uma nova marcação, posso te mostrar os horários disponíveis.');
-    quickBtns([
-      {label:'📅 Fazer novo agendamento',value:'book',primary:true},
-      {label:'Voltar ao início',value:'home'}
-    ],choice => {
-      if (choice.value === 'book') askPhone(false);
-      else showHomeOptions();
-    });
-
-    chat.scrollTop = chat.scrollHeight;
-  } catch (error) {
-    console.error('Erro na consulta de agendamentos:',error);
-
-    bubble(
-      'Não consegui consultar seus horários agora. A consulta depende da rota do servidor e da autorização configurada. Tente novamente mais tarde ou fale diretamente com a Taiany.'
-    );
-
-    quickBtns([
-      {label:'Tentar consulta novamente',value:'retry',primary:true},
-      {label:'Voltar ao início',value:'home'}
-    ],choice => {
-      if (choice.value === 'retry') lookupAppointments();
-      else showHomeOptions();
-    });
-  }
+    chat.scrollTop=chat.scrollHeight;
+  }catch(e){bubble('Não consegui carregar horários. Tente outra data.'); askDate();}
 }
-
-function showHomeOptions() {
-  quickBtns([
-    {label:'📅 Quero agendar',value:'book',primary:true},
-    {label:'🔍 Ver meus horários',value:'my'},
-    {label:'💅 Ver serviços e valores',value:'services'}
-  ],handleQuick);
+function askNotes(){S.step=5; setProgress(90); bubble('Quase lá! Alguma observação? Cor, formato... Se não, escreva "pular".'); setInput('Observação ou pular');}
+async function confirmBooking(){
+  if(S.busy) return;
+  if(!S.name||!S.phone||!S.service||!S.date||!S.time){bubble('Faltam dados.');showServices();return;}
+  setBusy(true); bubble('Registrando seu agendamento…');
+  try{
+    const payload={nome_cliente:S.name,telefone_cliente:S.phone,servico_id:S.service.id,data:S.date,hora_inicio:S.time,observacoes:S.notes,email:S.email||null};
+    const result=await api('/api/agendamentos',{method:'POST',body:JSON.stringify(payload)});
+    const ap=result.data||{};
+    $('modalDetails').innerHTML=`<b>Serviço:</b> ${esc(ap.nome_servico||S.service.nome)}<br><b>Data:</b> ${esc(dateBR(ap.data||S.date))}<br><b>Horário:</b> ${esc(String(ap.hora_inicio||S.time).slice(0,5))}${ap.hora_fim?` - ${esc(String(ap.hora_fim).slice(0,5))}`:''}<br><b>Valor:</b> ${money(ap.preco??S.service.preco)}<br><b>Cliente:</b> ${esc(S.name)}<br><b>WhatsApp:</b> ${esc(S.phone)}`;
+    $('successModal').classList.add('show'); setProgress(100);
+  }catch(e){bubble('Erro: '+e.message); quickBtns([{label:'Tentar novamente',value:'retry',primary:true},{label:'Ver outros horários',value:'times'}],c=>{if(c.value==='retry') confirmBooking(); else askTime();});}
+  finally{setBusy(false);}
 }
-
-async function askDate() {
-  if (!S.service) {
-    bubble('Escolha primeiro um serviço.');
-    showServices();
-    return;
-  }
-
-  S.step = 4;
-  setProgress(55);
-  bubble('Ótima escolha! Vou verificar os dias com horário livre para esse serviço…');
-
-  const duration = Number(S.service.duracao_minutos);
-  if (!duration || duration <= 0) {
-    bubble('Esse serviço está sem duração cadastrada. A Taiany precisa conferir o cadastro do serviço.');
-    showServices();
-    return;
-  }
-
-  const dates = [];
-  const serviceId = S.service.id;
-
-  for (let offset = 0; offset <= 60; offset++) {
-    const iso = isoDate(offset);
-    const weekday = new Date(iso + 'T12:00:00').getDay();
-
-    const periods = S.avail.filter(period =>
-      Number(period.dia_semana) === weekday
-    );
-
-    if (!periods.length) continue;
-
-    try {
-      const endpoint = '/api/horarios?data=' + encodeURIComponent(iso) +
-        '&servico_id=' + encodeURIComponent(serviceId);
-
-      const result = await api(endpoint);
-      const occupied = result.ocupados || result.data?.ocupados || [];
-      const blocks = result.bloqueios || result.data?.bloqueios || [];
-
-      let hasFreeSlot = false;
-
-      for (const period of periods) {
-        const opening = mins(period.hora_inicio);
-        const closing = mins(period.hora_fim);
-
-        for (let start = opening; start + duration <= closing; start += 30) {
-          const end = start + duration;
-
-          if (conflict(start,end,occupied) || conflict(start,end,blocks)) continue;
-
-          if (iso === today()) {
-            const now = new Date();
-            if (start <= now.getHours()*60 + now.getMinutes()) continue;
-          }
-
-          hasFreeSlot = true;
-          break;
-        }
-
-        if (hasFreeSlot) break;
-      }
-
-      if (hasFreeSlot) dates.push(iso);
-    } catch (error) {
-      console.warn('Não foi possível verificar a data ' + iso,error);
-    }
-
-    if (dates.length >= 14) break;
-  }
-
-  if (!dates.length) {
-    bubble('Não encontrei datas livres nos próximos 60 dias para esse serviço. Você pode escolher outro serviço.');
-    quickBtns([
-      {label:'Escolher outro serviço',value:'services',primary:true},
-      {label:'Voltar ao início',value:'home'}
-    ],choice => {
-      if (choice.value === 'services') showServices();
-      else showHomeOptions();
-    });
-    return;
-  }
-
-  const groups = {
-    'Hoje':[],
-    'Amanhã':[],
-    'Essa semana':[],
-    'Próximas semanas':[]
-  };
-
-  dates.forEach(iso => {
-    const difference = Math.round(
-      (new Date(iso + 'T12:00:00') - new Date(today() + 'T12:00:00')) / 86400000
-    );
-
-    if (difference === 0) groups['Hoje'].push(iso);
-    else if (difference === 1) groups['Amanhã'].push(iso);
-    else if (difference <= 7) groups['Essa semana'].push(iso);
-    else groups['Próximas semanas'].push(iso);
-  });
-
-  for (const [label,items] of Object.entries(groups)) {
-    if (!items.length) continue;
-
-    const group = document.createElement('div');
-    group.className = 'time-group';
-
-    const heading = document.createElement('label');
-    heading.textContent = label;
-    group.appendChild(heading);
-
-    const chips = document.createElement('div');
-    chips.className = 'chips';
-
-    items.forEach(iso => {
-      const date = new Date(iso + 'T12:00:00');
-      const weekday = date.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');
-      const displayDate = date.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'chip';
-      button.textContent = `${displayDate} (${weekday})`;
-
-      button.onclick = () => {
-        S.date = iso;
-        S.time = null;
-        bubble(`${dateBR(iso)} (${weekday})`,'user');
-        document.querySelectorAll('.time-group').forEach(element => element.remove());
-        askTime();
-      };
-
-      chips.appendChild(button);
-    });
-
-    group.appendChild(chips);
-    chat.appendChild(group);
-  }
-
-  chat.scrollTop = chat.scrollHeight;
-}
-
-async function askTime() {
-  if (!S.date || !S.service) return;
-
-  setProgress(75);
-  bubble(`Verificando os horários do dia ${dateBR(S.date)}…`);
-
-  let occupied = [];
-  let blocks = [];
-
-  try {
-    const endpoint = '/api/horarios?data=' + encodeURIComponent(S.date) +
-      '&servico_id=' + encodeURIComponent(S.service.id);
-    const result = await api(endpoint);
-
-    occupied = result.ocupados || result.data?.ocupados || [];
-    blocks = result.bloqueios || result.data?.bloqueios || [];
-  } catch (error) {
-    console.error('Erro ao carregar horários:',error);
-    bubble('Não consegui carregar os horários dessa data. Tente escolher a data novamente.');
-    quickBtns([{label:'Escolher outra data',value:'date',primary:true}],() => askDate());
-    return;
-  }
-
-  const duration = Number(S.service.duracao_minutos);
-  const weekday = new Date(S.date + 'T12:00:00').getDay();
-  const periods = S.avail.filter(period => Number(period.dia_semana) === weekday);
-  const slots = [];
-
-  periods.forEach(period => {
-    const opening = mins(period.hora_inicio);
-    const closing = mins(period.hora_fim);
-
-    for (let start = opening; start + duration <= closing; start += 30) {
-      const end = start + duration;
-
-      if (conflict(start,end,occupied) || conflict(start,end,blocks)) continue;
-
-      if (S.date === today()) {
-        const now = new Date();
-        if (start <= now.getHours()*60 + now.getMinutes()) continue;
-      }
-
-      slots.push(start);
-    }
-  });
-
-  const uniqueSlots = [...new Set(slots)]
-    .sort((a,b) => a-b)
-    .map(value =>
-      String(Math.floor(value/60)).padStart(2,'0') + ':' +
-      String(value%60).padStart(2,'0')
-    );
-
-  if (!uniqueSlots.length) {
-    bubble('Essa data não tem mais horários livres. Vamos verificar outra data.');
-    askDate();
-    return;
-  }
-
-  const groups = {
-    'Manhã':uniqueSlots.filter(time => mins(time) < 12*60),
-    'Tarde':uniqueSlots.filter(time => mins(time) >= 12*60 && mins(time) < 18*60),
-    'Noite':uniqueSlots.filter(time => mins(time) >= 18*60)
-  };
-
-  for (const [label,times] of Object.entries(groups)) {
-    if (!times.length) continue;
-
-    const group = document.createElement('div');
-    group.className = 'time-group';
-
-    const heading = document.createElement('label');
-    heading.textContent = label;
-    group.appendChild(heading);
-
-    const chips = document.createElement('div');
-    chips.className = 'chips';
-
-    times.forEach(time => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'chip';
-      button.textContent = time;
-
-      button.onclick = () => {
-        S.time = time;
-        bubble(time,'user');
-        document.querySelectorAll('.time-group').forEach(element => element.remove());
-        askNotes();
-      };
-
-      chips.appendChild(button);
-    });
-
-    group.appendChild(chips);
-    chat.appendChild(group);
-  }
-
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function askNotes() {
-  S.step = 5;
-  setProgress(90);
-  bubble('Quase lá! Deseja incluir alguma observação, como cor ou formato? Se não tiver, escreva "pular".');
-  setInput('Observação ou pular');
-}
-
-async function confirmBooking() {
-  if (S.busy) return;
-
-  if (!S.name || !S.phone || !S.service || !S.date || !S.time) {
-    bubble('Faltam algumas informações para concluir. Vamos revisar seu agendamento.');
-    showServices();
-    return;
-  }
-
-  setBusy(true);
-  bubble('Perfeito! Estou registrando seu agendamento…');
-
-  const payload = {
-    nome_cliente:S.name,
-    telefone_cliente:S.phone,
-    servico_id:S.service.id,
-    data:S.date,
-    hora_inicio:S.time,
-    observacoes:S.notes,
-    email:S.email || null
-  };
-
-  try {
-    const result = await api('/api/agendamentos',{
-      method:'POST',
-      body:JSON.stringify(payload)
-    });
-
-    const appointment = result.data || {};
-
-    $('modalDetails').innerHTML =
-      `<b>Serviço:</b> ${esc(appointment.nome_servico || S.service.nome)}<br>` +
-      `<b>Data:</b> ${esc(dateBR(appointment.data || S.date))}<br>` +
-      `<b>Horário:</b> ${esc(String(appointment.hora_inicio || S.time).slice(0,5))}` +
-      (appointment.hora_fim ? ` - ${esc(String(appointment.hora_fim).slice(0,5))}` : '') +
-      `<br><b>Valor:</b> ${money(appointment.preco ?? S.service.preco)}<br>` +
-      `<b>Cliente:</b> ${esc(S.name)}<br>` +
-      `<b>WhatsApp:</b> ${esc(S.phone)}<br><br>` +
-      `<small style="color:#887780">Guarde os dados do seu agendamento. Para consultar seus horários novamente, volte ao início e escolha “Ver meus horários”.</small>`;
-
-    $('successModal').classList.add('show');
-    setProgress(100);
-    S.step = 0;
-  } catch (error) {
-    console.error('Erro ao salvar agendamento:',error);
-    bubble('Não consegui concluir o agendamento: ' + error.message + '. Você pode escolher outro horário ou tentar novamente.');
-    quickBtns([
-      {label:'Tentar esse horário novamente',value:'retry',primary:true},
-      {label:'Ver outros horários',value:'times'}
-    ],choice => {
-      if (choice.value === 'retry') confirmBooking();
-      else askTime();
-    });
-  } finally {
-    setBusy(false);
-  }
-}
-
-function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve,ms));
-}
-
-$('inputForm').addEventListener('submit',event => {
-  event.preventDefault();
-  handleInput();
-});
-
-$('closeModal').addEventListener('click',() => {
-  $('successModal').classList.remove('show');
-  chat.innerHTML = '';
-  S.step = 0;
-  S.service = null;
-  S.date = null;
-  S.time = null;
-  S.name = '';
-  S.phone = '';
-  S.email = '';
-  S.notes = '';
-  start();
-});
-
-$('successModal').addEventListener('click',event => {
-  if (event.target === $('successModal')) {
-    $('successModal').classList.remove('show');
-  }
-});
-
+$('inputForm').addEventListener('submit',e=>{e.preventDefault();handleInput();});
+$('closeModal').addEventListener('click',()=>{$('successModal').classList.remove('show');chat.innerHTML='';S.service=null;S.date=null;S.time=null;S.name='';S.phone='';S.email='';S.notes='';S.step=0;start();});
+$('successModal').addEventListener('click',e=>{if(e.target===$('successModal')) $('successModal').classList.remove('show');});
 start();
 })();
 </script>
