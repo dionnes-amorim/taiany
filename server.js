@@ -23,6 +23,8 @@ const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
     })
   : null;
 
+app.get('/', (req,res)=> res.sendFile(path.join(__dirname,'index.html')));
+
 function database(res) {
   if (!supabase) {
     res.status(503).json({
