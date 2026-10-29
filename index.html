@@ -4,36 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fbf5ef">
-  <meta name="description" content="Taiany Trindade Nail Designer — sistema de gestão e agendamento.">
-  <title>Taiany Trindade | Sistema de Gestão</title>
+  <meta name="theme-color" content="#fbf7f3">
+  <title>Taiany Trindade | Acesso</title>
 
   <style>
     :root {
       --bg: #fbf7f3;
-      --surface: #fffdfb;
-      --surface-soft: #fff8f4;
-      --rose: #c47f8e;
-      --rose-dark: #a95e72;
-      --rose-light: #f4dce1;
+      --white: #fffdfb;
+      --rose: #b96f82;
+      --rose-dark: #9e566b;
       --gold: #c6a15b;
-      --gold-dark: #92713a;
-      --gold-light: #f4e8c9;
       --ink: #34242a;
       --muted: #89777c;
       --line: #eadde0;
-      --success: #34775d;
       --danger: #a64252;
-      --shadow: 0 28px 80px rgba(94, 53, 65, .10);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      min-height: 100%;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -41,286 +28,66 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 18px;
       color: var(--ink);
       background:
-        radial-gradient(ellipse at 10% 8%, rgba(244, 220, 225, .75), transparent 35%),
-        radial-gradient(ellipse at 95% 90%, rgba(244, 232, 201, .60), transparent 34%),
+        radial-gradient(ellipse at 10% 10%, #f4dce180, transparent 40%),
+        radial-gradient(ellipse at 90% 90%, #f4e8c966, transparent 38%),
         var(--bg);
-      font-family: Inter, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      font-family: Inter, "Segoe UI", system-ui, Arial, sans-serif;
     }
 
-    button, input {
-      font: inherit;
-    }
-
-    button {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .topbar {
+    .container {
       width: 100%;
-      min-height: 66px;
-      padding: 15px 5%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      border-bottom: 1px solid rgba(198, 161, 91, .25);
-      background: rgba(255, 253, 251, .78);
-      backdrop-filter: blur(14px);
-    }
-
-    .system-brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      min-width: 0;
-    }
-
-    .brand-mark {
-      width: 35px;
-      height: 35px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      border: 1px solid var(--gold);
-      border-radius: 11px;
-      color: var(--gold-dark);
-      background: linear-gradient(145deg, #fff, var(--gold-light));
-      font-family: Georgia, serif;
-      font-size: 20px;
-    }
-
-    .brand-name {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-
-    .brand-caption {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .system-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 0 4px rgba(52, 119, 93, .10);
-    }
-
-    .main {
-      flex: 1;
-      width: 100%;
-      display: grid;
-      place-items: center;
-      padding: 46px 20px 55px;
-    }
-
-    .login-layout {
-      width: min(100%, 1000px);
-      display: grid;
-      grid-template-columns: 1fr .88fr;
-      align-items: stretch;
-      border: 1px solid rgba(198, 161, 91, .34);
-      border-radius: 28px;
-      overflow: hidden;
-      background: var(--surface);
-      box-shadow: var(--shadow);
-    }
-
-    .brand-panel {
-      position: relative;
-      isolation: isolate;
-      min-height: 580px;
-      padding: 38px 30px;
+      max-width: 390px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 50% 38%, rgba(255,255,255,.97), rgba(255,248,244,.90) 45%, rgba(244,220,225,.8) 100%);
-      border-right: 1px solid var(--line);
     }
 
-    .brand-panel::before,
-    .brand-panel::after {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      width: 260px;
-      height: 260px;
-      border: 1px solid rgba(198, 161, 91, .22);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .brand-panel::before {
-      top: -120px;
-      right: -115px;
-    }
-
-    .brand-panel::after {
-      bottom: -150px;
-      left: -100px;
-      width: 310px;
-      height: 310px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      margin-bottom: 22px;
-      color: var(--gold-dark);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-    }
-
-    .eyebrow::before,
-    .eyebrow::after {
-      content: "";
-      width: 24px;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    .owner-logo-frame {
-      position: relative;
-      width: min(100%, 300px);
-      aspect-ratio: 1 / 1;
-      padding: 8px;
-      border-radius: 31px;
-      background: linear-gradient(145deg, #e8cf91, #b88b45 45%, #f8e8bd 75%, #b88b45);
-      box-shadow:
-        0 18px 45px rgba(155, 112, 63, .22),
-        0 0 0 1px rgba(255,255,255,.85) inset;
-    }
-
-    .owner-logo-inner {
-      width: 100%;
-      height: 100%;
+    .owner-logo {
+      width: 190px;
+      height: 190px;
       display: grid;
       place-items: center;
+      padding: 5px;
       overflow: hidden;
-      border: 1px solid rgba(198, 161, 91, .35);
+      border: 1px solid var(--gold);
       border-radius: 24px;
-      background: #fff;
+      background: linear-gradient(145deg, #fff, #f4e8c9);
+      box-shadow: 0 12px 36px #9b70401c;
     }
 
-    .owner-logo-inner img {
-      display: block;
+    .owner-logo img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      padding: 0;
+      border-radius: 18px;
     }
 
-    .owner-name {
-      margin: 27px 0 6px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(26px, 3vw, 34px);
-      font-weight: 500;
-      letter-spacing: -.7px;
-    }
-
-    .owner-subtitle {
-      margin: 0;
-      color: var(--rose-dark);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 2.2px;
-      text-transform: uppercase;
-    }
-
-    .owner-divider {
-      width: 80px;
-      height: 2px;
-      margin: 23px 0 18px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-
-    .brand-description {
-      max-width: 280px;
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.8;
-    }
-
-    .login-panel {
-      padding: 48px 38px 36px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: var(--surface);
-    }
-
-    .panel-tag {
-      display: inline-flex;
-      align-self: flex-start;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 11px;
-      border: 1px solid var(--rose-light);
-      border-radius: 8px;
-      color: var(--rose-dark);
-      background: var(--surface-soft);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-    }
-
-    .panel-tag svg {
-      width: 15px;
-      height: 15px;
-    }
-
-    .login-title {
-      margin: 25px 0 9px;
-      font-size: 27px;
-      font-weight: 750;
-      letter-spacing: -.9px;
-    }
-
-    .login-description {
-      margin: 0 0 30px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
+    .login-card {
+      width: 100%;
+      margin-top: 28px;
+      padding: 28px;
+      border: 1px solid #eadde0c9;
+      border-radius: 20px;
+      background: #fffdfbeF;
+      box-shadow: 0 18px 55px #5e35410d;
     }
 
     .field {
-      margin-bottom: 19px;
+      margin-bottom: 16px;
     }
 
-    .field label {
+    label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       color: #655058;
       font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1px;
+      font-weight: 750;
+      letter-spacing: .8px;
       text-transform: uppercase;
     }
 
@@ -328,426 +95,146 @@
       position: relative;
     }
 
-    .input-icon {
-      position: absolute;
-      top: 50%;
-      left: 15px;
-      width: 18px;
-      height: 18px;
-      color: var(--rose-dark);
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    .field input {
+    input {
       width: 100%;
-      height: 51px;
-      padding: 0 43px;
-      border: 1px solid #e6d8da;
-      border-radius: 11px;
+      height: 48px;
+      padding: 0 44px 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
       outline: none;
       color: var(--ink);
-      background: #fff;
+      background: white;
+      font: inherit;
       font-size: 13px;
-      transition: border-color .2s, box-shadow .2s, background .2s;
     }
 
-    .field input::placeholder {
+    input:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px #b96f821c;
+    }
+
+    input::placeholder {
       color: #b2a2a6;
     }
 
-    .field input:hover {
-      border-color: #d8b6be;
-    }
-
-    .field input:focus {
-      border-color: var(--rose);
-      background: #fffdfd;
-      box-shadow: 0 0 0 4px rgba(196, 127, 142, .12);
-    }
-
-    .toggle-password {
+    .toggle {
       position: absolute;
       top: 50%;
-      right: 10px;
-      width: 32px;
-      height: 32px;
+      right: 7px;
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
-      padding: 0;
+      transform: translateY(-50%);
       border: 0;
       border-radius: 8px;
       color: var(--muted);
       background: transparent;
       cursor: pointer;
-      transform: translateY(-50%);
     }
 
-    .toggle-password:hover {
-      color: var(--rose-dark);
-      background: var(--surface-soft);
+    .toggle svg {
+      width: 19px;
+      height: 19px;
     }
 
-    .toggle-password svg {
-      width: 17px;
-      height: 17px;
-    }
-
-    .btn {
+    .submit {
       width: 100%;
-      min-height: 51px;
+      min-height: 48px;
+      margin-top: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 13px 16px;
-      border: 1px solid transparent;
-      border-radius: 11px;
+      gap: 9px;
+      border: 0;
+      border-radius: 10px;
+      color: white;
+      background: linear-gradient(110deg, #bd7788, #9e566b);
+      box-shadow: 0 7px 18px #a95e7226;
       font-size: 12px;
       font-weight: 800;
-      letter-spacing: .6px;
-      cursor: pointer;
-      transition: transform .2s, box-shadow .2s, background .2s;
-    }
-
-    .btn:focus-visible,
-    .toggle-password:focus-visible {
-      outline: 3px solid rgba(196, 127, 142, .4);
-      outline-offset: 3px;
-    }
-
-    .btn:disabled {
-      opacity: .7;
-      cursor: wait;
-      transform: none;
-    }
-
-    .btn-primary {
-      margin-top: 7px;
-      color: #fff;
-      background: linear-gradient(110deg, #bd7788, #a95e72 60%, #986078);
-      box-shadow: 0 9px 20px rgba(169, 94, 114, .19);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 13px 26px rgba(169, 94, 114, .25);
-    }
-
-    .btn-primary svg {
-      width: 17px;
-      height: 17px;
-    }
-
-    .msg {
-      min-height: 20px;
-      margin: 12px 0 0;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .msg.error {
-      color: var(--danger);
-    }
-
-    .msg.ok {
-      color: var(--success);
-    }
-
-    .access-note {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 24px;
-      padding: 13px;
-      border: 1px solid #efe4d1;
-      border-radius: 11px;
-      background: #fffcf5;
-    }
-
-    .access-note svg {
-      width: 17px;
-      height: 17px;
-      flex-shrink: 0;
-      margin-top: 1px;
-      color: var(--gold-dark);
-    }
-
-    .access-note p {
-      margin: 0;
-      color: #86766c;
-      font-size: 11px;
-      line-height: 1.65;
-    }
-
-    .booking-box {
-      margin-top: 28px;
-      padding-top: 23px;
-      border-top: 1px solid var(--line);
-    }
-
-    .booking-heading {
-      margin: 0 0 6px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .booking-description {
-      margin: 0 0 13px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.7;
-    }
-
-    .link-box {
-      display: block;
-      padding: 11px 12px;
-      overflow-wrap: anywhere;
-      border: 1px dashed #d8b6be;
-      border-radius: 9px;
-      color: var(--rose-dark);
-      background: #fff9f8;
-      font-size: 11px;
-      line-height: 1.6;
-      text-decoration: none;
-    }
-
-    .link-box:hover {
-      border-color: var(--gold);
-      background: #fffaf0;
-    }
-
-    .btn-secondary {
-      min-height: 43px;
-      margin-top: 10px;
-      border-color: #e4d2d6;
-      color: var(--rose-dark);
-      background: #fff;
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--gold);
-      color: var(--gold-dark);
-      background: #fffaf0;
-    }
-
-    .btn-secondary svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .footer {
-      width: 100%;
-      padding: 22px 5%;
-      border-top: 1px solid rgba(198, 161, 91, .27);
-      background: rgba(255, 253, 251, .9);
-    }
-
-    .footer-inner {
-      width: min(100%, 1000px);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 25px;
-    }
-
-    .footer-copy {
-      color: var(--muted);
-      font-size: 10px;
-      line-height: 1.8;
-    }
-
-    .footer-copy strong {
-      display: block;
-      color: #715961;
-      font-size: 11px;
       letter-spacing: .5px;
+      cursor: pointer;
     }
+
+    .submit:hover:not(:disabled) {
+      filter: brightness(.97);
+    }
+
+    .submit:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .message {
+      min-height: 18px;
+      margin: 12px 0 0;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message.error { color: var(--danger); }
+    .message.ok { color: #34775d; }
 
     .developer {
+      margin-top: 28px;
       display: flex;
       align-items: center;
-      gap: 18px;
+      justify-content: center;
+      gap: 13px;
     }
 
     .developer-label {
-      max-width: 120px;
       color: var(--muted);
       font-size: 11px;
-      font-weight: 700;
       line-height: 1.6;
       text-align: right;
     }
 
-    .developer-label span {
+    .developer-label strong {
       display: block;
-      color: var(--gold-dark);
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      color: var(--gold-dark, #92713a);
+      font-size: 10px;
+      letter-spacing: .5px;
     }
 
-    .developer-logo-frame {
-      width: 116px;
-      height: 116px;
-      flex-shrink: 0;
-      padding: 4px;
-      border: 1px solid var(--gold);
-      border-radius: 19px;
-      background: linear-gradient(145deg, #f5e6bd, #c6a15b, #f9edcf);
-      box-shadow: 0 9px 24px rgba(155, 112, 63, .15);
-    }
-
-    .developer-logo-inner {
-      width: 100%;
-      height: 100%;
-      display: grid;
-      place-items: center;
+    .developer-logo {
+      width: 76px;
+      height: 76px;
+      padding: 3px;
       overflow: hidden;
+      border: 1px solid var(--gold);
       border-radius: 14px;
-      background: #fff;
+      background: white;
     }
 
-    .developer-logo-inner img {
-      display: block;
+    .developer-logo img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      padding: 0;
+      border-radius: 10px;
     }
 
-    @media (min-width: 1100px) {
-      .owner-logo-frame {
-        width: 320px;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .topbar {
-        min-height: 60px;
-        padding: 12px 18px;
+    @media (max-width: 380px) {
+      .owner-logo {
+        width: 155px;
+        height: 155px;
       }
 
-      .system-status {
-        font-size: 10px;
+      .login-card {
+        padding: 22px 19px;
       }
 
-      .main {
-        padding: 24px 14px 32px;
-      }
-
-      .login-layout {
-        width: min(100%, 480px);
-        grid-template-columns: 1fr;
-        border-radius: 22px;
-      }
-
-      .brand-panel {
-        min-height: auto;
-        padding: 28px 20px 25px;
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .eyebrow {
-        margin-bottom: 17px;
-      }
-
-      .owner-logo-frame {
-        width: min(68vw, 235px);
-        padding: 6px;
-        border-radius: 25px;
-      }
-
-      .owner-logo-inner {
-        border-radius: 19px;
-      }
-
-      .owner-name {
-        margin-top: 20px;
-        font-size: 29px;
-      }
-
-      .owner-divider {
-        margin: 16px 0 12px;
-      }
-
-      .brand-description {
-        max-width: 310px;
-        font-size: 11px;
-      }
-
-      .login-panel {
-        padding: 30px 24px 28px;
-      }
-
-      .login-title {
-        margin-top: 20px;
-        font-size: 25px;
-      }
-
-      .booking-box {
-        margin-top: 23px;
-      }
-
-      .footer {
-        padding: 19px 18px;
-      }
-
-      .footer-inner {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 20px;
-      }
-
-      .developer {
-        width: 100%;
-        justify-content: center;
-        gap: 15px;
-      }
-
-      .developer-label {
-        text-align: right;
-      }
-
-      .developer-logo-frame {
-        width: 106px;
-        height: 106px;
-      }
-    }
-
-    @media (max-width: 360px) {
-      .brand-name {
-        font-size: 10px;
-      }
-
-      .brand-caption {
-        font-size: 9px;
-      }
-
-      .system-status {
-        font-size: 9px;
-      }
-
-      .login-panel {
-        padding-right: 18px;
-        padding-left: 18px;
-      }
-
-      .developer-logo-frame {
-        width: 92px;
-        height: 92px;
+      .developer-logo {
+        width: 65px;
+        height: 65px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
+      *, *::before, *::after {
         transition: none !important;
       }
     }
@@ -755,265 +242,119 @@
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="system-brand">
-      <div class="brand-mark" aria-hidden="true">T</div>
-      <div>
-        <div class="brand-name">Taiany Trindade</div>
-        <div class="brand-caption">Beauty Management System</div>
-      </div>
+  <main class="container">
+    <div class="owner-logo">
+      <img src="/logo.png" alt="Taiany Trindade"
+           onerror="this.style.visibility='hidden'">
     </div>
 
-    <div class="system-status">
-      <span class="status-dot" aria-hidden="true"></span>
-      Ambiente de acesso
-    </div>
-  </header>
-
-  <main class="main">
-    <section class="login-layout" aria-label="Acesso ao sistema">
-
-      <div class="brand-panel">
-        <div class="eyebrow">Elegância em cada detalhe</div>
-
-        <div class="owner-logo-frame">
-          <div class="owner-logo-inner">
-            <img
-              src="/logo.png"
-              alt="Logo Taiany Trindade"
-              onerror="this.style.display='none';"
-            >
-          </div>
-        </div>
-
-        <h1 class="owner-name">Taiany Trindade</h1>
-        <p class="owner-subtitle">Nail Designer</p>
-
-        <div class="owner-divider"></div>
-
-        <p class="brand-description">
-          Seu espaço de gestão, organização e controle.
-          Uma experiência criada para valorizar cada detalhe do seu negócio.
-        </p>
+    <form class="login-card" id="loginForm">
+      <div class="field">
+        <label for="user">Usuário</label>
+        <input
+          id="user"
+          name="username"
+          type="text"
+          placeholder="Digite seu usuário"
+          autocomplete="username"
+          autocapitalize="none"
+          required
+        >
       </div>
 
-      <div class="login-panel">
-        <div class="panel-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-            aria-hidden="true">
-            <rect x="4" y="10" width="16" height="11" rx="2"></rect>
-            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-            <path d="M12 14v3"></path>
-          </svg>
-          Área administrativa
-        </div>
+      <div class="field">
+        <label for="pass">Senha</label>
+        <div class="input-wrap">
+          <input
+            id="pass"
+            name="password"
+            type="password"
+            placeholder="Digite sua senha"
+            autocomplete="current-password"
+            required
+          >
 
-        <h2 class="login-title">Bem-vinda de volta</h2>
-
-        <p class="login-description">
-          Entre com suas credenciais para acessar o painel de gestão.
-        </p>
-
-        <form id="loginForm" autocomplete="on">
-          <div class="field">
-            <label for="user">Usuário</label>
-
-            <div class="input-wrap">
-              <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <circle cx="12" cy="8" r="4"></circle>
-                <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
-              </svg>
-
-              <input
-                id="user"
-                name="username"
-                type="text"
-                placeholder="Digite seu usuário"
-                autocomplete="username"
-                autocapitalize="none"
-                spellcheck="false"
-                required
-              >
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="pass">Senha de acesso</label>
-
-            <div class="input-wrap">
-              <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <rect x="4" y="10" width="16" height="11" rx="2"></rect>
-                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-              </svg>
-
-              <input
-                id="pass"
-                name="password"
-                type="password"
-                placeholder="Digite sua senha"
-                autocomplete="current-password"
-                required
-              >
-
-              <button
-                class="toggle-password"
-                id="togglePassword"
-                type="button"
-                aria-label="Mostrar senha"
-                title="Mostrar ou ocultar senha"
-              >
-                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round"
-                  aria-hidden="true">
-                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <button class="btn btn-primary" id="loginBtn" type="submit">
-            <span id="loginBtnText">Entrar no painel</span>
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
+          <button class="toggle" id="togglePassword" type="button"
+                  aria-label="Mostrar senha">
+            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+              <circle cx="12" cy="12" r="3"/>
             </svg>
-          </button>
-
-          <div
-            id="msg"
-            class="msg"
-            role="status"
-            aria-live="polite"
-          ></div>
-        </form>
-
-        <div class="access-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="1.8" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"></path>
-            <path d="m9 12 2 2 4-4"></path>
-          </svg>
-
-          <p>
-            <strong>Acesso protegido.</strong>
-            Esta área é destinada à administração do negócio.
-            Mantenha suas credenciais em segurança.
-          </p>
-        </div>
-
-        <div class="booking-box">
-          <h3 class="booking-heading">Link para suas clientes</h3>
-
-          <p class="booking-description">
-            Compartilhe o endereço abaixo para que suas clientes
-            consultem os serviços e solicitem agendamentos.
-          </p>
-
-          <a
-            class="link-box"
-            id="linkBox"
-            href="/taiany-agendamento.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >https://taiany.onrender.com/taiany-agendamento.html</a>
-
-          <button class="btn btn-secondary" id="copyBtn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="1.8" stroke-linecap="round"
-              stroke-linejoin="round" aria-hidden="true">
-              <rect x="8" y="8" width="13" height="13" rx="2"></rect>
-              <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path>
-            </svg>
-            <span id="copyBtnText">Copiar link de agendamento</span>
           </button>
         </div>
       </div>
-    </section>
+
+      <button class="submit" id="loginBtn" type="submit">
+        <span id="loginBtnText">Entrar</span>
+        <svg width="17" height="17" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <p class="message" id="msg" role="status"
+         aria-live="polite"></p>
+    </form>
+
+    <footer class="developer">
+      <div class="developer-label">
+        Desenvolvido por
+        <strong>Tecnologia &amp; Soluções</strong>
+      </div>
+
+      <div class="developer-logo">
+        <img src="/logo-desenvolvimento.png"
+             alt="Logo da empresa desenvolvedora"
+             onerror="this.style.visibility='hidden'">
+      </div>
+    </footer>
   </main>
 
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-copy">
-        <strong>Taiany Trindade · Nail Designer</strong>
-        Sistema de gestão e agendamento
-      </div>
-
-      <div class="developer">
-        <div class="developer-label">
-          Desenvolvido por
-          <span>Tecnologia &amp; Soluções</span>
-        </div>
-
-        <div class="developer-logo-frame">
-          <div class="developer-logo-inner">
-            <img
-              src="/logo-desenvolvimento.png"
-              alt="Logo da empresa desenvolvedora"
-              onerror="this.style.display='none';"
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
-
   <script>
-    const $ = (id) => document.getElementById(id);
+    const $ = id => document.getElementById(id);
 
-    const loginForm = $('loginForm');
-    const loginBtn = $('loginBtn');
-    const loginBtnText = $('loginBtnText');
-    const msg = $('msg');
+    const form = $('loginForm');
+    const button = $('loginBtn');
+    const buttonText = $('loginBtnText');
+    const message = $('msg');
 
     function showMessage(text, type = 'error') {
-      msg.textContent = text;
-      msg.className = `msg ${type}`;
+      message.textContent = text;
+      message.className = `message ${type}`;
     }
 
-    // Mostrar ou ocultar a senha.
     $('togglePassword').addEventListener('click', () => {
       const password = $('pass');
       const showing = password.type === 'password';
 
       password.type = showing ? 'text' : 'password';
-
       $('togglePassword').setAttribute(
         'aria-label',
         showing ? 'Ocultar senha' : 'Mostrar senha'
       );
 
       $('eyeIcon').innerHTML = showing
-        ? '<path d="m3 3 18 18"></path><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a16 16 0 0 1-4 4.8"></path><path d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4-.8"></path>'
-        : '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>';
+        ? '<path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a16 16 0 0 1-4 4.8"/><path d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4-.8"/>'
+        : '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
     });
 
-    // Login — mantém a integração com /api/login.
-    loginForm.addEventListener('submit', async (event) => {
+    form.addEventListener('submit', async event => {
       event.preventDefault();
 
       const user = $('user').value.trim();
       const pass = $('pass').value;
 
       if (!user || !pass) {
-        showMessage('Preencha usuário e senha.');
+        showMessage('Informe o usuário e a senha.');
         return;
       }
 
-      loginBtn.disabled = true;
-      loginBtnText.textContent = 'Verificando acesso...';
+      button.disabled = true;
+      buttonText.textContent = 'Verificando...';
       showMessage('');
 
       try {
@@ -1030,58 +371,21 @@
 
         if (!response.ok || !result.ok) {
           throw new Error(
-            result.error || 'Não foi possível autenticar. Tente novamente.'
+            result.error || 'Usuário ou senha incorretos.'
           );
         }
 
-        showMessage('Acesso autorizado. Abrindo o painel...', 'ok');
+        showMessage('Acesso autorizado.', 'ok');
 
-        window.location.href =
-          result.redirect || '/taiany-painel-admin.html';
+        // Destino fixo: página administrativa na raiz do site.
+        window.location.replace('/taiany-painel-admin.html');
+
       } catch (error) {
         showMessage(
           error.message || 'Falha de conexão. Tente novamente.'
         );
-      } finally {
-        loginBtn.disabled = false;
-        loginBtnText.textContent = 'Entrar no painel';
-      }
-    });
-
-    // Copiar o endereço público de agendamento.
-    $('copyBtn').addEventListener('click', async () => {
-      const link = $('linkBox').href;
-      const copyBtn = $('copyBtn');
-      const copyBtnText = $('copyBtnText');
-
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(link);
-        } else {
-          const temporaryInput = document.createElement('textarea');
-          temporaryInput.value = link;
-          temporaryInput.style.position = 'fixed';
-          temporaryInput.style.opacity = '0';
-
-          document.body.appendChild(temporaryInput);
-          temporaryInput.select();
-
-          const copied = document.execCommand('copy');
-          temporaryInput.remove();
-
-          if (!copied) {
-            throw new Error('Não foi possível copiar automaticamente.');
-          }
-        }
-
-        copyBtnText.textContent = 'Link copiado!';
-        showMessage('Link de agendamento copiado.', 'ok');
-
-        setTimeout(() => {
-          copyBtnText.textContent = 'Copiar link de agendamento';
-        }, 2000);
-      } catch {
-        window.prompt('Copie o link de agendamento:', link);
+        button.disabled = false;
+        buttonText.textContent = 'Entrar';
       }
     });
   </script>
