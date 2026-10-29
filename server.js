@@ -1,6 +1,7 @@
-// ======================================================
-// SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
-// ======================================================
+
+ // ======================================================
+ // SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
+ // ======================================================
 
 import express from 'express';
 import session from 'express-session';
@@ -14,13 +15,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Render utiliza um proxy HTTPS à frente da aplicação.
 app.set('trust proxy', 1);
-
-// ======================================================
-// CONFIGURAÇÃO
-// ======================================================
-
 app.disable('x-powered-by');
 
 app.use(express.json({ limit: '100kb' }));
@@ -123,7 +118,6 @@ function timeToMinutes(value) {
   if (!validTime(value)) return NaN;
 
   const [hours, minutes] = value.split(':').map(Number);
-
   return hours * 60 + minutes;
 }
 
@@ -165,7 +159,7 @@ async function executeQuery(res, query) {
 }
 
 // ======================================================
-// AUTENTICAÇÃO
+// AUTENTICAÇÃO ADMINISTRATIVA
 // ======================================================
 
 function requireAuth(req, res, next) {
@@ -804,14 +798,22 @@ app.delete('/api/admin/agendamentos/:id', admin, async (req, res) => {
       });
     }
 
-    const { error } = await db()
+    const { data, error } = await db()
       .from('agendamentos')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select('id');
 
     if (error) throw error;
 
-    return res.json({ ok: true });
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Agendamento não encontrado.'
+      });
+    }
+
+    return res.json({ ok: true, data: data[0] });
   } catch (error) {
     return sendDbError(res, error);
   }
@@ -819,9 +821,11 @@ app.delete('/api/admin/agendamentos/:id', admin, async (req, res) => {
 
 // ======================================================
 // ADMIN — CLIENTES TAIANY
-// IMPORTANTE: NÃO UTILIZAR A TABELA GENÉRICA "clientes"
+// IMPORTANTE: USAR SEMPRE clientes_taiany
+// NUNCA USAR A TABELA GENÉRICA "clientes"
 // ======================================================
 
+// LISTAR CLIENTES
 app.get('/api/admin/clientes', admin, async (req, res) => {
   try {
     return await executeQuery(
@@ -836,6 +840,7 @@ app.get('/api/admin/clientes', admin, async (req, res) => {
   }
 });
 
+// CADASTRAR CLIENTE
 app.post('/api/admin/clientes', admin, async (req, res) => {
   try {
     const nome = cleanText(req.body?.nome, 150);
@@ -862,7 +867,119 @@ app.post('/api/admin/clientes', admin, async (req, res) => {
 
     if (error) throw error;
 
-    return res.status(201).json({ ok: true, data });
+    return res.status(201).json({
+      ok: true,
+      data,
+      message: 'Cliente cadastrado com sucesso.'
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// EDITAR CLIENTE
+app.patch('/api/admin/clientes/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de cliente inválido.'
+      });
+    }
+
+    const updates = {};
+
+    if (req.body?.nome !== undefined) {
+      const nome = cleanText(req.body.nome, 150);
+
+      if (!nome) {
+        return res.status(400).json({
+          ok: false,
+          error: 'O nome do cliente não pode ficar vazio.'
+        });
+      }
+
+      updates.nome = nome;
+    }
+
+    if (req.body?.telefone !== undefined) {
+      updates.telefone = cleanText(req.body.telefone, 40);
+    }
+
+    if (req.body?.email !== undefined) {
+      updates.email = cleanText(req.body.email, 200);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe pelo menos um campo para atualizar.'
+      });
+    }
+
+    const { data, error } = await db()
+      .from('clientes_taiany')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Cliente não encontrado no Supabase.'
+      });
+    }
+
+    return res.json({
+      ok: true,
+      data,
+      message: 'Cliente atualizado com sucesso.'
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// EXCLUIR CLIENTE DEFINITIVAMENTE DO SUPABASE
+app.delete('/api/admin/clientes/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de cliente inválido.'
+      });
+    }
+
+    const { data, error } = await db()
+      .from('clientes_taiany')
+      .delete()
+      .eq('id', id)
+      .select('id');
+
+    if (error) {
+      console.error('Erro ao excluir cliente de clientes_taiany:', error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Cliente não encontrado. Nenhum registro foi excluído.'
+      });
+    }
+
+    return res.json({
+      ok: true,
+      id: data[0].id,
+      message: 'Cliente excluído do banco de dados com sucesso.'
+    });
   } catch (error) {
     return sendDbError(res, error);
   }
@@ -1030,12 +1147,20 @@ app.delete('/api/admin/servicos/:id', admin, async (req, res) => {
       });
     }
 
-    const { error } = await db()
+    const { data, error } = await db()
       .from('servicos')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select('id');
 
     if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Serviço não encontrado.'
+      });
+    }
 
     return res.json({ ok: true });
   } catch (error) {
@@ -1197,12 +1322,20 @@ app.delete(
         });
       }
 
-      const { error } = await db()
+      const { data, error } = await db()
         .from('disponibilidade')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .select('id');
 
       if (error) throw error;
+
+      if (!data || data.length === 0) {
+        return res.status(404).json({
+          ok: false,
+          error: 'Disponibilidade não encontrada.'
+        });
+      }
 
       return res.json({ ok: true });
     } catch (error) {
@@ -1283,12 +1416,20 @@ app.delete('/api/admin/bloqueios/:id', admin, async (req, res) => {
       });
     }
 
-    const { error } = await db()
+    const { data, error } = await db()
       .from('bloqueios')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select('id');
 
     if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Bloqueio não encontrado.'
+      });
+    }
 
     return res.json({ ok: true });
   } catch (error) {
