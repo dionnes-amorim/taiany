@@ -1,383 +1,1322 @@
-'use strict';
+// ======================================================
+// SERVER.JS — TAIANY TRINDADE | NAIL DESIGNER
+// ======================================================
 
 const express = require('express');
 const session = require('express-session');
-const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// ======================================================
+// CONFIGURAÇÃO
+// ======================================================
+
 app.disable('x-powered-by');
+
 app.use(express.json({ limit: '100kb' }));
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'taiany-2024',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 8 }
-}));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
-// ROTA DE LOGIN - CORRIGIDA
-app.post('/api/login', (req, res) => {
-  const { user, pass } = req.body;
-  const AUTH_USER = process.env.AUTH_USER || 'taiany';
-  const AUTH_PASS = process.env.AUTH_PASS || '123456';
-  
-  console.log('Tentativa login:', user);
-  
-  if(user === AUTH_USER && pass === AUTH_PASS){
-    req.session.auth = true;
-    return res.json({ ok: true });
-  }
-  return res.status(401).json({ ok: false, error: 'Usuário ou senha incorretos' });
-});
+app.use(
+  session({
+    name: 'taiany.sid',
+    secret: process.env.SESSION_SECRET || 'troque-esta-chave-antes-de-publicar',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 8
+    }
+  })
+);
 
-app.post('/api/logout', (req,res)=>{
-  req.session.destroy(()=>res.json({ok:true}));
-});
+// ======================================================
+// SUPABASE
+// A chave de serviço fica somente no servidor.
+// Configure as variáveis no Render.
+// ======================================================
 
-function requireAuth(req,res,next){
-  if(req.session && req.session.auth) return next();
-  return res.redirect('/');
-}
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// A chave privilegiada permanece exclusivamente no servidor.
-const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+const supabase =
+  supabaseUrl && supabaseKey
+    ? createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      })
+    : null;
 
-const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
-  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
-    })
-  : null;
-
-function database(res) {
+function db() {
   if (!supabase) {
-    res.status(503).json({
-      ok: false,
-      error: 'Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no Render.'
-    });
-    return null;
+    const error = new Error(
+      'Supabase não configurado. Verifique SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no Render.'
+    );
+    error.status = 503;
+    throw error;
   }
+
   return supabase;
 }
 
-function admin(req, res, next) { next(); }
+// ======================================================
+// FUNÇÕES AUXILIARES
+// ======================================================
 
-function route(fn) {
-  return (req, res, next) =>
-    Promise.resolve(fn(req, res, next)).catch(next);
+function cleanText(value, maxLength = 500) {
+  if (value === undefined || value === null) return '';
+  return String(value).trim().slice(0, maxLength);
+}
+
+function validId(value) {
+  return (
+    typeof value === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value
+    )
+  );
 }
 
 function validDate(value) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return false;
-  const date = new Date(value + 'T12:00:00Z');
-  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+  if (typeof value !== 'string') return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day, 12);
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
 }
+
 function validTime(value) {
-  return /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(value || '');
+  return (
+    typeof value === 'string' &&
+    /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(value)
+  );
 }
-function timeToMinutes(value) {
-  if (!validTime(value)) return null;
-  const parts = value.split(':').map(Number);
-  return parts[0] * 60 + parts[1];
-}
+
 function normalizeTime(value) {
-  return value && value.length === 5 ? value + ':00' : value;
+  if (!validTime(value)) return null;
+  return value.length === 5 ? `${value}:00` : value;
 }
+
+function timeToMinutes(value) {
+  if (!validTime(value)) return NaN;
+
+  const [hours, minutes] = value.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
 function overlaps(startA, endA, startB, endB) {
   return startA < endB && startB < endA;
 }
-function validId(value) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value || '');
-}
-function cleanText(value, max = 200) {
-  return typeof value === 'string' ? value.trim().slice(0, max) : '';
-}
-function sendDbError(res, message, error) {
-  console.error('[SUPABASE]', error?.message || error, error?.details, error?.hint);
-  return res.status(500).json({ ok: false, error: message + ' | Detalhe: ' + (error?.message || JSON.stringify(error)) });
-}
-const STATUS = ['pendente','confirmado','concluido','cancelado'];
 
-// SAÚDE
-app.get('/health', (req, res) => {
-  res.json({ ok: true, app: 'Taiany Trindade — Nail Designer', supabaseConfigured: Boolean(supabase) });
+function sendDbError(res, error) {
+  console.error('Erro no servidor/Supabase:', error);
+
+  const status = Number(error?.status) || 500;
+
+  return res.status(status).json({
+    ok: false,
+    error:
+      status === 503
+        ? error.message
+        : 'Não foi possível concluir a operação. Verifique os dados e tente novamente.'
+  });
+}
+
+async function executeQuery(res, query) {
+  try {
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Erro Supabase:', error);
+      return res.status(500).json({
+        ok: false,
+        error: 'Erro ao consultar o banco de dados.'
+      });
+    }
+
+    return res.json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+}
+
+// ======================================================
+// AUTENTICAÇÃO
+// ======================================================
+
+// Protege as páginas administrativas.
+function requireAuth(req, res, next) {
+  if (req.session && req.session.auth === true) {
+    return next();
+  }
+
+  return res.redirect('/');
+}
+
+// Protege todas as APIs administrativas.
+function admin(req, res, next) {
+  if (req.session && req.session.auth === true) {
+    return next();
+  }
+
+  return res.status(401).json({
+    ok: false,
+    error: 'Sessão expirada ou acesso não autorizado. Faça login novamente.'
+  });
+}
+
+// Login
+app.post('/api/login', (req, res) => {
+  const user = cleanText(req.body?.user, 100);
+  const pass = String(req.body?.pass ?? '');
+
+  const configuredUser = process.env.AUTH_USER;
+  const configuredPass = process.env.AUTH_PASS;
+
+  if (!configuredUser || !configuredPass) {
+    return res.status(503).json({
+      ok: false,
+      error: 'Configure AUTH_USER e AUTH_PASS nas variáveis de ambiente do Render.'
+    });
+  }
+
+  if (user !== configuredUser || pass !== configuredPass) {
+    return res.status(401).json({
+      ok: false,
+      error: 'Usuário ou senha incorretos.'
+    });
+  }
+
+  req.session.regenerate((error) => {
+    if (error) {
+      console.error('Erro ao criar sessão:', error);
+
+      return res.status(500).json({
+        ok: false,
+        error: 'Não foi possível iniciar a sessão.'
+      });
+    }
+
+    req.session.auth = true;
+
+    req.session.save((saveError) => {
+      if (saveError) {
+        console.error('Erro ao salvar sessão:', saveError);
+
+        return res.status(500).json({
+          ok: false,
+          error: 'Não foi possível salvar a sessão.'
+        });
+      }
+
+      return res.json({
+        ok: true,
+        redirect: '/taiany-painel-admin.html'
+      });
+    });
+  });
 });
 
-// SERVIÇOS PÚBLICOS
-app.get('/api/servicos', route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('servicos').select('id,nome,categoria,descricao,preco,duracao_minutos').eq('ativo', true).order('nome');
-  if (error) return sendDbError(res, 'Não foi possível carregar os serviços.', error);
-  res.json({ ok: true, data });
-}));
-
-app.get('/api/disponibilidade', route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('disponibilidade').select('id,dia_semana,hora_inicio,hora_fim').eq('ativo', true).order('dia_semana').order('hora_inicio');
-  if (error) return sendDbError(res, 'Não foi possível carregar a disponibilidade.', error);
-  res.json({ ok: true, data });
-}));
-
-app.get('/api/horarios', route(async (req, res) => {
-  const data = req.query.data;
-  if (!validDate(data)) return res.status(400).json({ ok: false, error: 'Informe a data no formato AAAA-MM-DD.' });
-  const db = database(res); if (!db) return;
-  const [agenda, bloqueios] = await Promise.all([
-    db.from('agendamentos').select('hora_inicio,hora_fim').eq('data', data).neq('status', 'cancelado'),
-    db.from('bloqueios').select('hora_inicio,hora_fim').eq('data', data)
-  ]);
-  if (agenda.error) return sendDbError(res, 'Não foi possível consultar os agendamentos.', agenda.error);
-  if (bloqueios.error) return sendDbError(res, 'Não foi possível consultar os bloqueios.', bloqueios.error);
-  res.json({ ok: true, data, ocupados: agenda.data || [], bloqueios: bloqueios.data || [] });
-}));
-
-app.post('/api/agendamentos', route(async (req, res) => {
-  const nome = cleanText(req.body?.nome_cliente, 120);
-  const telefone = cleanText(req.body?.telefone_cliente, 30);
-  const email = cleanText(req.body?.email, 160).toLowerCase();
-  const servicoId = req.body?.servico_id;
-  const data = req.body?.data;
-  const horaInicio = req.body?.hora_inicio;
-  const observacoes = cleanText(req.body?.observacoes, 1000);
-  if (nome.length < 2) return res.status(400).json({ ok: false, error: 'Informe seu nome completo.' });
-  const telefoneLimpo = telefone.replace(/\D/g, '');
-  if (telefoneLimpo.length < 10 || telefoneLimpo.length > 13) return res.status(400).json({ ok: false, error: 'Informe um telefone válido com DDD.' });
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ ok: false, error: 'Informe um e-mail válido.' });
-  if (!validId(servicoId) || !validDate(data) || !validTime(horaInicio)) return res.status(400).json({ ok: false, error: 'Confira o serviço, a data e o horário escolhidos.' });
-  const db = database(res); if (!db) return;
-  const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-  if (data < hoje) return res.status(400).json({ ok: false, error: 'Não é possível agendar em uma data passada.' });
-  const { data: servico, error: erroServico } = await db.from('servicos').select('id,nome,preco,duracao_minutos,ativo').eq('id', servicoId).eq('ativo', true).maybeSingle();
-  if (erroServico) return sendDbError(res, 'Não foi possível validar o serviço.', erroServico);
-  if (!servico) return res.status(400).json({ ok: false, error: 'O serviço selecionado não está disponível.' });
-  const inicioMin = timeToMinutes(horaInicio);
-  const duracao = Number(servico.duracao_minutos);
-  const preco = Number(servico.preco);
-  if (inicioMin === null || !Number.isInteger(duracao) || duracao <= 0 || !Number.isFinite(preco) || preco < 0) return res.status(500).json({ ok: false, error: 'O serviço está com preço ou duração inválidos no cadastro.' });
-  const fimMin = inicioMin + duracao;
-  if (fimMin > 1440) return res.status(400).json({ ok: false, error: 'O horário escolhido ultrapassa o fim do dia.' });
-  const horaFim = String(Math.floor(fimMin / 60)).padStart(2, '0') + ':' + String(fimMin % 60).padStart(2, '0');
-  const diaSemana = new Date(data + 'T12:00:00').getDay();
-  const [disponibilidades, agenda, bloqueios] = await Promise.all([
-    db.from('disponibilidade').select('hora_inicio,hora_fim').eq('dia_semana', diaSemana).eq('ativo', true),
-    db.from('agendamentos').select('hora_inicio,hora_fim').eq('data', data).neq('status', 'cancelado'),
-    db.from('bloqueios').select('hora_inicio,hora_fim').eq('data', data)
-  ]);
-  if (disponibilidades.error) return sendDbError(res, 'Não foi possível validar o expediente.', disponibilidades.error);
-  if (agenda.error) return sendDbError(res, 'Não foi possível validar a agenda.', agenda.error);
-  if (bloqueios.error) return sendDbError(res, 'Não foi possível validar os bloqueios.', bloqueios.error);
-  const dentroDoExpediente = (disponibilidades.data || []).some(item => {
-    const abre = timeToMinutes(item.hora_inicio); const fecha = timeToMinutes(item.hora_fim);
-    return abre !== null && fecha !== null && inicioMin >= abre && fimMin <= fecha;
+// Verifica se a sessão está ativa.
+app.get('/api/sessao', (req, res) => {
+  res.json({
+    ok: true,
+    autenticado: req.session?.auth === true
   });
-  if (!dentroDoExpediente) return res.status(409).json({ ok: false, error: 'Esse horário está fora do expediente disponível.' });
-  const conflitoAgenda = (agenda.data || []).some(item => {
-    const inicio = timeToMinutes(item.hora_inicio); const fim = timeToMinutes(item.hora_fim);
-    return inicio !== null && fim !== null && overlaps(inicioMin, fimMin, inicio, fim);
-  });
-  if (conflitoAgenda) return res.status(409).json({ ok: false, error: 'Esse horário acabou de ser ocupado. Escolha outro.' });
-  const conflitoBloqueio = (bloqueios.data || []).some(item => {
-    const inicio = timeToMinutes(item.hora_inicio); const fim = timeToMinutes(item.hora_fim);
-    return inicio !== null && fim !== null && overlaps(inicioMin, fimMin, inicio, fim);
-  });
-  if (conflitoBloqueio) return res.status(409).json({ ok: false, error: 'Esse horário está bloqueado. Escolha outro.' });
-  let cliente = null;
-  const buscaTelefone = await db.from('clientes_taiany').select('id,nome,telefone,email').eq('telefone', telefone).limit(1).maybeSingle();
-  if (buscaTelefone.error) return sendDbError(res, 'Não foi possível consultar o cadastro do cliente.', buscaTelefone.error);
-  cliente = buscaTelefone.data;
-  if (!cliente && email) {
-    const buscaEmail = await db.from('clientes_taiany').select('id,nome,telefone,email').eq('email', email).limit(1).maybeSingle();
-    if (buscaEmail.error) return sendDbError(res, 'Não foi possível consultar o cadastro do cliente.', buscaEmail.error);
-    cliente = buscaEmail.data;
-  }
-  if (!cliente) {
-    const { data: clienteCriado, error: erroCliente } = await db.from('clientes_taiany').insert({ nome, telefone, email: email || null }).select('id,nome,telefone,email').single();
-    if (erroCliente) return sendDbError(res, 'Não foi possível cadastrar o cliente.', erroCliente);
-    cliente = clienteCriado;
-  }
-  const novoAgendamento = { cliente_id: cliente.id, nome_cliente: nome, telefone_cliente: telefone, servico_id: servico.id, nome_servico: servico.nome, data, hora_inicio: normalizeTime(horaInicio), hora_fim: normalizeTime(horaFim), preco, status: 'pendente', observacoes: observacoes || null, origem: 'online' };
-  const { data: agendamento, error: erroAgendamento } = await db.from('agendamentos').insert(novoAgendamento).select('id,nome_servico,data,hora_inicio,hora_fim,preco,status').single();
-  if (erroAgendamento) return sendDbError(res, 'Não foi possível concluir o agendamento.', erroAgendamento);
-  return res.status(201).json({ ok: true, message: 'Agendamento solicitado com sucesso!', data: agendamento });
-}));
+});
 
-// --- ADMIN (mantido igual) ---
-app.get('/api/admin/agendamentos', admin, route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  let query = db.from('agendamentos').select('*').order('data').order('hora_inicio').limit(500);
-  if (req.query.data) {
-    if (!validDate(req.query.data)) return res.status(400).json({ ok: false, error: 'Data inválida.' });
-    query = query.eq('data', req.query.data);
+// Logout
+app.post('/api/logout', (req, res) => {
+  if (!req.session) {
+    return res.json({ ok: true });
   }
-  if (req.query.status) {
-    const status = cleanText(req.query.status, 30);
-    if (!STATUS.includes(status)) return res.status(400).json({ ok: false, error: 'Status inválido.' });
-    query = query.eq('status', status);
-  }
-  const { data, error } = await query;
-  if (error) return sendDbError(res, 'Não foi possível carregar a agenda.', error);
-  res.json({ ok: true, data });
-}));
-app.patch('/api/admin/agendamentos/:id/status', admin, route(async (req, res) => {
-  if (!validId(req.params.id) || !STATUS.includes(req.body?.status)) return res.status(400).json({ ok: false, error: 'ID ou status inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('agendamentos').update({ status: req.body.status }).eq('id', req.params.id).select().maybeSingle();
-  if (error) return sendDbError(res, 'Não foi possível atualizar o agendamento.', error);
-  if (!data) return res.status(404).json({ ok: false, error: 'Agendamento não encontrado.' });
-  res.json({ ok: true, data });
-}));
-app.delete('/api/admin/agendamentos/:id', admin, route(async (req, res) => {
-  if (!validId(req.params.id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('agendamentos').delete().eq('id', req.params.id).select('id').maybeSingle();
-  if (error) return sendDbError(res, 'Não foi possível excluir o agendamento.', error);
-  if (!data) return res.status(404).json({ ok: false, error: 'Agendamento não encontrado.' });
-  res.json({ ok: true });
-}));
-app.get('/api/admin/clientes', admin, route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('clientes_taiany').select('*').order('nome').limit(1000);
-  if (error) return sendDbError(res, 'Não foi possível carregar os clientes.', error);
-  res.json({ ok: true, data });
-}));
-app.post('/api/admin/clientes', admin, route(async (req, res) => {
-  const nome = cleanText(req.body?.nome, 120); const telefone = cleanText(req.body?.telefone, 30); const email = cleanText(req.body?.email, 160).toLowerCase();
-  if (nome.length < 2) return res.status(400).json({ ok: false, error: 'Informe o nome do cliente.' });
-  if (telefone.replace(/\D/g, '').length < 10) return res.status(400).json({ ok: false, error: 'Informe um telefone válido com DDD.' });
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ ok: false, error: 'Informe um e-mail válido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('clientes_taiany').insert({ nome, telefone, email: email || null, data_nascimento: req.body?.data_nascimento || null, observacoes: cleanText(req.body?.observacoes, 1000) || null }).select().single();
-  if (error) return sendDbError(res, 'Não foi possível cadastrar o cliente.', error);
-  res.status(201).json({ ok: true, data });
-}));
-// ... mantenha o restante dos seus /api/admin/servicos, disponibilidade, bloqueios IGUAIS ao que você já tinha
-app.get('/api/admin/servicos', admin, route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('servicos').select('*').order('nome');
-  if (error) return sendDbError(res, 'Não foi possível carregar os serviços.', error);
-  res.json({ ok: true, data });
-}));
-app.post('/api/admin/servicos', admin, route(async (req, res) => {
-  const nome = cleanText(req.body?.nome, 120); const preco = Number(req.body?.preco); const duracao = Number(req.body?.duracao_minutos);
-  if (!nome || !Number.isFinite(preco) || preco < 0 || !Number.isInteger(duracao) || duracao <= 0) return res.status(400).json({ ok: false, error: 'Informe nome, preço e duração válidos.' });
-  const db = database(res); if (!db) return;
-  const registro = { nome, categoria: cleanText(req.body?.categoria, 80) || null, descricao: cleanText(req.body?.descricao, 1000) || null, preco, duracao_minutos: duracao, ativo: req.body?.ativo !== false };
-  const { data, error } = await db.from('servicos').insert(registro).select().single();
-  if (error) return sendDbError(res, 'Não foi possível cadastrar o serviço.', error);
-  res.status(201).json({ ok: true, data });
-}));
-app.patch('/api/admin/servicos/:id', admin, route(async (req, res) => {
-  if (!validId(req.params.id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
-  const campos = ['nome','categoria','descricao','preco','duracao_minutos','ativo']; const atualizacao = {};
-  for (const campo of campos) if (Object.prototype.hasOwnProperty.call(req.body || {}, campo)) atualizacao[campo] = req.body[campo];
-  if (!Object.keys(atualizacao).length) return res.status(400).json({ ok: false, error: 'Nenhum campo para atualizar.' });
-  if ('nome' in atualizacao) atualizacao.nome = cleanText(atualizacao.nome, 120);
-  if ('categoria' in atualizacao) atualizacao.categoria = cleanText(atualizacao.categoria, 80) || null;
-  if ('descricao' in atualizacao) atualizacao.descricao = cleanText(atualizacao.descricao, 1000) || null;
-  if ('preco' in atualizacao) atualizacao.preco = Number(atualizacao.preco);
-  if ('duracao_minutos' in atualizacao) atualizacao.duracao_minutos = Number(atualizacao.duracao_minutos);
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('servicos').update(atualizacao).eq('id', req.params.id).select().maybeSingle();
-  if (error) return sendDbError(res, 'Não foi possível atualizar o serviço.', error);
-  if (!data) return res.status(404).json({ ok: false, error: 'Serviço não encontrado.' });
-  res.json({ ok: true, data });
-}));
-app.delete('/api/admin/servicos/:id', admin, route(async (req, res) => {
-  if (!validId(req.params.id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('servicos').update({ ativo: false }).eq('id', req.params.id).select('id').maybeSingle();
-  if (error) return sendDbError(res, 'Não foi possível desativar o serviço.', error);
-  if (!data) return res.status(404).json({ ok: false, error: 'Serviço não encontrado.' });
-  res.json({ ok: true });
-}));
-app.get('/api/admin/disponibilidade', admin, route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('disponibilidade').select('*').order('dia_semana').order('hora_inicio');
-  if (error) return sendDbError(res, 'Não foi possível carregar a disponibilidade.', error);
-  res.json({ ok: true, data });
-}));
-app.post('/api/admin/disponibilidade', admin, route(async (req, res) => {
-  const dia = Number(req.body?.dia_semana); const inicio = req.body?.hora_inicio; const fim = req.body?.hora_fim;
-  if (!Number.isInteger(dia) || dia < 0 || dia > 6 || !validTime(inicio) || !validTime(fim) || timeToMinutes(inicio) >= timeToMinutes(fim)) return res.status(400).json({ ok: false, error: 'Dia ou horário inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('disponibilidade').insert({ dia_semana: dia, hora_inicio: normalizeTime(inicio), hora_fim: normalizeTime(fim), ativo: req.body?.ativo !== false }).select().single();
-  if (error) return sendDbError(res, 'Não foi possível cadastrar a disponibilidade.', error);
-  res.status(201).json({ ok: true, data });
-}));
-app.patch('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
-  if (!validId(req.params.id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
-  const corpo = req.body || {}; const atualizacao = {};
-  if ('dia_semana' in corpo) atualizacao.dia_semana = Number(corpo.dia_semana);
-  if ('hora_inicio' in corpo) atualizacao.hora_inicio = normalizeTime(corpo.hora_inicio);
-  if ('hora_fim' in corpo) atualizacao.hora_fim = normalizeTime(corpo.hora_fim);
-  if ('ativo' in corpo) atualizacao.ativo = corpo.ativo;
-  if (!Object.keys(atualizacao).length) return res.status(400).json({ ok: false, error: 'Nenhum campo para atualizar.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('disponibilidade').update(atualizacao).eq('id', req.params.id).select().single();
-  if (error) return sendDbError(res, 'Não foi possível atualizar a disponibilidade.', error);
-  res.json({ ok: true, data });
-}));
-app.delete('/api/admin/disponibilidade/:id', admin, route(async (req, res) => {
-  if (!validId(req.params.id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('disponibilidade').delete().eq('id', req.params.id).select('id').maybeSingle();
-  if (error) return sendDbError(res, 'Não foi possível excluir a disponibilidade.', error);
-  if (!data) return res.status(404).json({ ok: false, error: 'Disponibilidade não encontrada.' });
-  res.json({ ok: true });
-}));
-app.get('/api/admin/bloqueios', admin, route(async (req, res) => {
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('bloqueios').select('*').order('data').order('hora_inicio').limit(1000);
-  if (error) return sendDbError(res, 'Não foi possível carregar os bloqueios.', error);
-  res.json({ ok: true, data });
-}));
-app.post('/api/admin/bloqueios', admin, route(async (req, res) => {
-  const dataBloqueio = req.body?.data; const inicio = req.body?.hora_inicio; const fim = req.body?.hora_fim;
-  if (!validDate(dataBloqueio) || !validTime(inicio) || !validTime(fim) || timeToMinutes(inicio) >= timeToMinutes(fim)) return res.status(400).json({ ok: false, error: 'Data ou horário de bloqueio inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('bloqueios').insert({ data: dataBloqueio, hora_inicio: normalizeTime(inicio), hora_fim: normalizeTime(fim), motivo: cleanText(req.body?.motivo, 300) || null }).select().single();
-  if (error) return sendDbError(res, 'Não foi possível cadastrar o bloqueio.', error);
-  res.status(201).json({ ok: true, data });
-}));
-app.delete('/api/admin/bloqueios/:id', admin, route(async (req, res) => {
-  if (!validId(req.params.id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
-  const db = database(res); if (!db) return;
-  const { data, error } = await db.from('bloqueios').delete().eq('id', req.params.id).select('id').maybeSingle();
-  if (error) return sendDbError(res, 'Não foi possível excluir o bloqueio.', error);
-  if (!data) return res.status(404).json({ ok: false, error: 'Bloqueio não encontrado.' });
-  res.json({ ok: true });
-}));
 
-// ARQUIVOS ESTÁTICOS E ROTAS FINAIS - ORDEM IMPORTA
-app.use(express.static(path.join(__dirname), { index: false, dotfiles: 'deny' }));
+  req.session.destroy((error) => {
+    if (error) {
+      console.error('Erro ao encerrar sessão:', error);
+
+      return res.status(500).json({
+        ok: false,
+        error: 'Não foi possível encerrar a sessão.'
+      });
+    }
+
+    res.clearCookie('taiany.sid', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+
+    return res.json({ ok: true });
+  });
+});
+
+// ======================================================
+// SAÚDE DO SERVIDOR
+// ======================================================
+
+app.get('/health', (req, res) => {
+  res.json({
+    ok: true,
+    service: 'Taiany Trindade — Nail Designer',
+    supabaseConfigured: Boolean(supabase)
+  });
+});
+
+// ======================================================
+// SERVIÇOS — API PÚBLICA
+// ======================================================
+
+app.get('/api/servicos', async (req, res) => {
+  try {
+    return await executeQuery(
+      res,
+      db()
+        .from('servicos')
+        .select('*')
+        .order('nome', { ascending: true })
+    );
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// DISPONIBILIDADE — API PÚBLICA
+// ======================================================
+
+app.get('/api/disponibilidade', async (req, res) => {
+  try {
+    let query = db()
+      .from('disponibilidade')
+      .select('*')
+      .order('dia_semana', { ascending: true });
+
+    if (req.query.dia !== undefined) {
+      const dia = Number(req.query.dia);
+
+      if (!Number.isInteger(dia) || dia < 0 || dia > 6) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Dia da semana inválido.'
+        });
+      }
+
+      query = query.eq('dia_semana', dia);
+    }
+
+    return await executeQuery(res, query);
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// HORÁRIOS DISPONÍVEIS
+// ======================================================
+
+app.get('/api/horarios', async (req, res) => {
+  try {
+    const data = cleanText(req.query.data, 10);
+    const servicoId = cleanText(req.query.servico_id, 50);
+
+    if (!validDate(data)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe uma data válida no formato AAAA-MM-DD.'
+      });
+    }
+
+    const supabaseClient = db();
+
+    // Busca o serviço para identificar sua duração.
+    let duracao = 60;
+
+    if (servicoId) {
+      if (!validId(servicoId)) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Serviço inválido.'
+        });
+      }
+
+      const { data: servico, error: servicoError } = await supabaseClient
+        .from('servicos')
+        .select('*')
+        .eq('id', servicoId)
+        .maybeSingle();
+
+      if (servicoError) throw servicoError;
+
+      if (!servico) {
+        return res.status(404).json({
+          ok: false,
+          error: 'Serviço não encontrado.'
+        });
+      }
+
+      duracao = Number(
+        servico.duracao_minutos || servico.duracao || 60
+      );
+    }
+
+    if (!Number.isFinite(duracao) || duracao <= 0) {
+      duracao = 60;
+    }
+
+    const [ano, mes, dia] = data.split('-').map(Number);
+    const diaSemana = new Date(ano, mes - 1, dia, 12).getDay();
+
+    const [dispResult, bloqueiosResult, agendamentosResult] =
+      await Promise.all([
+        supabaseClient
+          .from('disponibilidade')
+          .select('*')
+          .eq('dia_semana', diaSemana),
+
+        supabaseClient
+          .from('bloqueios')
+          .select('*')
+          .eq('data', data),
+
+        supabaseClient
+          .from('agendamentos')
+          .select('*')
+          .eq('data', data)
+      ]);
+
+    if (dispResult.error) throw dispResult.error;
+    if (bloqueiosResult.error) throw bloqueiosResult.error;
+    if (agendamentosResult.error) throw agendamentosResult.error;
+
+    const disponibilidade = dispResult.data || [];
+    const bloqueios = bloqueiosResult.data || [];
+    const agendamentos = agendamentosResult.data || [];
+
+    const horarios = [];
+
+    for (const faixa of disponibilidade) {
+      const inicio = timeToMinutes(faixa.hora_inicio);
+      const fim = timeToMinutes(faixa.hora_fim);
+
+      if (!Number.isFinite(inicio) || !Number.isFinite(fim) || fim <= inicio) {
+        continue;
+      }
+
+      // Gera horários em intervalos de 30 minutos.
+      for (
+        let horario = inicio;
+        horario + duracao <= fim;
+        horario += 30
+      ) {
+        const horarioFim = horario + duracao;
+
+        const bloqueado = bloqueios.some((bloqueio) => {
+          const bInicio = timeToMinutes(bloqueio.hora_inicio);
+          const bFim = timeToMinutes(bloqueio.hora_fim);
+
+          return (
+            Number.isFinite(bInicio) &&
+            Number.isFinite(bFim) &&
+            overlaps(horario, horarioFim, bInicio, bFim)
+          );
+        });
+
+        const ocupado = agendamentos.some((agendamento) => {
+          const status = String(agendamento.status || '').toLowerCase();
+
+          if (
+            ['cancelado', 'cancelada', 'cancelled'].includes(status)
+          ) {
+            return false;
+          }
+
+          const aInicio = timeToMinutes(agendamento.hora_inicio);
+          const aFim = timeToMinutes(agendamento.hora_fim);
+
+          return (
+            Number.isFinite(aInicio) &&
+            Number.isFinite(aFim) &&
+            overlaps(horario, horarioFim, aInicio, aFim)
+          );
+        });
+
+        if (!bloqueado && !ocupado) {
+          const hora = `${String(Math.floor(horario / 60)).padStart(2, '0')}:${String(
+            horario % 60
+          ).padStart(2, '0')}`;
+
+          if (!horarios.includes(hora)) {
+            horarios.push(hora);
+          }
+        }
+      }
+    }
+
+    return res.json({
+      ok: true,
+      data: horarios.sort()
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// CRIAR AGENDAMENTO — API PÚBLICA
+// ======================================================
+
+app.post('/api/agendamentos', async (req, res) => {
+  try {
+    const body = req.body || {};
+
+    const nomeCliente = cleanText(body.nome_cliente || body.nome, 150);
+    const telefoneCliente = cleanText(
+      body.telefone_cliente || body.telefone,
+      40
+    );
+
+    const servicoId = cleanText(body.servico_id, 50);
+    const data = cleanText(body.data, 10);
+    const horaInicio = normalizeTime(body.hora_inicio || body.hora);
+    const observacoes = cleanText(body.observacoes, 1000);
+
+    if (!nomeCliente || !telefoneCliente || !servicoId || !data || !horaInicio) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Preencha nome, telefone, serviço, data e horário.'
+      });
+    }
+
+    if (!validId(servicoId) || !validDate(data) || !horaInicio) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Os dados do agendamento são inválidos.'
+      });
+    }
+
+    const supabaseClient = db();
+
+    const { data: servico, error: servicoError } = await supabaseClient
+      .from('servicos')
+      .select('*')
+      .eq('id', servicoId)
+      .maybeSingle();
+
+    if (servicoError) throw servicoError;
+
+    if (!servico) {
+      return res.status(404).json({
+        ok: false,
+        error: 'O serviço selecionado não foi encontrado.'
+      });
+    }
+
+    const duracao = Number(
+      servico.duracao_minutos || servico.duracao || 60
+    );
+
+    if (!Number.isFinite(duracao) || duracao <= 0) {
+      return res.status(400).json({
+        ok: false,
+        error: 'A duração do serviço está configurada incorretamente.'
+      });
+    }
+
+    const inicioMinutos = timeToMinutes(horaInicio);
+
+    if (!Number.isFinite(inicioMinutos)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Horário inválido.'
+      });
+    }
+
+    const fimMinutos = inicioMinutos + duracao;
+
+    if (fimMinutos > 24 * 60) {
+      return res.status(400).json({
+        ok: false,
+        error: 'O horário escolhido ultrapassa o final do dia.'
+      });
+    }
+
+    const horaFim = `${String(Math.floor(fimMinutos / 60)).padStart(2, '0')}:${String(
+      fimMinutos % 60
+    ).padStart(2, '0')}:00`;
+
+    const [ano, mes, dia] = data.split('-').map(Number);
+    const diaSemana = new Date(ano, mes - 1, dia, 12).getDay();
+
+    const [dispResult, bloqueiosResult, agendamentosResult] =
+      await Promise.all([
+        supabaseClient
+          .from('disponibilidade')
+          .select('*')
+          .eq('dia_semana', diaSemana),
+
+        supabaseClient
+          .from('bloqueios')
+          .select('*')
+          .eq('data', data),
+
+        supabaseClient
+          .from('agendamentos')
+          .select('*')
+          .eq('data', data)
+      ]);
+
+    if (dispResult.error) throw dispResult.error;
+    if (bloqueiosResult.error) throw bloqueiosResult.error;
+    if (agendamentosResult.error) throw agendamentosResult.error;
+
+    const dentroDaDisponibilidade = (dispResult.data || []).some((faixa) => {
+      const faixaInicio = timeToMinutes(faixa.hora_inicio);
+      const faixaFim = timeToMinutes(faixa.hora_fim);
+
+      return (
+        Number.isFinite(faixaInicio) &&
+        Number.isFinite(faixaFim) &&
+        inicioMinutos >= faixaInicio &&
+        fimMinutos <= faixaFim
+      );
+    });
+
+    if (!dentroDaDisponibilidade) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Esse horário não está dentro da disponibilidade.'
+      });
+    }
+
+    const bloqueado = (bloqueiosResult.data || []).some((bloqueio) => {
+      const bInicio = timeToMinutes(bloqueio.hora_inicio);
+      const bFim = timeToMinutes(bloqueio.hora_fim);
+
+      return (
+        Number.isFinite(bInicio) &&
+        Number.isFinite(bFim) &&
+        overlaps(inicioMinutos, fimMinutos, bInicio, bFim)
+      );
+    });
+
+    if (bloqueado) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Esse horário está bloqueado. Escolha outro.'
+      });
+    }
+
+    const ocupado = (agendamentosResult.data || []).some((agendamento) => {
+      const status = String(agendamento.status || '').toLowerCase();
+
+      if (['cancelado', 'cancelada', 'cancelled'].includes(status)) {
+        return false;
+      }
+
+      const aInicio = timeToMinutes(agendamento.hora_inicio);
+      const aFim = timeToMinutes(agendamento.hora_fim);
+
+      return (
+        Number.isFinite(aInicio) &&
+        Number.isFinite(aFim) &&
+        overlaps(inicioMinutos, fimMinutos, aInicio, aFim)
+      );
+    });
+
+    if (ocupado) {
+      return res.status(409).json({
+        ok: false,
+        error: 'Esse horário acabou de ser reservado. Escolha outro.'
+      });
+    }
+
+    const agendamento = {
+      nome_cliente: nomeCliente,
+      telefone_cliente: telefoneCliente,
+      servico_id: servico.id,
+      nome_servico: servico.nome,
+      data,
+      hora_inicio: horaInicio,
+      hora_fim: horaFim,
+      preco: Number(servico.preco || 0),
+      status: 'Pendente',
+      observacoes,
+      origem: 'site'
+    };
+
+    const { data: criado, error: insertError } = await supabaseClient
+      .from('agendamentos')
+      .insert(agendamento)
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+
+    return res.status(201).json({
+      ok: true,
+      data: criado,
+      message: 'Agendamento realizado com sucesso.'
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// ADMIN — AGENDAMENTOS
+// ======================================================
+
+app.get('/api/admin/agendamentos', admin, async (req, res) => {
+  try {
+    let query = db()
+      .from('agendamentos')
+      .select('*')
+      .order('data', { ascending: false })
+      .order('hora_inicio', { ascending: true });
+
+    if (req.query.data && validDate(String(req.query.data))) {
+      query = query.eq('data', String(req.query.data));
+    }
+
+    if (req.query.status) {
+      query = query.eq('status', cleanText(req.query.status, 50));
+    }
+
+    return await executeQuery(res, query);
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.patch('/api/admin/agendamentos/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de agendamento inválido.'
+      });
+    }
+
+    const allowed = ['status', 'observacoes'];
+    const updates = {};
+
+    for (const key of allowed) {
+      if (req.body?.[key] !== undefined) {
+        updates[key] =
+          key === 'status'
+            ? cleanText(req.body[key], 50)
+            : cleanText(req.body[key], 1000);
+      }
+    }
+
+    if (!Object.keys(updates).length) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Nenhum campo válido foi enviado.'
+      });
+    }
+
+    const { data, error } = await db()
+      .from('agendamentos')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.delete('/api/admin/agendamentos/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de agendamento inválido.'
+      });
+    }
+
+    const { error } = await db()
+      .from('agendamentos')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// ADMIN — CLIENTES
+// ======================================================
+
+app.get('/api/admin/clientes', admin, async (req, res) => {
+  try {
+    return await executeQuery(
+      res,
+      db()
+        .from('clientes')
+        .select('*')
+        .order('nome', { ascending: true })
+    );
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.post('/api/admin/clientes', admin, async (req, res) => {
+  try {
+    const nome = cleanText(req.body?.nome, 150);
+    const telefone = cleanText(req.body?.telefone, 40);
+    const email = cleanText(req.body?.email, 200);
+
+    if (!nome) {
+      return res.status(400).json({
+        ok: false,
+        error: 'O nome do cliente é obrigatório.'
+      });
+    }
+
+    const cliente = { nome };
+
+    if (telefone) cliente.telefone = telefone;
+    if (email) cliente.email = email;
+
+    const { data, error } = await db()
+      .from('clientes')
+      .insert(cliente)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// ADMIN — SERVIÇOS
+// ======================================================
+
+app.get('/api/admin/servicos', admin, async (req, res) => {
+  try {
+    return await executeQuery(
+      res,
+      db()
+        .from('servicos')
+        .select('*')
+        .order('nome', { ascending: true })
+    );
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.post('/api/admin/servicos', admin, async (req, res) => {
+  try {
+    const nome = cleanText(req.body?.nome, 150);
+
+    if (!nome) {
+      return res.status(400).json({
+        ok: false,
+        error: 'O nome do serviço é obrigatório.'
+      });
+    }
+
+    const duracao = Number(
+      req.body?.duracao_minutos ?? req.body?.duracao ?? 60
+    );
+
+    const preco = Number(req.body?.preco ?? 0);
+
+    if (!Number.isFinite(duracao) || duracao <= 0) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe uma duração válida para o serviço.'
+      });
+    }
+
+    if (!Number.isFinite(preco) || preco < 0) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe um preço válido.'
+      });
+    }
+
+    const servico = {
+      nome,
+      descricao: cleanText(req.body?.descricao, 1000),
+      duracao_minutos: duracao,
+      preco
+    };
+
+    if (req.body?.ativo !== undefined) {
+      servico.ativo = Boolean(req.body.ativo);
+    }
+
+    const { data, error } = await db()
+      .from('servicos')
+      .insert(servico)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.patch('/api/admin/servicos/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de serviço inválido.'
+      });
+    }
+
+    const updates = {};
+
+    if (req.body?.nome !== undefined) {
+      updates.nome = cleanText(req.body.nome, 150);
+    }
+
+    if (req.body?.descricao !== undefined) {
+      updates.descricao = cleanText(req.body.descricao, 1000);
+    }
+
+    if (
+      req.body?.duracao_minutos !== undefined ||
+      req.body?.duracao !== undefined
+    ) {
+      const duracao = Number(
+        req.body.duracao_minutos ?? req.body.duracao
+      );
+
+      if (!Number.isFinite(duracao) || duracao <= 0) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Duração inválida.'
+        });
+      }
+
+      updates.duracao_minutos = duracao;
+    }
+
+    if (req.body?.preco !== undefined) {
+      const preco = Number(req.body.preco);
+
+      if (!Number.isFinite(preco) || preco < 0) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Preço inválido.'
+        });
+      }
+
+      updates.preco = preco;
+    }
+
+    if (req.body?.ativo !== undefined) {
+      updates.ativo = Boolean(req.body.ativo);
+    }
+
+    if (!Object.keys(updates).length) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Nenhum campo válido foi enviado.'
+      });
+    }
+
+    const { data, error } = await db()
+      .from('servicos')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.delete('/api/admin/servicos/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de serviço inválido.'
+      });
+    }
+
+    const { error } = await db()
+      .from('servicos')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// ADMIN — DISPONIBILIDADE
+// ======================================================
+
+app.get('/api/admin/disponibilidade', admin, async (req, res) => {
+  try {
+    return await executeQuery(
+      res,
+      db()
+        .from('disponibilidade')
+        .select('*')
+        .order('dia_semana', { ascending: true })
+    );
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.post('/api/admin/disponibilidade', admin, async (req, res) => {
+  try {
+    const dia = Number(req.body?.dia_semana);
+    const inicio = normalizeTime(req.body?.hora_inicio);
+    const fim = normalizeTime(req.body?.hora_fim);
+
+    if (!Number.isInteger(dia) || dia < 0 || dia > 6) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Dia da semana inválido. Use de 0 a 6.'
+      });
+    }
+
+    if (!inicio || !fim || timeToMinutes(inicio) >= timeToMinutes(fim)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe horários válidos, com o fim depois do início.'
+      });
+    }
+
+    const registro = {
+      dia_semana: dia,
+      hora_inicio: inicio,
+      hora_fim: fim
+    };
+
+    if (req.body?.ativo !== undefined) {
+      registro.ativo = Boolean(req.body.ativo);
+    }
+
+    const { data, error } = await db()
+      .from('disponibilidade')
+      .insert(registro)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.patch('/api/admin/disponibilidade/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de disponibilidade inválido.'
+      });
+    }
+
+    const updates = {};
+
+    if (req.body?.dia_semana !== undefined) {
+      const dia = Number(req.body.dia_semana);
+
+      if (!Number.isInteger(dia) || dia < 0 || dia > 6) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Dia da semana inválido.'
+        });
+      }
+
+      updates.dia_semana = dia;
+    }
+
+    if (req.body?.hora_inicio !== undefined) {
+      const inicio = normalizeTime(req.body.hora_inicio);
+
+      if (!inicio) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Horário inicial inválido.'
+        });
+      }
+
+      updates.hora_inicio = inicio;
+    }
+
+    if (req.body?.hora_fim !== undefined) {
+      const fim = normalizeTime(req.body.hora_fim);
+
+      if (!fim) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Horário final inválido.'
+        });
+      }
+
+      updates.hora_fim = fim;
+    }
+
+    if (req.body?.ativo !== undefined) {
+      updates.ativo = Boolean(req.body.ativo);
+    }
+
+    if (!Object.keys(updates).length) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Nenhum campo válido foi enviado.'
+      });
+    }
+
+    const { data, error } = await db()
+      .from('disponibilidade')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.json({ ok: true, data });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.delete('/api/admin/disponibilidade/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de disponibilidade inválido.'
+      });
+    }
+
+    const { error } = await db()
+      .from('disponibilidade')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// ADMIN — BLOQUEIOS DE AGENDA
+// ======================================================
+
+app.get('/api/admin/bloqueios', admin, async (req, res) => {
+  try {
+    let query = db()
+      .from('bloqueios')
+      .select('*')
+      .order('data', { ascending: true });
+
+    if (req.query.data && validDate(String(req.query.data))) {
+      query = query.eq('data', String(req.query.data));
+    }
+
+    return await executeQuery(res, query);
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.post('/api/admin/bloqueios', admin, async (req, res) => {
+  try {
+    const data = cleanText(req.body?.data, 10);
+    const inicio = normalizeTime(req.body?.hora_inicio);
+    const fim = normalizeTime(req.body?.hora_fim);
+    const motivo = cleanText(req.body?.motivo, 500);
+
+    if (!validDate(data)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe uma data válida.'
+      });
+    }
+
+    if (!inicio || !fim || timeToMinutes(inicio) >= timeToMinutes(fim)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Informe um intervalo de horários válido.'
+      });
+    }
+
+    const { data: bloqueio, error } = await db()
+      .from('bloqueios')
+      .insert({
+        data,
+        hora_inicio: inicio,
+        hora_fim: fim,
+        motivo
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return res.status(201).json({
+      ok: true,
+      data: bloqueio
+    });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+app.delete('/api/admin/bloqueios/:id', admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validId(id)) {
+      return res.status(400).json({
+        ok: false,
+        error: 'ID de bloqueio inválido.'
+      });
+    }
+
+    const { error } = await db()
+      .from('bloqueios')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return sendDbError(res, error);
+  }
+});
+
+// ======================================================
+// PÁGINAS HTML
+// ======================================================
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
+
 app.get('/taiany-painel-admin.html', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'taiany-painel-admin.html'));
+  res.sendFile(
+    path.join(__dirname, 'taiany-painel-admin.html')
+  );
 });
+
 app.get('/taiany-agendamento.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'taiany-agendamento.html'));
+  res.sendFile(
+    path.join(__dirname, 'taiany-agendamento.html')
+  );
 });
+
 app.get('/agendar', (req, res) => {
-  res.sendFile(path.join(__dirname, 'taiany-agendamento.html'));
+  res.sendFile(
+    path.join(__dirname, 'taiany-agendamento.html')
+  );
 });
+
+// ======================================================
+// ARQUIVOS ESTÁTICOS
+// ======================================================
+
+app.use(
+  express.static(__dirname, {
+    index: false,
+    dotfiles: 'deny'
+  })
+);
+
+// ======================================================
+// ROTA NÃO ENCONTRADA
+// ======================================================
 
 app.use((req, res) => {
-  res.status(404).json({ ok: false, error: 'Rota não encontrada.' });
-});
-app.use((err, req, res, next) => {
-  console.error('[ERRO]', err.message);
-  if (res.headersSent) return next(err);
-  res.status(500).json({ ok: false, error: 'Erro interno do servidor.' });
+  res.status(404).json({
+    ok: false,
+    error: 'Rota não encontrada.'
+  });
 });
 
+// ======================================================
+// ERROS NÃO TRATADOS
+// ======================================================
+
+app.use((error, req, res, next) => {
+  console.error('Erro não tratado:', error);
+
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  return res.status(500).json({
+    ok: false,
+    error: 'Erro interno do servidor.'
+  });
+});
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
 app.listen(PORT, '0.0.0.0', () => {
-  console.log('Servidor Taiany iniciado na porta ' + PORT);
-  console.log('Supabase: ' + (supabase ? 'configurado' : 'não configurado'));
+  console.log(`Servidor iniciado na porta ${PORT}`);
 });
