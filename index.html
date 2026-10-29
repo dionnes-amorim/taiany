@@ -7,47 +7,45 @@
 :root{--cream:#fbf5ef;--rose:#b97861;--copper:#9b5c43;--ink:#211916;--muted:#7f7069;--line:#eadfd7;--white:#fffdfb}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#fbf5ef;color:var(--ink);font-family:Inter,system-ui,Arial;display:flex;flex-direction:column}
 .wrap{flex:1;display:grid;place-items:center;padding:24px}
-.card{width:min(100%,420px);background:var(--white);border:1px solid var(--line);border-radius:24px;box-shadow:0 20px 60px rgba(33,25,22,.08);padding:28px;text-align:center}
-.logo-hero{width:140px;height:140px;margin:0 auto 16px;border-radius:22px;background:var(--rose);display:grid;place-items:center;overflow:hidden;box-shadow:0 10px 30px rgba(185,120,97,.3)}
-.logo-hero img{width:100%;height:100%;object-fit:contain;padding:10px;background:#fff}
-h1{font-family:Georgia,serif;font-size:26px;margin:0 0 4px;font-weight:500} .sub{color:var(--muted);font-size:13px;margin:0 0 22px}
+.card{width:min(100%,440px);background:var(--white);border:1px solid var(--line);border-radius:28px;box-shadow:0 20px 60px rgba(33,25,22,.08);padding:32px 28px;text-align:center}
+.logo-hero{width:220px;height:220px;margin:0 auto 18px;border-radius:28px;background:var(--rose);display:grid;place-items:center;overflow:hidden;box-shadow:0 14px 40px rgba(185,120,97,.35)}
+.logo-hero img{width:100%;height:100%;object-fit:contain;padding:12px;background:#fff}
+h1{font-family:Georgia,serif;font-size:28px;margin:0 0 4px;font-weight:500} .sub{color:var(--muted);font-size:13px;margin:0 0 24px}
 .field{text-align:left;margin-bottom:12px}label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700}
-input{width:100%;height:48px;border:1px solid #d9c9bf;border-radius:12px;padding:0 14px;outline:none;margin-top:6px}
+input{width:100%;height:50px;border:1px solid #d9c9bf;border-radius:12px;padding:0 14px;outline:none;margin-top:6px;font-size:15px}
 input:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(185,120,97,.15)}
-.btn{width:100%;height:50px;border:0;border-radius:12px;background:var(--copper);color:#fff;font-weight:800;cursor:pointer;margin-top:10px}
+.btn{width:100%;height:52px;border:0;border-radius:12px;background:var(--copper);color:#fff;font-weight:800;cursor:pointer;margin-top:12px;font-size:15px}
 .btn.secondary{background:#fff;color:var(--copper);border:1px solid var(--copper)}
 .msg{font-size:13px;margin-top:12px;min-height:18px}.msg.error{color:#a84747}.msg.ok{color:#2e7d5a}
-.link-box{margin-top:18px;padding:12px;border:1px dashed var(--rose);border-radius:12px;background:#fff8f4;font-size:12px;word-break:break-all}
-.footer{padding:20px;display:flex;justify-content:center;border-top:1px solid var(--line);background:#fff}
-.dev{display:flex;align-items:center;gap:14px}
-.dev-logo{width:72px;height:72px;border-radius:14px;background:#111;display:grid;place-items:center;overflow:hidden;border:1px solid #222;box-shadow:0 8px 20px rgba(0,0,0,.15)}
-.dev-logo img{width:100%;height:100%;object-fit:contain;padding:6px;background:#fff}
-.dev-text{line-height:1.2;text-align:left}.dev-text strong{font-size:14px;display:block}.dev-text span{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.link-box{margin-top:20px;padding:12px;border:1px dashed var(--rose);border-radius:12px;background:#fff8f4;font-size:12px;word-break:break-all}
+.footer{padding:28px 20px;display:flex;justify-content:center;background:#fff;border-top:1px solid var(--line)}
+.dev{display:flex;align-items:center;gap:18px}
+.dev-logo{width:110px;height:110px;border-radius:18px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.12);border:1px solid var(--line)}
+.dev-logo img{width:100%;height:100%;object-fit:contain;padding:8px}
+.dev-text{line-height:1.1;text-align:left}.dev-text strong{font-size:20px;display:block;letter-spacing:.3px}.dev-text span{font-size:13px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;font-weight:700}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <div class="logo-hero"><img src="/logo.png" alt="Taiany" onerror="this.style.display='none';this.parentElement.textContent='TT';this.parentElement.style.color='#fff';this.parentElement.style.fontSize='48px';this.parentElement.style.fontFamily='Georgia,serif'"></div>
+    <div class="logo-hero"><img src="/logo.png" alt="Taiany Trindade"></div>
     <h1>Taiany Trindade</h1>
     <p class="sub">Nail Designer • Acesso restrito</p>
 
-    <div class="field"><label>Usuário</label><input id="user" placeholder="Usuário" autocomplete="username"></div>
-    <div class="field"><label>Senha</label><input id="pass" type="password" placeholder="Senha" autocomplete="current-password"></div>
+    <div class="field"><label>Usuário</label><input id="user" placeholder="Usuário"></div>
+    <div class="field"><label>Senha</label><input id="pass" type="password" placeholder="Senha"></div>
     <button class="btn" id="loginBtn">Entrar no Painel</button>
     <div id="msg" class="msg"></div>
 
-    <div style="margin-top:22px">
-      <div class="link-box" id="linkBox">https://taiany.onrender.com/taiany-agendamento.html</div>
-      <button class="btn secondary" id="copyBtn">Copiar link de agendamento</button>
-    </div>
+    <div class="link-box" id="linkBox">https://taiany.onrender.com/taiany-agendamento.html</div>
+    <button class="btn secondary" id="copyBtn">Copiar link de agendamento</button>
   </div>
 </div>
 
 <footer class="footer">
   <div class="dev">
-    <div class="dev-text"><strong>Desenvolvido por</strong>
-    <div class="dev-logo"><img src="/logo-desenvolvimento.png" alt="Sua empresa" onerror="this.style.display='none';this.parentElement.textContent='DEV';this.parentElement.style.color='#fff';this.parentElement.style.fontWeight='800'"></div>
+    <div class="dev-logo"><img src="/logo-desenvolvimento.png" alt="Logo Desenvolvimento"></div>
+    <div class="dev-text"><strong>Desenvolvido por</strong><span>SUA EMPRESA</span></div>
   </div>
 </footer>
 
@@ -55,7 +53,7 @@ input:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(185,120,97,.15)}
 const $=id=>document.getElementById(id);
 $('copyBtn').onclick=async()=>{
   const link=$('linkBox').textContent.trim();
-  try{await navigator.clipboard.writeText(link);$('copyBtn').textContent='Link copiado! ✓';setTimeout(()=>$('copyBtn').textContent='Copiar link de agendamento',1500);}catch{prompt('Copie o link:',link);}
+  try{await navigator.clipboard.writeText(link);$('copyBtn').textContent='Link copiado! ✓';setTimeout(()=>$('copyBtn').textContent='Copiar link de agendamento',1500);}catch{prompt('Copie:',link);}
 };
 $('loginBtn').onclick=async()=>{
   const user=$('user').value.trim(), pass=$('pass').value.trim();
@@ -65,7 +63,7 @@ $('loginBtn').onclick=async()=>{
     const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user,pass})});
     const j=await r.json();
     if(j.ok){$('msg').textContent='Acesso liberado!';$('msg').className='msg ok';location.href='/taiany-painel-admin.html';}
-    else{throw new Error(j.error||'Acesso negado');}
+    else throw new Error(j.error||'Acesso negado');
   }catch(e){$('msg').textContent=e.message;$('msg').className='msg error';}
   finally{$('loginBtn').textContent='Entrar no Painel';$('loginBtn').disabled=false;}
 };
