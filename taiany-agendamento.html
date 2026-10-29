@@ -2177,6 +2177,10 @@
           action: askPhone
         },
         {
+          label: "♡ Consultar agendamento",
+          action: consultBooking
+        },
+        {
           label: "Como funciona?",
           action: explainBooking
         }
@@ -2185,6 +2189,23 @@
       setStep("welcome");
     }
 
+
+function consultBooking() {
+  setStep("consultBookingPhone");
+
+  botSay(
+    "Claro! ♡ Vou ajudar você a consultar seu agendamento.\n\nInforme o WhatsApp com DDD que foi utilizado no momento da marcação."
+  );
+
+  configureInput({
+    label: "WhatsApp usado no agendamento",
+    placeholder: "(17) 99999-9999",
+    type: "tel",
+    enabled: true,
+    hint: "Digite o mesmo número informado ao realizar o agendamento."
+  });
+}
+      
     function explainBooking() {
       botSay(
         "É simples! Vou localizar seu cadastro pelo WhatsApp, mostrar os procedimentos disponíveis e consultar os dias e horários livres. No final, você revisa os dados e envia a solicitação de agendamento."
