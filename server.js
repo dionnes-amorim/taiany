@@ -979,88 +979,43 @@ app.get('/api/horarios', async (req, res) => {
     const date = cleanText(req.query.data, 10);
     const serviceId = cleanText(req.query.servico_id, 50);
     const cidade = cleanText(req.query.cidade, 50);
-    if (!validDate(date)) return res.status(400).json({ ok: false, error: 'Informe uma data válida no formato AAAA-MM-DD.' });
-    if (!validId(serviceId)) return res.status(400).json({ ok: false, error: 'Selecione um serviço válido.' });
-    if (date < getSaoPauloNow().date) return res.json({ ok: true, data: [] });
-    const context = await getBookingContext(date, serviceId, cidade);
 
     if (!validDate(date)) {
-      return res.status(400).json({
-        ok: false,
-        error: 'Informe uma data válida no formato AAAA-MM-DD.'
-      });
+      return res.status(400).json({ ok: false, error: 'Informe uma data válida no formato AAAA-MM-DD.' });
     }
-
     if (!validId(serviceId)) {
-      return res.status(400).json({
-        ok: false,
-        error: 'Selecione um serviço válido.'
-      });
+      return res.status(400).json({ ok: false, error: 'Selecione um serviço válido.' });
     }
-
     if (date < getSaoPauloNow().date) {
-      return res.json({
-        ok: true,
-        data: []
-      });
+      return res.json({ ok: true, data: [] });
     }
 
-    const context = await getBookingContext(date, serviceId);
+    const context = await getBookingContext(date, serviceId, cidade);
 
     if (context.missingService) {
-      return res.status(404).json({
-        ok: false,
-        error: 'Serviço não encontrado.'
-      });
+      return res.status(404).json({ ok: false, error: 'Serviço não encontrado.' });
     }
-
     if (context.inactiveService) {
-      return res.json({
-        ok: true,
-        data: []
-      });
+      return res.json({ ok: true, data: [] });
     }
-
     if (context.invalidDuration) {
-      return res.status(400).json({
-        ok: false,
-        error: 'A duração do serviço está configurada incorretamente.'
-      });
+      return res.status(400).json({ ok: false, error: 'A duração do serviço está configurada incorretamente.' });
     }
 
     const slots = new Set();
-
     for (const range of context.availability) {
       if (!parseBoolean(range.ativo, true)) continue;
-
       const start = timeToMinutes(range.hora_inicio);
       const end = timeToMinutes(range.hora_fim);
-
-      if (
-        !Number.isFinite(start) ||
-        !Number.isFinite(end) ||
-        end <= start
-      ) {
-        continue;
-      }
-
-      for (
-        let slot = start;
-        slot + context.duration <= end;
-        slot += 30
-      ) {
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) continue;
+      for (let slot = start; slot + context.duration <= end; slot += 30) {
         if (isPastSlot(date, slot)) continue;
-
         if (isSlotAvailable(context, slot, slot + context.duration)) {
           slots.add(minutesToTime(slot).slice(0, 5));
         }
       }
     }
-
-    return res.json({
-      ok: true,
-      data: [...slots].sort()
-    });
+    return res.json({ ok: true, data: [...slots].sort() });
   } catch (error) {
     return sendDbError(res, error);
   }
