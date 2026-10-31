@@ -1568,6 +1568,7 @@
       telefone: "",
       email: "",
       servico: null,
+      cidade: "",
       data: "",
       horario: "",
       observacoes: "",
@@ -2351,6 +2352,16 @@ function consultBooking() {
       loadServices();
     }
 
+    function askCidade() {
+      setStep("cidade");
+      botSay("Em qual cidade você quer ser atendida? ✨\n\nSelecione abaixo para eu consultar os horários na cidade correta.");
+
+      renderQuickReplies([
+        { label: "📍 Severínia", gold: true, action: () => { state.cidade = "Severínia"; loadDates(); } },
+        { label: "📍 Olímpia", gold: true, action: () => { state.cidade = "Olímpia"; loadDates(); } }
+      ]);
+    }
+
     function startNewClient() {
       state.clientType = "new";
       state.clientExists = false;
@@ -2506,7 +2517,7 @@ function consultBooking() {
         ]);
       }
     }
-
+    
     /* SERVIÇOS */
 
     async function loadServices() {
@@ -2566,7 +2577,7 @@ function consultBooking() {
               `Ótima escolha! ✨\n\nProcedimento: ${state.servico.nome}\nValor: ${money(state.servico.preco)}\nDuração prevista: ${state.servico.duracao} minutos.`
             );
 
-            await loadDates();
+            askCidade();
           }
         );
       } catch (error) {
@@ -2587,13 +2598,14 @@ function consultBooking() {
         ]);
       }
     }
-
+    
     /* CONSULTA DOS HORÁRIOS */
 
     async function fetchTimesForDate(iso, serviceId) {
+      const cidadeParam = state.cidade ? `&cidade=${encodeURIComponent(state.cidade)}` : '';
       const url =
         `${API.times}?data=${encodeURIComponent(iso)}` +
-        `&servico_id=${encodeURIComponent(serviceId)}`;
+        `&servico_id=${encodeURIComponent(serviceId)}` + cidadeParam;
 
       const result = await apiRequest(url);
 
@@ -3091,6 +3103,7 @@ function consultBooking() {
         ["Procedimento", state.servico?.nome || "—"],
         ["Data", state.data ? formatDate(state.data) : "—"],
         ["Horário", state.horario || "—"],
+        ["Cidade", state.cidade || "—"],
         ["Valor", money(state.servico?.preco || 0)],
         ["Observações", state.observacoes || "Nenhuma"]
       ];
@@ -3209,6 +3222,7 @@ function consultBooking() {
           ...(state.clientId ? { cliente_id: state.clientId } : {}),
           servico_id: state.servico.id,
           nome_servico: state.servico.nome,
+          cidade: state.cidade,
           data: state.data,
           hora_inicio: state.horario,
           hora_fim: calculateEndTime(
