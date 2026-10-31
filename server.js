@@ -885,87 +885,49 @@ app.get('/api/servicos', async (req, res) => {
 
 app.get('/api/disponibilidade', async (req, res) => {
   try {
-    let query = db()
-      .from('disponibilidade')
-      .select('*')
-      .order('dia_semana', { ascending: true });
-
+    let query = db().from('disponibilidade').select('*').order('dia_semana', { ascending: true });
+    if (req.query.cidade) {
+      query = query.eq('cidade', req.query.cidade);
+    }
     if (req.query.dia !== undefined) {
       const day = Number(req.query.dia);
-
       if (!Number.isInteger(day) || day < 0 || day > 6) {
-        return res.status(400).json({
-          ok: false,
-          error: 'Dia da semana inválido. Use um número de 0 a 6.'
-        });
+        return res.status(400).json({ ok: false, error: 'Dia da semana inválido.' });
       }
-
-      // dentro da query, depois do eq ativo:
-      if(req.query.cidade) query = query.eq('cidade', req.query.cidade)
-
       query = query.eq('dia_semana', day);
     }
-
     return await executeQuery(res, query);
-  } catch (error) {
-    return sendDbError(res, error);
-  }
+  } catch (error) { return sendDbError(res, error); }
 });
 
 // ======================================================
 // CONTEXTO DE AGENDAMENTO
 // ======================================================
 
-async function getBookingContext(date, serviceId) {
+async function getBookingContext(date, serviceId, cidade) {
   const client = db();
-
-  const { data: service, error: serviceError } = await client
-    .from('servicos')
-    .select('*')
-    .eq('id', serviceId)
-    .maybeSingle();
-
+  const { data: service, error: serviceError } = await client.from('servicos').select('*').eq('id', serviceId).maybeSingle();
   if (serviceError) throw serviceError;
   if (!service) return { missingService: true };
-
-  if (!parseBoolean(service.ativo, true)) {
-    return { inactiveService: true };
-  }
-
+  if (!parseBoolean(service.ativo, true)) return { inactiveService: true };
   const duration = getServiceDuration(service);
-
   if (!duration) return { invalidDuration: true };
-
   const weekday = weekdayFromDate(date);
+  
+  let availQuery = client.from('disponibilidade').select('*').eq('dia_semana', weekday);
+  if (cidade) availQuery = availQuery.eq('cidade', cidade);
 
   const [availability, blocks, bookings] = await Promise.all([
-    client
-      .from('disponibilidade')
-      .select('*')
-      .eq('dia_semana', weekday),
-
-    client
-      .from('bloqueios')
-      .select('*')
-      .eq('data', date),
-
-    client
-      .from('agendamentos')
-      .select('*')
-      .eq('data', date)
+    availQuery,
+    client.from('bloqueios').select('*').eq('data', date),
+    client.from('agendamentos').select('*').eq('data', date)
   ]);
 
   if (availability.error) throw availability.error;
   if (blocks.error) throw blocks.error;
   if (bookings.error) throw bookings.error;
 
-  return {
-    service,
-    duration,
-    availability: availability.data || [],
-    blocks: blocks.data || [],
-    bookings: bookings.data || []
-  };
+  return { service, duration, availability: availability.data || [], blocks: blocks.data || [], bookings: bookings.data || [] };
 }
 
 function isSlotAvailable(context, start, end) {
@@ -1016,6 +978,11 @@ app.get('/api/horarios', async (req, res) => {
   try {
     const date = cleanText(req.query.data, 10);
     const serviceId = cleanText(req.query.servico_id, 50);
+    const cidade = cleanText(req.query.cidade, 50);
+    if (!validDate(date)) return res.status(400).json({ ok: false, error: 'Informe uma data válida no formato AAAA-MM-DD.' });
+    if (!validId(serviceId)) return res.status(400).json({ ok: false, error: 'Selecione um serviço válido.' });
+    if (date < getSaoPauloNow().date) return res.json({ ok: true, data: [] });
+    const context = await getBookingContext(date, serviceId, cidade);
 
     if (!validDate(date)) {
       return res.status(400).json({
@@ -1115,6 +1082,7 @@ app.get('/api/meus-agendamentos', async (req, res) => {
 app.post('/api/agendamentos', async (req, res) => {
   try {
     const body = req.body || {};
+    const cidade = cleanText(body.cidade, 50) || 'Severínia';
 
     const nome = cleanText(body.nome_cliente || body.nome, 150);
     const telefone = normalizePhone(
@@ -1212,6 +1180,7 @@ app.post('/api/agendamentos', async (req, res) => {
         telefone_cliente: telefone,
         servico_id: context.service.id,
         nome_servico: context.service.nome,
+        cidade: cidade,
         data: date,
         hora_inicio: startTime,
         hora_fim: minutesToTime(end),
@@ -1816,7 +1785,7 @@ app.get('/api/admin/disponibilidade', admin, async (req, res) => {
 app.post('/api/admin/disponibilidade', admin, async (req, res) => {
   try {
     const day = Number(req.body?.dia_semana);
-    const cidade = req.body?.cidade // 'Severínia' ou 'Olímpia'
+    const cidade = cleanText(req.body?.cidade, 50) || 'Severínia';
     const start = normalizeTime(req.body?.hora_inicio);
     const end = normalizeTime(req.body?.hora_fim);
 
@@ -1837,7 +1806,8 @@ app.post('/api/admin/disponibilidade', admin, async (req, res) => {
     const payload = {
       dia_semana: day,
       hora_inicio: start,
-      hora_fim: end
+      hora_fim: end,
+      cidade: cidade
     };
 
     if (req.body?.ativo !== undefined) {
