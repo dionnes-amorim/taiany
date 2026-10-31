@@ -51,7 +51,10 @@
 </section>
 
 <section class="page" id="page-disponibilidade"><div class="page-heading"><div><h2>Disponibilidade</h2><p class="sub">Defina os dias e períodos em que aceita agendamentos.</p></div></div><div class="panel"><h3>Horários semanais</h3><form id="availabilityForm"><div id="availabilityRows"></div><div class="field" style="max-width:260px"><label for="slotInterval">Intervalo das opções (minutos)</label><select id="slotInterval"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option></select></div><button class="button" type="submit">Salvar disponibilidade</button></form></div></section>
-
+<select id="filterCidadeDisponibilidade">
+  <option value="Severínia">Severínia</option>
+  <option value="Olímpia">Olímpia</option>
+</select>
 <section class="page" id="page-bloqueios"><div class="page-heading"><div><h2>Bloqueios de agenda</h2><p class="sub">Reserve períodos para pausas, compromissos ou folgas.</p></div></div>
 <div class="panel"><h3>Bloqueios cadastrados</h3><div id="blocksTable"></div></div>
 <div class="panel"><h3>Novo bloqueio</h3><form id="blockForm"><div class="form-grid"><div class="field"><label for="blockDate">Data *</label><input id="blockDate" type="date" required></div><div class="field"><label for="blockReason">Motivo</label><input id="blockReason"></div><div class="field"><label for="blockStart">Início *</label><input id="blockStart" type="time" required></div><div class="field"><label for="blockEnd">Fim *</label><input id="blockEnd" type="time" required></div></div><button class="button" type="submit">Adicionar bloqueio</button></form></div>
