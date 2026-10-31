@@ -900,6 +900,9 @@ app.get('/api/disponibilidade', async (req, res) => {
         });
       }
 
+      // dentro da query, depois do eq ativo:
+      if(req.query.cidade) query = query.eq('cidade', req.query.cidade)
+
       query = query.eq('dia_semana', day);
     }
 
@@ -1813,6 +1816,7 @@ app.get('/api/admin/disponibilidade', admin, async (req, res) => {
 app.post('/api/admin/disponibilidade', admin, async (req, res) => {
   try {
     const day = Number(req.body?.dia_semana);
+    const cidade = req.body?.cidade // 'Severínia' ou 'Olímpia'
     const start = normalizeTime(req.body?.hora_inicio);
     const end = normalizeTime(req.body?.hora_fim);
 
