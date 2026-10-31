@@ -50,11 +50,21 @@
 <div class="panel"><h3>Adicionar serviço</h3><form id="serviceForm"><div class="form-grid"><div class="field"><label for="serviceName">Nome do serviço *</label><input id="serviceName" required></div><div class="field"><label for="servicePrice">Preço (R$) *</label><input id="servicePrice" type="number" min="0" step="0.01" required></div><div class="field"><label for="serviceDuration">Duração em minutos *</label><input id="serviceDuration" type="number" min="10" step="5" value="60" required></div><div class="field"><label for="serviceCategory">Categoria</label><select id="serviceCategory"><option>Manicure</option><option>Pedicure</option><option>Alongamento</option><option>Manutenção</option><option>Decoração</option><option>Outro</option></select></div><div class="field full"><label for="serviceDescription">Descrição</label><textarea id="serviceDescription"></textarea></div></div><button class="button" type="submit">Adicionar serviço</button></form></div>
 </section>
 
-<section class="page" id="page-disponibilidade"><div class="page-heading"><div><h2>Disponibilidade</h2><p class="sub">Defina os dias e períodos em que aceita agendamentos.</p></div></div><div class="panel"><h3>Horários semanais</h3><form id="availabilityForm"><div id="availabilityRows"></div><div class="field" style="max-width:260px"><label for="slotInterval">Intervalo das opções (minutos)</label><select id="slotInterval"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option></select></div><button class="button" type="submit">Salvar disponibilidade</button></form></div></section>
-<select id="filterCidadeDisponibilidade">
-  <option value="Severínia">Severínia</option>
-  <option value="Olímpia">Olímpia</option>
-</select>
+<section class="page" id="page-disponibilidade">
+<div class="page-heading"><div><h2>Disponibilidade por Cidade</h2><p class="sub">Defina onde você estará em cada dia - Severínia ou Olímpia.</p></div></div>
+<div class="panel">
+<h3>Horários semanais</h3>
+<div class="filters" style="margin-bottom:16px">
+  <div class="field">
+    <label for="filterCidadeDisponibilidade">Filtrar / Cadastrar para a cidade:</label>
+    <select id="filterCidadeDisponibilidade">
+      <option value="Severínia">Severínia</option>
+      <option value="Olímpia">Olímpia</option>
+    </select>
+  </div>
+</div>
+<form id="availabilityForm"><div id="availabilityRows"></div><div class="field" style="max-width:260px"><label for="slotInterval">Intervalo das opções (minutos)</label><select id="slotInterval"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option></select></div><button class="button" type="submit">Salvar disponibilidade</button></form></div></section>
+
 <section class="page" id="page-bloqueios"><div class="page-heading"><div><h2>Bloqueios de agenda</h2><p class="sub">Reserve períodos para pausas, compromissos ou folgas.</p></div></div>
 <div class="panel"><h3>Bloqueios cadastrados</h3><div id="blocksTable"></div></div>
 <div class="panel"><h3>Novo bloqueio</h3><form id="blockForm"><div class="form-grid"><div class="field"><label for="blockDate">Data *</label><input id="blockDate" type="date" required></div><div class="field"><label for="blockReason">Motivo</label><input id="blockReason"></div><div class="field"><label for="blockStart">Início *</label><input id="blockStart" type="time" required></div><div class="field"><label for="blockEnd">Fim *</label><input id="blockEnd" type="time" required></div></div><button class="button" type="submit">Adicionar bloqueio</button></form></div>
@@ -177,7 +187,8 @@ document.getElementById('availabilityForm').addEventListener('submit',async e=>{
       const end=document.getElementById('end'+i)?.value;
       if(enabled){
         if(!start||!end||toMinutes(start)>=toMinutes(end)){ alert('Horário inválido: '+weekdays[i]); btn.disabled=false; btn.textContent=oldText; return; }
-        await api('/api/admin/disponibilidade',{method:'POST',body:{dia_semana:i,hora_inicio:start,hora_fim:end,ativo:true}});
+        const cidade = document.getElementById('filterCidadeDisponibilidade').value;
+      await api('/api/admin/disponibilidade',{method:'POST',body:{dia_semana:i,hora_inicio:start,hora_fim:end,ativo:true,cidade:cidade}});
         salvou++;
       }
     }
@@ -250,7 +261,17 @@ function appointmentTable(items,actions=true){if(!items.length)return'<p class="
 function renderAppointments(){const date=document.getElementById('filterDate').value;const status=document.getElementById('filterStatus').value;const list=state.appointments.filter(a=>(!date||a.date===date)&&(!status||a.status===status)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));document.getElementById('appointmentsTable').innerHTML=appointmentTable(list,true);}
 function renderClients(){const q=(document.getElementById('clientSearch').value||'').toLowerCase();const clients=state.clients.filter(c=>(c.name+' '+c.phone).toLowerCase().includes(q));document.getElementById('clientsTable').innerHTML=clients.length?'<div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Atendimentos</th><th>Ação</th></tr></thead><tbody>'+clients.map(c=>'<tr><td>'+esc(c.name)+'</td><td>'+esc(c.phone)+'</td><td>'+esc(c.email||'—')+'</td><td>'+state.appointments.filter(a=>a.phone===c.phone&&a.status!=='cancelled').length+'</td><td><button class="button danger small" onclick="deleteClient(\''+c.id+'\')">Excluir do Supabase</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhuma cliente no Supabase.</p>';}
 function renderServices(){const select=document.getElementById('appointmentService');const old=select.value;select.innerHTML='<option value="">Selecione um serviço</option>'+state.services.filter(s=>s.active!==false).map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+' · '+money(s.price)+' · '+s.duration+' min</option>').join('');if(state.services.some(s=>String(s.id)===String(old))) select.value=old;document.getElementById('servicesTable').innerHTML=state.services.length?'<div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Duração</th><th>Preço</th><th>Disponível</th><th>Ações</th></tr></thead><tbody>'+state.services.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+esc(s.category)+'</td><td>'+s.duration+' min</td><td>'+money(s.price)+'</td><td>'+(s.active!==false?'Sim':'Não')+'</td><td><button class="button secondary small" onclick="toggleService(\''+s.id+'\')">'+(s.active!==false?'Desativar':'Ativar')+'</button> <button class="button danger small" onclick="deleteService(\''+s.id+'\')">Excluir</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhum serviço.</p>';}
-function renderAvailability(){document.getElementById('availabilityRows').innerHTML=state.availability.map((a,i)=>'<div class="availability-row"><div class="field"><label><input type="checkbox" id="enabled'+i+'" '+(a.enabled?'checked':'')+' style="width:auto"> '+esc(a.day)+'</label></div><div class="field"><label for="start'+i+'">Início</label><input id="start'+i+'" type="time" value="'+esc(a.start)+'"></div><div class="field"><label for="end'+i+'">Fim</label><input id="end'+i+'" type="time" value="'+esc(a.end)+'"></div><div class="hint">'+(a.enabled?'Ativo':'Folga')+'</div></div>').join('');document.getElementById('slotInterval').value=String(state.interval);}
+function renderAvailability(){
+  const cidadeSelecionada = document.getElementById('filterCidadeDisponibilidade')?.value || 'Severínia';
+  document.getElementById('availabilityRows').innerHTML=state.availability.map((a,i)=>`
+    <div class="availability-row">
+      <div class="field"><label><input type="checkbox" id="enabled${i}" ${a.enabled?'checked':''} style="width:auto"> ${esc(a.day)}</label></div>
+      <div class="field"><label for="start${i}">Início</label><input id="start${i}" type="time" value="${esc(a.start)}"></div>
+      <div class="field"><label for="end${i}">Fim</label><input id="end${i}" type="time" value="${esc(a.end)}"></div>
+      <div class="field"><label>Cidade</label><input value="${cidadeSelecionada}" disabled style="background:#fbf5ef"></div>
+    </div>`).join('');
+  document.getElementById('slotInterval').value=String(state.interval);
+}
 function renderBlocks(){document.getElementById('blocksTable').innerHTML=state.blocks.length?'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Período</th><th>Motivo</th><th>Ação</th></tr></thead><tbody>'+state.blocks.slice().sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).map(b=>'<tr><td>'+esc(b.date)+'</td><td>'+esc(b.start)+'–'+esc(b.end)+'</td><td>'+esc(b.reason||'—')+'</td><td><button class="button danger small" onclick="deleteBlock(\''+b.id+'\')">Remover</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhum bloqueio.</p>';}
 function renderSettings(){const s=state.settings;for(const [id,key] of [['studioName','studioName'],['studioTitle','title'],['studioPhone','phone'],['advanceDays','advanceDays'],['minNotice','minNotice'],['cancelPolicy','cancelPolicy'],['welcomeMessage','welcomeMessage']]){const el=document.getElementById(id);if(el&&document.activeElement!==el) el.value=s[key]??'';}document.getElementById('publicLink').textContent=location.origin+'/agendar';}
 function renderAll(){renderDashboard();renderAppointments();renderClients();renderServices();renderAvailability();renderBlocks();renderSettings();refreshChoices(true);}
