@@ -913,26 +913,90 @@ async function getBookingContext(date, serviceId, cidade) {
   const duration = getServiceDuration(service);
   if (!duration) return { invalidDuration: true };
 
-  let availQuery = client.from('disponibilidade').select('*').eq('dia_semana', weekdayFromDate(date)).eq('ativo', true);
-  // SE TIVER CIDADE E DATA ESPECÍFICA, PRIORIZA ELA
-  if (cidade) availQuery = availQuery.eq('cidade', cidade);
+  const weekday = weekdayFromDate(date);
+
+  // Busca tudo de uma vez
+  let queryAvail = client.from('disponibilidade').select('*').eq('ativo', true);
+  // Se tem data específica com essa cidade, prioriza ela
   if (date) {
-     const { data: specific } = await client.from('disponibilidade').select('*').eq('data_especifica', date).eq('ativo', true);
-     if (specific && specific.length > 0) {
-       // se achou data específica, usa ela
-       return { service, duration, availability: specific, blocks: [], bookings: [] } // blocks e bookings busca depois
-     }
+    let specificQuery = client.from('disponibilidade').select('*').eq('data_especifica', date).eq('ativo', true);
+    if (cidade) specificQuery = specificQuery.eq('cidade', cidade);
+    const { data: specific } = await specificQuery;
+    if (specific && specific.length > 0) {
+      const [blocks, bookings] = await Promise.all([
+        client.from('bloqueios').select('*').eq('data', date),
+        client.from('agendamentos').select('*').eq('data', date)
+      ]);
+      return { 
+        service, 
+        duration, 
+        availability: specific, 
+        blocks: blocks.data || [], 
+        bookings: bookings.data || [] 
+      };
+    }
   }
+
+  // Se não achou específica, usa a regra semanal
+  queryAvail = queryAvail.eq('dia_semana', weekday);
+  if (cidade) queryAvail = queryAvail.eq('cidade', cidade);
+
   const [availability, blocks, bookings] = await Promise.all([
-    availQuery,
+    queryAvail,
     client.from('bloqueios').select('*').eq('data', date),
     client.from('agendamentos').select('*').eq('data', date)
   ]);
   if (availability.error) throw availability.error;
   if (blocks.error) throw blocks.error;
   if (bookings.error) throw bookings.error;
+  
   return { service, duration, availability: availability.data || [], blocks: blocks.data || [], bookings: bookings.data || [] };
 }
+
+app.get('/api/admin/disponibilidade', admin, async (req, res) => {
+  try {
+    return await executeQuery(
+      res,
+      db().from('disponibilidade').select('*').order('data_especifica', { ascending: true, nullsFirst: true }).order('dia_semana', { ascending: true })
+    );
+  } catch (error) { return sendDbError(res, error); }
+});
+
+app.post('/api/admin/disponibilidade', admin, async (req, res) => {
+  try {
+    const day = Number(req.body?.dia_semana);
+    const cidade = cleanText(req.body?.cidade, 50) || 'Severínia';
+    const dataEspecifica = req.body?.data_especifica ? cleanText(req.body.data_especifica, 10) : null;
+    const start = normalizeTime(req.body?.hora_inicio);
+    const end = normalizeTime(req.body?.hora_fim);
+
+    if (!Number.isInteger(day) || day < 0 || day > 6) return res.status(400).json({ ok: false, error: 'Dia inválido.' });
+    if (dataEspecifica && !validDate(dataEspecifica)) return res.status(400).json({ ok: false, error: 'data_especifica inválida.' });
+    if (!start || !end || !validRange(start, end)) return res.status(400).json({ ok: false, error: 'Horário inválido.' });
+
+    const payload = {
+      dia_semana: day,
+      hora_inicio: start,
+      hora_fim: end,
+      cidade: cidade,
+      data_especifica: dataEspecifica,
+      ativo: req.body?.ativo !== undefined ? parseBoolean(req.body.ativo) : true
+    };
+
+    if (dataEspecifica) {
+      const { data: existente } = await db().from('disponibilidade').select('id').eq('data_especifica', dataEspecifica).eq('cidade', cidade).maybeSingle();
+      if (existente?.id) {
+        const { data, error } = await db().from('disponibilidade').update(payload).eq('id', existente.id).select().single();
+        if (error) throw error;
+        return res.json({ ok: true, data, upsert: true });
+      }
+    }
+
+    const { data, error } = await db().from('disponibilidade').insert(payload).select().single();
+    if (error) throw error;
+    return res.status(201).json({ ok: true, data });
+  } catch (error) { return sendDbError(res, error); }
+});
 
 function isSlotAvailable(context, start, end) {
   const withinAvailability = context.availability.some(item => {
