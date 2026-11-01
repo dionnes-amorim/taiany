@@ -5,7 +5,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f7eee7">
   <title>Painel Administrativo | Taiany Trindade</title>
   <style>
-    :root { --cream:#fbf5ef; --nude:#ead6c8; --rose:#b97861; --copper:#9b5c43; --ink:#211916; --muted:#7f7069; --line:#eadfd7; --white:#fffdfb; --green:#47745d; --red:#a84747; }
+    :root { --cream:#fbf5ef; --nude:#ead6c8; --rose:#b97861; --copper:#9b5c43; --ink:#211916; --muted:#7f7069; --line:#eadfd7; --white:#fffdfb; --green:#47745d; --red:#a84747; --gold:#c6a15b; }
     *{box-sizing:border-box} body{margin:0;color:var(--ink);background:var(--cream);font-family:Arial,Helvetica,sans-serif}
     button,input,select,textarea{font:inherit} button{cursor:pointer}
     .topbar{background:var(--white);border-bottom:1px solid var(--line);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -22,10 +22,27 @@
     .metric-label{color:var(--muted);font-size:13px} .metric-value{font-size:27px;margin-top:10px;font-family:Georgia,serif} .panel{margin-bottom:18px} .panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
     .filters,.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px} .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;min-width:0} label{font-size:13px;color:var(--muted)} input,select,textarea{width:100%;border:1px solid #d9c9bf;border-radius:8px;padding:10px;background:#fff;color:var(--ink)} textarea{min-height:75px;resize:vertical} .full{grid-column:1/-1} .table-wrap{overflow-x:auto} table{width:100%;border-collapse:collapse;font-size:13px} th,td{text-align:left;border-bottom:1px solid var(--line);padding:12px 9px;white-space:nowrap} th{color:var(--muted);font-weight:600}
     .status{display:inline-block;border-radius:20px;padding:5px 8px;font-size:11px;background:#eee4dc} .status.confirmed,.status.paid,.status.completed{background:#e1eee5;color:#2c6546} .status.cancelled{background:#f5e2e0;color:#9a3e3e} .status.pending{background:#f7edcf;color:#80611b}
-    .empty{color:var(--muted);padding:18px 0;font-size:14px} .hint{font-size:12px;color:var(--muted);line-height:1.5} .availability-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:10px} .link-box{overflow-wrap:anywhere;padding:12px;background:var(--cream);border:1px dashed var(--rose);border-radius:8px} .footer{text-align:center;color:var(--muted);padding:12px 24px 28px;font-size:11px;letter-spacing:1.5px}
+    .empty{color:var(--muted);padding:18px 0;font-size:14px} .hint{font-size:12px;color:var(--muted);line-height:1.5} .link-box{overflow-wrap:anywhere;padding:12px;background:var(--cream);border:1px dashed var(--rose);border-radius:8px} .footer{text-align:center;color:var(--muted);padding:12px 24px 28px;font-size:11px;letter-spacing:1.5px}
     .choice-group{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 14px} .choice-chip{min-width:66px;border:1px solid #d9c9bf;border-radius:999px;padding:10px 13px;background:#fff;color:var(--ink);text-align:center;transition:background .15s,border-color .15s,color .15s} .choice-chip:hover:not(:disabled){border-color:var(--copper);color:var(--copper)} .choice-chip.selected{background:var(--copper);color:#fff;border-color:var(--copper)} .choice-chip:disabled{opacity:.35;cursor:not-allowed} .date-chip{min-width:88px;padding:10px 12px} .date-chip strong,.date-chip span{display:block} .date-chip strong{font-size:14px;margin-bottom:4px} .date-chip span{font-size:11px} .choice-title{color:var(--muted);font-size:13px;margin:0 0 8px} .choice-empty{font-size:13px;color:var(--muted);padding:8px 0 14px} .selection-summary{font-size:13px;color:var(--copper);margin:0 0 14px}
-    @media(max-width:900px){.layout{grid-template-columns:1fr;padding:14px} aside{display:flex;overflow-x:auto;gap:4px} .nav-button{width:auto;white-space:nowrap} .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:560px){.topbar{padding:14px} .brand{gap:10px} .brand-mark{width:86px;height:86px;flex-basis:86px} .brand h1{font-size:19px} .brand p{font-size:10px;letter-spacing:1.3px} .cards{grid-template-columns:1fr 1fr;gap:8px} .card,.panel{padding:13px} .form-grid,.filters{grid-template-columns:1fr} .availability-row{grid-template-columns:1fr 1fr} h2{font-size:24px} .choice-group{gap:7px} .choice-chip{min-width:58px;padding:9px 10px} .date-chip{min-width:76px}}
+
+    /* KANBAN NOVO ROSE GOLD */
+    .kanban-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px}
+    .kanban-col{background:var(--white);border:1.5px solid var(--line);border-radius:16px;padding:14px;min-height:420px;transition:.2s}
+    .kanban-col h4{margin:0 0 14px;font-family:Georgia,serif;font-size:18px;display:flex;align-items:center;justify-content:space-between}
+    .kanban-col h4 span.count{background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:12px;font-family:Arial}
+    .kanban-col.drag-over{background:#fdf2ec;border-color:var(--rose);transform:scale(1.01);box-shadow:0 8px 24px rgba(185,120,97,.15)}
+    .kanban-col#col-Severinia{border-top:4px solid var(--rose)}
+    .kanban-col#col-Olimpia{border-top:4px solid var(--gold)}
+    .kanban-col#col-Indefinido{border-top:4px solid #ddd}
+    .drop-zone{min-height:300px}
+    .day-chip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(145deg,#fffdfb,#fbf5ef);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:grab;user-select:none;transition:.18s;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .day-chip:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(185,120,97,.15);border-color:var(--rose)}
+    .day-chip:active{cursor:grabbing;transform:scale(1.02)}
+    .day-chip strong{font-size:14px;display:block} .day-chip small{font-size:11px;color:var(--muted);display:block;text-transform:capitalize}
+    .day-chip .hours{font-size:11px;color:var(--copper);background:var(--cream);padding:4px 8px;border-radius:20px;border:1px solid var(--line)}
+    .day-chip.severinia{border-left:4px solid var(--rose);background:linear-gradient(145deg,#fffdfb,#fdf2ec)}
+    .day-chip.olimpia{border-left:4px solid var(--gold);background:linear-gradient(145deg,#fffdfb,#fdf6e3)}
+    @media(max-width:900px){.layout{grid-template-columns:1fr;padding:14px} aside{display:flex;overflow-x:auto;gap:4px} .nav-button{width:auto;white-space:nowrap} .cards{grid-template-columns:repeat(2,minmax(0,1fr))} .kanban-board{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -51,26 +68,34 @@
 </section>
 
 <section class="page" id="page-disponibilidade">
-<div class="page-heading"><div><h2>Disponibilidade por Cidade</h2><p class="sub">Defina onde você estará em cada dia - Severínia ou Olímpia.</p></div></div>
+<div class="page-heading"><div><h2>Disponibilidade por Cidade</h2><p class="sub">Arraste os próximos 30 dias para Severínia ou Olímpia. Clique para editar horário.</p></div><button class="button" id="saveKanbanBtn">💾 Salvar no banco</button></div>
 <div class="panel">
-<h3>Horários semanais</h3>
-<div class="filters" style="margin-bottom:16px">
-  <div class="field">
-    <label for="filterCidadeDisponibilidade">Filtrar / Cadastrar para a cidade:</label>
-    <select id="filterCidadeDisponibilidade">
-      <option value="Severínia">Severínia</option>
-      <option value="Olímpia">Olímpia</option>
-    </select>
-  </div>
+<h3>Próximos 30 dias - Distribuição Rose & Gold</h3>
+<p class="hint">✨ Arraste o dia para a cidade onde vai atender. No celular, toque no dia e escolha a cidade e horário. As clientes verão só as datas liberadas.</p>
+<div class="kanban-board">
+  <div class="kanban-col" id="col-Severinia" data-cidade="Severínia"><h4>📍 Severínia <span class="count" id="count-Sev">0</span></h4><div class="drop-zone" id="zone-Sev"></div></div>
+  <div class="kanban-col" id="col-Olimpia" data-cidade="Olímpia"><h4>✨ Olímpia <span class="count" id="count-Oli">0</span></h4><div class="drop-zone" id="zone-Oli"></div></div>
+  <div class="kanban-col" id="col-Indefinido" data-cidade=""><h4>❓ A definir <span class="count" id="count-Indef">0</span></h4><div class="drop-zone" id="zone-Indef"></div></div>
 </div>
-<form id="availabilityForm"><div id="availabilityRows"></div><div class="field" style="max-width:260px"><label for="slotInterval">Intervalo das opções (minutos)</label><select id="slotInterval"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option></select></div><button class="button" type="submit">Salvar disponibilidade</button></form></div></section>
+<div class="form-grid" style="margin-top:18px"><div class="field" style="max-width:260px"><label>Intervalo dos horários</label><select id="slotIntervalKanban"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">60 min</option></select></div></div>
+</div>
+<div class="panel" id="dayEditPanel" style="display:none">
+<h3 id="editTitle">Editar dia</h3>
+<div class="form-grid">
+<div class="field"><label>Início</label><input id="editStart" type="time" value="09:00"></div>
+<div class="field"><label>Fim</label><input id="editEnd" type="time" value="18:00"></div>
+<div class="field"><label>Cidade</label><select id="editCity"><option value="">A definir</option><option value="Severínia">Severínia</option><option value="Olímpia">Olímpia</option></select></div>
+</div>
+<button class="button secondary" onclick="closeEdit()">Fechar</button>
+</div>
+</section>
 
 <section class="page" id="page-bloqueios"><div class="page-heading"><div><h2>Bloqueios de agenda</h2><p class="sub">Reserve períodos para pausas, compromissos ou folgas.</p></div></div>
 <div class="panel"><h3>Bloqueios cadastrados</h3><div id="blocksTable"></div></div>
 <div class="panel"><h3>Novo bloqueio</h3><form id="blockForm"><div class="form-grid"><div class="field"><label for="blockDate">Data *</label><input id="blockDate" type="date" required></div><div class="field"><label for="blockReason">Motivo</label><input id="blockReason"></div><div class="field"><label for="blockStart">Início *</label><input id="blockStart" type="time" required></div><div class="field"><label for="blockEnd">Fim *</label><input id="blockEnd" type="time" required></div></div><button class="button" type="submit">Adicionar bloqueio</button></form></div>
 </section>
 
-<section class="page" id="page-configuracoes"><div class="page-heading"><div><h2>Configurações</h2><p class="sub">Personalize a experiência de agendamento.</p></div></div><div class="panel"><h3>Dados do studio</h3><form id="settingsForm"><div class="form-grid"><div class="field"><label for="studioName">Nome profissional</label><input id="studioName" value="Taiany Trindade"></div><div class="field"><label for="studioTitle">Especialidade</label><input id="studioTitle" value="Nail Designer"></div><div class="field"><label for="studioPhone">WhatsApp</label><input id="studioPhone"></div><div class="field"><label for="advanceDays">Dias à frente</label><input id="advanceDays" type="number" value="60"></div><div class="field"><label for="minNotice">Antecedência mínima (horas)</label><input id="minNotice" type="number" value="2"></div><div class="field"><label for="cancelPolicy">Política de cancelamento</label><input id="cancelPolicy"></div><div class="field full"><label for="welcomeMessage">Mensagem inicial</label><textarea id="welcomeMessage">Olá! Seja bem-vinda ao studio Taiany Trindade. 💅</textarea></div></div><button class="button" type="submit">Salvar configurações</button></form></div><div class="panel"><h3>Link para as clientes</h3><div class="link-box" id="publicLink"></div></div><div class="panel"><h3>Dados</h3><p class="hint">Todos os dados agora são salvos diretamente no Supabase na tabela <b>clientes_taiany</b>. Sem cache local.</p></div></section>
+<section class="page" id="page-configuracoes"><div class="page-heading"><div><h2>Configurações</h2><p class="sub">Personalize a experiência de agendamento.</p></div></div><div class="panel"><h3>Dados do studio</h3><form id="settingsForm"><div class="form-grid"><div class="field"><label for="studioName">Nome profissional</label><input id="studioName" value="Taiany Trindade"></div><div class="field"><label for="studioTitle">Especialidade</label><input id="studioTitle" value="Nail Designer"></div><div class="field"><label for="studioPhone">WhatsApp</label><input id="studioPhone"></div><div class="field"><label for="advanceDays">Dias à frente</label><input id="advanceDays" type="number" value="60"></div><div class="field"><label for="minNotice">Antecedência mínima (horas)</label><input id="minNotice" type="number" value="2"></div><div class="field"><label for="cancelPolicy">Política de cancelamento</label><input id="cancelPolicy"></div><div class="field full"><label for="welcomeMessage">Mensagem inicial</label><textarea id="welcomeMessage">Olá! Seja bem-vinda ao studio Taiany Trindade. 💅</textarea></div></div><button class="button" type="submit">Salvar configurações</button></form></div><div class="panel"><h3>Link para as clientes</h3><div class="link-box" id="publicLink"></div></div></section>
 </main>
 </div>
 <footer class="footer">TAIANY TRINDADE · NAIL DESIGNER</footer>
@@ -79,21 +104,19 @@
 'use strict';
 const weekdays=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 const todayISO=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
-let state={services:[],clients:[],appointments:[],blocks:[],availability:weekdays.map((day,i)=>({day,enabled:i>=1&&i<=5,start:'09:00',end:'18:00'})),interval:30,settings:{studioName:'Taiany Trindade',title:'Nail Designer',phone:'',advanceDays:60,minNotice:2,cancelPolicy:'',welcomeMessage:'Olá! Seja bem-vinda ao studio Taiany Trindade. 💅'}};
-let kanbanData = {}; // { '2026-05-14': {cidade:'Severínia', start:'09:00', end:'18:00'} }
+let state={services:[],clients:[],appointments:[],blocks:[],availability:[],interval:30,settings:{studioName:'Taiany Trindade',title:'Nail Designer',phone:'',advanceDays:60,minNotice:2,cancelPolicy:'',welcomeMessage:'Olá! Seja bem-vinda ao studio Taiany Trindade. 💅'}};
+let kanbanData = {};
 
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
 function serviceById(id){return state.services.find(s=>s.id==id);}
 function statusLabel(s){return({confirmed:'Confirmado',pending:'Pendente',cancelled:'Cancelado',completed:'Concluído',confirmado:'Confirmado',pendente:'Pendente',cancelado:'Cancelado',concluido:'Concluído'})[s]||s;}
-
 async function api(path,opts={}){
   const res=await fetch(path,{headers:{'Content-Type':'application/json'},...opts,body:opts.body?JSON.stringify(opts.body):undefined});
   const json=await res.json().catch(()=>({}));
   if(!res.ok||json.ok===false) throw new Error(json.error||'Erro no servidor');
   return json.data!==undefined?json.data:json;
 }
-
 async function loadFromServer(){
   try{
     const [servicos,clientes,agenda,bloqueios,disponibilidade]=await Promise.all([
@@ -107,35 +130,23 @@ async function loadFromServer(){
     state.clients=(clientes||[]).map(c=>({id:c.id,name:c.nome,phone:c.telefone,email:c.email||'',birthday:c.data_nascimento||'',notes:c.observacoes||'',createdAt:c.created_at}));
     state.appointments=(agenda||[]).map(a=>({id:a.id,client:a.nome_cliente,phone:a.telefone_cliente,serviceId:a.servico_id,date:a.data,time:(a.hora_inicio||'').slice(0,5),duration:(()=>{try{const si=a.hora_inicio.split(':').map(Number);const sf=a.hora_fim.split(':').map(Number);return (sf[0]*60+sf[1])-(si[0]*60+si[1]);}catch{return 60}})(),price:Number(a.preco),status:({pendente:'pending',confirmado:'confirmed',concluido:'completed',cancelado:'cancelled'}[String(a.status).toLowerCase()]||a.status||'pending'),notes:a.observacoes||''}));
     state.blocks=(bloqueios||[]).map(b=>({id:b.id,date:b.data,start:b.hora_inicio.slice(0,5),end:b.hora_fim.slice(0,5),reason:b.motivo}));
-    
-    // NOVO: carrega kanban por data específica
     kanbanData={};
     if(disponibilidade&&disponibilidade.length){
       disponibilidade.forEach(d=>{
         const iso = d.data_especifica ? d.data_especifica.slice(0,10) : null;
-        if(iso){
-          kanbanData[iso]={cidade:d.cidade||'', start:d.hora_inicio.slice(0,5), end:d.hora_fim.slice(0,5), id:d.id};
-        }
+        if(iso){ kanbanData[iso]={cidade:d.cidade||'', start:d.hora_inicio.slice(0,5), end:d.hora_fim.slice(0,5), id:d.id}; }
       });
     }
     renderAll();
   }catch(e){ console.error(e); alert('Erro ao carregar do Supabase: '+e.message); }
 }
-
 function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));document.querySelectorAll('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));renderAll();}
 document.querySelectorAll('.nav-button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
-
 function toMinutes(t){const [h,m]=String(t||'00:00').split(':').map(Number);return h*60+m;}
 function fromMinutes(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
 function overlaps(a,b,c,d){return a<d && c<b;}
 function localDateTime(date,time){return new Date(date+'T'+time+':00');}
-function getAvailability(date){
-  // Agora verifica primeiro o kanban por data específica
-  if(kanbanData[date] && kanbanData[date].cidade){
-    return {enabled:true, start:kanbanData[date].start, end:kanbanData[date].end};
-  }
-  return null;
-}
+function getAvailability(date){ if(kanbanData[date] && kanbanData[date].cidade){ return {enabled:true, start:kanbanData[date].start, end:kanbanData[date].end}; } return null; }
 function isWithinBookingWindow(date,time='23:59'){const now=new Date();const minNotice=Math.max(0,Number(state.settings.minNotice)||0);if(localDateTime(date,time).getTime()<now.getTime()+minNotice*3600000)return false;const maxDate=new Date();maxDate.setHours(23,59,59,999);maxDate.setDate(maxDate.getDate()+Math.max(1,Number(state.settings.advanceDays)||60));return localDateTime(date,'23:59').getTime()<=maxDate.getTime();}
 function isAvailable(date,time,duration,ignoreId=''){const av=getAvailability(date);if(!av||!av.enabled)return false;const start=toMinutes(time);const end=start+Number(duration);if(start<toMinutes(av.start)||end>toMinutes(av.end))return false;if(!isWithinBookingWindow(date,time))return false;for(const a of state.appointments){if(String(a.id)===String(ignoreId)||a.date!==date||a.status==='cancelled')continue;const svc=serviceById(a.serviceId);const otherDuration=Number(a.duration||(svc&&svc.duration)||60);if(overlaps(start,end,toMinutes(a.time),toMinutes(a.time)+otherDuration))return false;}for(const b of state.blocks){if(b.date===date&&overlaps(start,end,toMinutes(b.start),toMinutes(b.end)))return false;}return true;}
 function timeOptions(date,duration){if(!date||!duration)return[];const av=getAvailability(date);if(!av||!av.enabled)return[];const result=[];const interval=Math.max(5,Number(state.interval)||30);for(let m=toMinutes(av.start);m+Number(duration)<=toMinutes(av.end);m+=interval){const time=fromMinutes(m);if(isAvailable(date,time,duration))result.push(time);}return result;}
@@ -148,20 +159,19 @@ function renderTimeChoices(){const holder=document.getElementById('appointmentTi
 function updateSelectionSummary(){const date=document.getElementById('appointmentDate').value;const time=document.getElementById('appointmentTime').value;const service=serviceById(document.getElementById('appointmentService').value);const el=document.getElementById('appointmentSelectionSummary');if(!date||!time||!service){el.textContent='';return;}const d=new Date(date+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});el.textContent=d+' às '+time+' · '+service.duration+' min · '+money(service.price);}
 function refreshChoices(keepDate=false){const oldDate=document.getElementById('appointmentDate').value;const oldTime=document.getElementById('appointmentTime').value;renderDateChoices();const service=serviceById(document.getElementById('appointmentService').value);const dates=service?datesWithAvailability(service.duration):[];const date=keepDate&&dates.includes(oldDate)?oldDate:'';document.getElementById('appointmentDate').value=date;const times=date&&service?timeOptions(date,service.duration):[];document.getElementById('appointmentTime').value=times.includes(oldTime)?oldTime:'';renderDateChoices();renderTimeChoices();updateSelectionSummary();}
 
-// --- KANBAN LOGIC ---
+// KANBAN
 function getNext30Days(){const days=[];for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()+i);const iso=d.toISOString().slice(0,10);days.push({iso, date:d}); if(!kanbanData[iso]) kanbanData[iso]={cidade:'', start:'09:00', end:'18:00'};} return days;}
-
 function renderKanban(){
   const days=getNext30Days();
   const zones={ 'Severínia': document.getElementById('zone-Sev'), 'Olímpia': document.getElementById('zone-Oli'), '': document.getElementById('zone-Indef') };
   if(!zones['Severínia']) return;
   Object.values(zones).forEach(z=>z.innerHTML='');
   days.forEach(({iso,date})=>{
-    const cfg = kanbanData[iso] || {cidade:'', start:'09:00', end:'18:00'};
+    const cfg = kanbanData[iso];
     const chip = document.createElement('div');
     chip.className = `day-chip ${cfg.cidade==='Severínia'?'severinia':cfg.cidade==='Olímpia'?'olimpia':''}`;
     chip.draggable=true; chip.dataset.iso=iso;
-    chip.innerHTML=`<div><strong>${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}</strong><small>${weekdays[date.getDay()].slice(0,3)}</small></div><div class="hours">${cfg.start}-${cfg.end}</div>`;
+    chip.innerHTML=`<div><strong>${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')} - ${weekdays[date.getDay()].slice(0,3)}</strong><small>${cfg.cidade||'A definir'}</small></div><div class="hours">${cfg.start} - ${cfg.end}</div>`;
     chip.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', iso); });
     chip.addEventListener('click', ()=> openEdit(iso));
     zones[cfg.cidade||''].appendChild(chip);
@@ -219,7 +229,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         total++;
       }
       state.interval=Number(document.getElementById('slotIntervalKanban').value||30);
-      alert(`Salvo! ${total} dias configurados.`);
+      alert(`Salvo! ${total} dias configurados. Maravilhoso de bão!`);
       await loadFromServer();
     }catch(err){ alert('Erro: '+err.message); } finally{ saveBtn.disabled=false; saveBtn.textContent=old; }
   });
@@ -232,7 +242,6 @@ document.getElementById('dashboardDate').addEventListener('change',renderDashboa
 document.getElementById('filterDate').addEventListener('change',renderAppointments);
 document.getElementById('filterStatus').addEventListener('change',renderAppointments);
 document.getElementById('clientSearch').addEventListener('input',renderClients);
-
 document.getElementById('appointmentForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const client=document.getElementById('appointmentClient').value.trim();
@@ -248,7 +257,6 @@ document.getElementById('appointmentForm').addEventListener('submit',async e=>{
     await loadFromServer();refreshChoices(false);alert('Agendamento salvo no Supabase!');
   }catch(err){alert(err.message);}
 });
-
 document.getElementById('clientForm').addEventListener('submit',async e=>{
   e.preventDefault();
   try{
@@ -256,7 +264,6 @@ document.getElementById('clientForm').addEventListener('submit',async e=>{
     e.target.reset();await loadFromServer();
   }catch(err){alert(err.message);}
 });
-
 document.getElementById('serviceForm').addEventListener('submit',async e=>{
   e.preventDefault();
   try{
@@ -264,7 +271,6 @@ document.getElementById('serviceForm').addEventListener('submit',async e=>{
     e.target.reset();document.getElementById('serviceDuration').value=60;await loadFromServer();
   }catch(err){alert(err.message);}
 });
-
 document.getElementById('blockForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const date=document.getElementById('blockDate').value;
@@ -276,18 +282,15 @@ document.getElementById('blockForm').addEventListener('submit',async e=>{
     e.target.reset();await loadFromServer();refreshChoices(true);
   }catch(err){alert(err.message);}
 });
-
 document.getElementById('settingsForm').addEventListener('submit',e=>{
   e.preventDefault();
   state.settings={studioName:document.getElementById('studioName').value.trim(),title:document.getElementById('studioTitle').value.trim(),phone:document.getElementById('studioPhone').value.trim(),advanceDays:Number(document.getElementById('advanceDays').value),minNotice:Number(document.getElementById('minNotice').value),cancelPolicy:document.getElementById('cancelPolicy').value.trim(),welcomeMessage:document.getElementById('welcomeMessage').value.trim()};
   alert('Configurações salvas localmente nesta sessão.');
 });
-
 document.getElementById('exportBtn').addEventListener('click',()=>{
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='taiany-backup-supabase.json';a.click();URL.revokeObjectURL(url);
 });
-
 async function changeAppointment(id,status){
   try{
     const map={pending:'Pendente',confirmed:'Confirmado',completed:'Concluído',cancelled:'Cancelado'};
@@ -301,15 +304,10 @@ async function deleteAppointment(id){
 }
 async function deleteClient(id){
   if(!confirm('Excluir esta cliente DEFINITIVAMENTE do Supabase?')) return;
-  try{
-    await api('/api/admin/clientes/'+id,{method:'DELETE'});
-    await loadFromServer();
-    alert('Cliente excluída do banco com sucesso!');
-  }catch(err){ alert('Erro ao excluir: '+err.message); }
+  try{ await api('/api/admin/clientes/'+id,{method:'DELETE'}); await loadFromServer(); alert('Cliente excluída do banco com sucesso!'); }catch(err){ alert('Erro ao excluir: '+err.message); }
 }
 async function toggleService(id){
-  const s=serviceById(id);
-  if(!s) return;
+  const s=serviceById(id); if(!s) return;
   try{ await api('/api/admin/servicos/'+id,{method:'PATCH',body:{ativo:!s.active}}); await loadFromServer(); }catch(err){alert(err.message);}
 }
 async function deleteService(id){
@@ -319,7 +317,6 @@ async function deleteService(id){
 async function deleteBlock(id){
   try{ await api('/api/admin/bloqueios/'+id,{method:'DELETE'}); await loadFromServer(); }catch(err){alert(err.message);}
 }
-
 function renderDashboard(){const date=document.getElementById('dashboardDate').value||todayISO();const day=state.appointments.filter(a=>a.date===date&&a.status!=='cancelled');document.getElementById('metricToday').textContent=day.length;document.getElementById('metricConfirmed').textContent=day.filter(a=>a.status==='confirmed').length;document.getElementById('metricClients').textContent=state.clients.length;document.getElementById('metricRevenue').textContent=money(day.reduce((sum,a)=>sum+Number(a.price||0),0));const upcoming=state.appointments.filter(a=>a.date>=todayISO()&&a.status!=='cancelled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,6);document.getElementById('dashboardAppointments').innerHTML=upcoming.length?appointmentTable(upcoming,false):'<p class="empty">Nenhum atendimento futuro.</p>';}
 function appointmentTable(items,actions=true){if(!items.length)return'<p class="empty">Nenhum agendamento.</p>';return'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Situação</th>'+(actions?'<th>Ações</th>':'')+'</tr></thead><tbody>'+items.map(a=>{const svc=serviceById(a.serviceId);return'<tr><td>'+esc(a.date)+'</td><td>'+esc(a.time)+'</td><td>'+esc(a.client)+'</td><td>'+esc(svc?svc.name:'—')+'</td><td>'+money(a.price)+'</td><td><span class="status '+esc(a.status)+'">'+esc(statusLabel(a.status))+'</span></td>'+(actions?'<td><select onchange="changeAppointment(\''+a.id+'\',this.value)"><option value="'+esc(a.status)+'">'+esc(statusLabel(a.status))+'</option><option value="confirmed">Confirmado</option><option value="pending">Pendente</option><option value="completed">Concluído</option><option value="cancelled">Cancelado</option></select> <button class="button danger small" onclick="deleteAppointment(\''+a.id+'\')">Excluir</button></td>':'')+'</tr>';}).join('')+'</tbody></table></div>';}
 function renderAppointments(){const date=document.getElementById('filterDate').value;const status=document.getElementById('filterStatus').value;const list=state.appointments.filter(a=>(!date||a.date===date)&&(!status||a.status===status)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));document.getElementById('appointmentsTable').innerHTML=appointmentTable(list,true);}
@@ -328,7 +325,6 @@ function renderServices(){const select=document.getElementById('appointmentServi
 function renderBlocks(){document.getElementById('blocksTable').innerHTML=state.blocks.length?'<div class="table-wrap"><table><thead><tr><th>Data</th><th>Período</th><th>Motivo</th><th>Ação</th></tr></thead><tbody>'+state.blocks.slice().sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).map(b=>'<tr><td>'+esc(b.date)+'</td><td>'+esc(b.start)+'–'+esc(b.end)+'</td><td>'+esc(b.reason||'—')+'</td><td><button class="button danger small" onclick="deleteBlock(\''+b.id+'\')">Remover</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">Nenhum bloqueio.</p>';}
 function renderSettings(){const s=state.settings;for(const [id,key] of [['studioName','studioName'],['studioTitle','title'],['studioPhone','phone'],['advanceDays','advanceDays'],['minNotice','minNotice'],['cancelPolicy','cancelPolicy'],['welcomeMessage','welcomeMessage']]){const el=document.getElementById(id);if(el&&document.activeElement!==el) el.value=s[key]??'';}document.getElementById('publicLink').textContent=location.origin+'/agendar';}
 function renderAll(){renderDashboard();renderAppointments();renderClients();renderServices();renderKanban();renderBlocks();renderSettings();refreshChoices(true);}
-
 loadFromServer();
 </script>
 </body>
