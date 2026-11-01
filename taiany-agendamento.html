@@ -2601,39 +2601,20 @@ function consultBooking() {
     
     /* CONSULTA DOS HORÁRIOS */
 
-    async function fetchTimesForDate(iso, serviceId) {
-      const cidadeParam = state.cidade ? `&cidade=${encodeURIComponent(state.cidade)}` : '';
-      const url =
-        `${API.times}?data=${encodeURIComponent(iso)}` +
-        `&servico_id=${encodeURIComponent(serviceId)}` + cidadeParam;
-
-      const result = await apiRequest(url);
-
-      /*
-        Alguns servidores retornam a lista diretamente.
-        Outros usam { horarios: [...] }, { data: [...] },
-        { horarios_disponiveis: [...] } ou estruturas semelhantes.
-      */
-      let list = normalizeList(result);
-
-      /*
-        Compatibilidade com APIs que retornam um único horário
-        em vez de uma lista.
-      */
-      if (
-        !list.length &&
-        result &&
-        typeof result === "object" &&
-        (
-          result.hora_inicio ||
-          result.horario ||
-          result.hora ||
-          result.inicio ||
-          result.time
-        )
-      ) {
-        list = [result];
-      }
+async function fetchTimesForDate(iso, serviceId) {
+  const cidadeParam = state.cidade ? `&cidade=${encodeURIComponent(state.cidade)}` : '';
+  const url = `${API.times}?data=${encodeURIComponent(iso)}&servico_id=${encodeURIComponent(serviceId)}` + cidadeParam;
+  const result = await apiRequest(url);
+  let list = normalizeList(result);
+  if (!list.length && result && typeof result === "object" && (result.hora_inicio || result.horario)) list = [result];
+  const times = list
+    .map(extractTime)
+    .filter(Boolean)
+    .map(t => String(t).trim().slice(0,5))
+    .filter(t => /^\d{2}:\d{2}$/.test(t))
+    .filter(t => !isTimeInPastToday(iso, t));
+  return [...new Set(times)].sort((a,b)=>a.localeCompare(b));
+}
 
       const times = list
         .filter((item) => {
@@ -2672,79 +2653,70 @@ function consultBooking() {
 
     /* DATAS DISPONÍVEIS */
 
-    async function loadDates() {
-      setStep("dates");
+async function loadDates() {
+  setStep("dates");
+  clearOptionContainers();
+  botSay("Vou consultar a agenda da cidade de " + state.cidade + " para encontrar os dias com horários livres.");
+  addTyping();
+  const serviceId = state.servico?.id;
+  if (!serviceId) { removeTyping(); await loadServices(); return; }
+  const token = ++state.requestToken;
 
-      clearOptionContainers();
+  try {
+    // 1. Pega a agenda da cidade (tanto as fixas quanto as de data_especifica)
+    const dispRes = await apiRequest(`/api/disponibilidade?cidade=${encodeURIComponent(state.cidade)}`);
+    const disponibilidades = normalizeList(dispRes);
 
-      botSay(
-        "Agora vou consultar a agenda para encontrar os dias com horários livres. Pode levar alguns segundos."
-      );
+    // 2. Gera os próximos 30 dias
+    const candidates = Array.from({ length: 30 }, (_, i) => addDays(todayISO(), i));
+    
+    // 3. Filtra só os dias que TEM disponibilidade
+    // - Se tem data_especifica = aquele dia específico trabalha
+    // - Se não tem data_especifica, verifica se o dia da semana daquele dia existe no modelo semanal
+    const diasComAgenda = candidates.filter(iso => {
+      const weekday = dateFromISO(iso).getDay();
+      // tem data específica pra esse dia?
+      const temEspecifica = disponibilidades.some(d => d.data_especifica === iso && parseBoolean(d.ativo, true));
+      if (temEspecifica) return true;
+      // senão, tem regra semanal pro dia da semana?
+      const temSemanal = disponibilidades.some(d => !d.data_especifica && Number(d.dia_semana) === weekday && parseBoolean(d.ativo, true));
+      return temSemanal;
+    });
 
-      addTyping();
+    // 4. Agora sim consulta horários só desses dias filtrados (bem mais rápido)
+    const availableDates = [];
+    for (let i = 0; i < diasComAgenda.length; i += 4) {
+      if (token !== state.requestToken) return;
+      const batch = diasComAgenda.slice(i, i+4);
+      const results = await Promise.all(batch.map(async iso => {
+        try { const times = await fetchTimesForDate(iso, serviceId); return { iso, times }; } 
+        catch { return { iso, times: [] }; }
+      }));
+      results.forEach(r => { if (r.times.length > 0) availableDates.push(r.iso); });
+    }
 
-      const serviceId = state.servico?.id;
+    if (token !== state.requestToken) return;
+    removeTyping();
+    state.dates = [...new Set(availableDates)].sort();
 
-      if (!serviceId) {
-        removeTyping();
+    if (!state.dates.length) {
+      botSay(`Ainda não liberei agenda para ${state.cidade} nos próximos 30 dias. Você pode escolher outra cidade ou outro procedimento.`);
+      renderQuickReplies([
+        { label: "Escolher outra cidade", action: askCidade },
+        { label: "Escolher outro procedimento", action: loadServices }
+      ]);
+      return;
+    }
 
-        botSay("Não encontrei o procedimento selecionado. Vamos escolher novamente.");
+    botSay(`Encontrei ${state.dates.length} data(s) com horário em ${state.cidade}! ♡`);
+    renderDates();
 
-        await loadServices();
-        return;
-      }
-
-      const token = ++state.requestToken;
-      const candidates = Array.from(
-        { length: 30 },
-        (_, index) => addDays(todayISO(), index)
-      );
-
-      const availableDates = [];
-      let completed = 0;
-      let errors = 0;
-      let validResponses = 0;
-
-      try {
-        /*
-          Consulta quatro datas por vez para reduzir o tempo de espera
-          sem enviar 30 solicitações simultâneas ao servidor.
-        */
-        for (let index = 0; index < candidates.length; index += 4) {
-          if (token !== state.requestToken) return;
-
-          const batch = candidates.slice(index, index + 4);
-
-          const results = await Promise.all(
-            batch.map(async (iso) => {
-              try {
-                const times = await fetchTimesForDate(iso, serviceId);
-
-                return {
-                  iso,
-                  times,
-                  error: false,
-                  unavailable: false
-                };
-              } catch (error) {
-                if (isUnavailableResponse(error)) {
-                  return {
-                    iso,
-                    times: [],
-                    error: false,
-                    unavailable: true
-                  };
-                }
-
-                return {
-                  iso,
-                  times: [],
-                  error: true,
-                  message: error.message
-                };
-              }
-            })
-          );
+  } catch (error) {
+    removeTyping();
+    botSay(`Não consegui consultar a agenda.\n\n${error.message}`);
+    renderQuickReplies([{ label: "Tentar novamente", gold: true, action: loadDates }]);
+  }
+}
 
           results.forEach((result) => {
             completed++;
