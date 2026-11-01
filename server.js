@@ -1,3 +1,4 @@
+
 import express from 'express';
 import session from 'express-session';
 import path from 'node:path';
@@ -379,6 +380,13 @@ async function withBookingLock(key, action) {
       bookingLocks.delete(key);
     }
   }
+}
+
+function getBookingLockKey(date, cidade) {
+  const normalizedCity = cleanText(cidade, 50)
+    .toLocaleLowerCase('pt-BR');
+
+  return `${date}:${normalizedCity}`;
 }
 
 // ======================================================
@@ -772,117 +780,120 @@ app.patch('/api/meus-agendamentos/:id/remarcar', async (req, res) => {
       });
     }
 
-    return await withBookingLock(date, async () => {
-      const { data: atual, error: atualError } = await client
-        .from('agendamentos')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
+    return await withBookingLock(
+      getBookingLockKey(date, cidade),
+      async () => {
+        const { data: atual, error: atualError } = await client
+          .from('agendamentos')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
 
-      if (atualError) throw atualError;
+        if (atualError) throw atualError;
 
-      if (
-        !atual ||
-        normalizePhone(atual.telefone_cliente) !== telefone
-      ) {
-        return res.status(404).json({
-          ok: false,
-          error: 'Agendamento não encontrado.'
+        if (
+          !atual ||
+          normalizePhone(atual.telefone_cliente) !== telefone
+        ) {
+          return res.status(404).json({
+            ok: false,
+            error: 'Agendamento não encontrado.'
+          });
+        }
+
+        if (isCancelled(atual.status)) {
+          return res.status(409).json({
+            ok: false,
+            error: 'Este agendamento foi cancelado e não pode ser remarcado.'
+          });
+        }
+
+        const cidadeAtual = cleanText(atual.cidade, 50);
+
+        if (!cidadeAtual) {
+          return res.status(409).json({
+            ok: false,
+            error: 'O agendamento não possui cidade cadastrada.'
+          });
+        }
+
+        const context = await getBookingContext(
+          date,
+          atual.servico_id,
+          cidadeAtual
+        );
+
+        if (context.missingService || context.inactiveService) {
+          return res.status(409).json({
+            ok: false,
+            error: 'O serviço deste agendamento não está disponível para remarcação.'
+          });
+        }
+
+        if (context.invalidDuration) {
+          return res.status(400).json({
+            ok: false,
+            error: 'A duração do serviço está configurada incorretamente.'
+          });
+        }
+
+        context.bookings = context.bookings.filter(
+          item => String(item.id) !== String(id)
+        );
+
+        const start = timeToMinutes(startTime);
+        const end = start + context.duration;
+
+        if (!Number.isFinite(start) || end > 1440) {
+          return res.status(400).json({
+            ok: false,
+            error: 'Horário inválido.'
+          });
+        }
+
+        if (isPastSlot(date, start)) {
+          return res.status(409).json({
+            ok: false,
+            error: 'Esse horário já passou. Escolha outro.'
+          });
+        }
+
+        if (!isSlotAvailable(context, start, end)) {
+          return res.status(409).json({
+            ok: false,
+            code: 'HORARIO_INDISPONIVEL',
+            error: 'Esse horário não está disponível. Escolha outro horário.'
+          });
+        }
+
+        const { data, error } = await client
+          .from('agendamentos')
+          .update({
+            data: date,
+            hora_inicio: startTime,
+            hora_fim: minutesToTime(end),
+            cidade: cidadeAtual
+          })
+          .eq('id', id)
+          .select()
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (!data) {
+          return res.status(404).json({
+            ok: false,
+            error: 'Não foi possível atualizar o agendamento.'
+          });
+        }
+
+        return res.json({
+          ok: true,
+          data,
+          message: 'Agendamento remarcado com sucesso.'
         });
       }
-
-      if (isCancelled(atual.status)) {
-        return res.status(409).json({
-          ok: false,
-          error: 'Este agendamento foi cancelado e não pode ser remarcado.'
-        });
-      }
-
-      const cidadeAtual = cleanText(atual.cidade, 50);
-
-      if (!cidadeAtual) {
-        return res.status(409).json({
-          ok: false,
-          error: 'O agendamento não possui cidade cadastrada.'
-        });
-      }
-
-      const context = await getBookingContext(
-        date,
-        atual.servico_id,
-        cidadeAtual
-      );
-
-      if (context.missingService || context.inactiveService) {
-        return res.status(409).json({
-          ok: false,
-          error: 'O serviço deste agendamento não está disponível para remarcação.'
-        });
-      }
-
-      if (context.invalidDuration) {
-        return res.status(400).json({
-          ok: false,
-          error: 'A duração do serviço está configurada incorretamente.'
-        });
-      }
-
-      context.bookings = context.bookings.filter(
-        item => String(item.id) !== String(id)
-      );
-
-      const start = timeToMinutes(startTime);
-      const end = start + context.duration;
-
-      if (!Number.isFinite(start) || end > 1440) {
-        return res.status(400).json({
-          ok: false,
-          error: 'Horário inválido.'
-        });
-      }
-
-      if (isPastSlot(date, start)) {
-        return res.status(409).json({
-          ok: false,
-          error: 'Esse horário já passou. Escolha outro.'
-        });
-      }
-
-      if (!isSlotAvailable(context, start, end)) {
-        return res.status(409).json({
-          ok: false,
-          code: 'HORARIO_INDISPONIVEL',
-          error: 'Esse horário não está disponível. Escolha outro horário.'
-        });
-      }
-
-      const { data, error } = await client
-        .from('agendamentos')
-        .update({
-          data: date,
-          hora_inicio: startTime,
-          hora_fim: minutesToTime(end),
-          cidade: cidadeAtual
-        })
-        .eq('id', id)
-        .select()
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (!data) {
-        return res.status(404).json({
-          ok: false,
-          error: 'Não foi possível atualizar o agendamento.'
-        });
-      }
-
-      return res.json({
-        ok: true,
-        data,
-        message: 'Agendamento remarcado com sucesso.'
-      });
-    });
+    );
   } catch (error) {
     return sendDbError(res, error);
   }
@@ -999,7 +1010,11 @@ async function getBookingContext(date, serviceId, cidade) {
 
   const weekday = weekdayFromDate(date);
 
-  const [availabilityResult, blocksResult, bookingsResult] = await Promise.all([
+  const [
+    availabilityResult,
+    blocksResult,
+    bookingsResult
+  ] = await Promise.all([
     client
       .from('disponibilidade')
       .select('*')
@@ -1014,31 +1029,43 @@ async function getBookingContext(date, serviceId, cidade) {
       .from('agendamentos')
       .select('*')
       .eq('data', date)
+      .eq('cidade', cidade)
   ]);
 
   if (availabilityResult.error) throw availabilityResult.error;
   if (blocksResult.error) throw blocksResult.error;
   if (bookingsResult.error) throw bookingsResult.error;
 
-  const allAvailability = (availabilityResult.data || []).filter(
-    item => parseBoolean(item.ativo, true)
-  );
+  /*
+    A consulta acima já separa a disponibilidade pela cidade.
+    Agora avaliamos os registros de data específica.
 
-  // Registros específicos para a data selecionada.
-  const specificAvailability = allAvailability.filter(
+    Importante:
+    - Havendo registro específico para a data, ele prevalece.
+    - Se esse registro específico estiver inativo, a data fica fechada.
+    - A disponibilidade semanal só é utilizada quando não existe
+      nenhum registro específico para aquela cidade e data.
+  */
+
+  const allAvailability = availabilityResult.data || [];
+
+  const specificRows = allAvailability.filter(
     item => cleanText(item.data_especifica, 10) === date
   );
 
-  // Registros semanais recorrentes, sem data específica.
+  const specificAvailability = specificRows.filter(
+    item => parseBoolean(item.ativo, true)
+  );
+
   const recurringAvailability = allAvailability.filter(item => {
     const specificDate = cleanText(item.data_especifica, 10);
 
     return !specificDate &&
-      Number(item.dia_semana) === weekday;
+      Number(item.dia_semana) === weekday &&
+      parseBoolean(item.ativo, true);
   });
 
-  // Se houver cadastro específico para a data, ele prevalece.
-  const availability = specificAvailability.length
+  const availability = specificRows.length
     ? specificAvailability
     : recurringAvailability;
 
@@ -1130,7 +1157,11 @@ app.get('/api/horarios', async (req, res) => {
       return res.json({ ok: true, data: [] });
     }
 
-    const context = await getBookingContext(date, serviceId, cidade);
+    const context = await getBookingContext(
+      date,
+      serviceId,
+      cidade
+    );
 
     if (context.missingCity) {
       return res.status(400).json({
@@ -1209,8 +1240,7 @@ app.post('/api/agendamentos', async (req, res) => {
   try {
     const body = req.body || {};
 
-    // Cidade não possui mais valor padrão.
-    // O cliente precisa escolher uma cidade disponível.
+    // A cidade é obrigatória. Não existe mais cidade padrão.
     const cidade = cleanText(body.cidade, 50);
 
     const nome = cleanText(
@@ -1262,97 +1292,100 @@ app.post('/api/agendamentos', async (req, res) => {
       });
     }
 
-    return await withBookingLock(date, async () => {
-      // A disponibilidade é consultada novamente no momento da reserva.
-      const context = await getBookingContext(
-        date,
-        serviceId,
-        cidade
-      );
+    return await withBookingLock(
+      getBookingLockKey(date, cidade),
+      async () => {
+        // Confere novamente a disponibilidade no momento da reserva.
+        const context = await getBookingContext(
+          date,
+          serviceId,
+          cidade
+        );
 
-      if (context.missingCity) {
-        return res.status(400).json({
-          ok: false,
-          error: 'Selecione uma cidade válida.'
+        if (context.missingCity) {
+          return res.status(400).json({
+            ok: false,
+            error: 'Selecione uma cidade válida.'
+          });
+        }
+
+        if (context.missingService) {
+          return res.status(404).json({
+            ok: false,
+            error: 'O serviço selecionado não foi encontrado.'
+          });
+        }
+
+        if (context.inactiveService) {
+          return res.status(409).json({
+            ok: false,
+            error: 'Este serviço não está disponível para agendamento.'
+          });
+        }
+
+        if (context.invalidDuration) {
+          return res.status(400).json({
+            ok: false,
+            error: 'A duração do serviço está configurada incorretamente.'
+          });
+        }
+
+        const start = timeToMinutes(startTime);
+        const end = start + context.duration;
+
+        if (!Number.isFinite(start) || end > 1440) {
+          return res.status(400).json({
+            ok: false,
+            error: 'Horário inválido ou fora do limite do dia.'
+          });
+        }
+
+        if (isPastSlot(date, start)) {
+          return res.status(409).json({
+            ok: false,
+            code: 'HORARIO_PASSADO',
+            error: 'Esse horário já passou. Escolha outro horário.'
+          });
+        }
+
+        if (!isSlotAvailable(context, start, end)) {
+          return res.status(409).json({
+            ok: false,
+            code: 'HORARIO_INDISPONIVEL',
+            error: 'Esse horário não está mais disponível. Atualize a agenda e escolha outro.'
+          });
+        }
+
+        const payload = {
+          nome_cliente: nome,
+          telefone_cliente: telefone,
+          servico_id: context.service.id,
+          nome_servico: context.service.nome,
+          cidade,
+          data: date,
+          hora_inicio: startTime,
+          hora_fim: minutesToTime(end),
+          preco: Number(context.service.preco || 0),
+          status: 'Pendente',
+          observacoes: observations,
+          origem: 'site'
+        };
+
+        const { data, error } = await db()
+          .from('agendamentos')
+          .insert(payload)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        return res.status(201).json({
+          ok: true,
+          data,
+          message: 'Agendamento realizado com sucesso.'
         });
       }
-
-      if (context.missingService) {
-        return res.status(404).json({
-          ok: false,
-          error: 'O serviço selecionado não foi encontrado.'
-        });
-      }
-
-      if (context.inactiveService) {
-        return res.status(409).json({
-          ok: false,
-          error: 'Este serviço não está disponível para agendamento.'
-        });
-      }
-
-      if (context.invalidDuration) {
-        return res.status(400).json({
-          ok: false,
-          error: 'A duração do serviço está configurada incorretamente.'
-        });
-      }
-
-      const start = timeToMinutes(startTime);
-      const end = start + context.duration;
-
-      if (!Number.isFinite(start) || end > 1440) {
-        return res.status(400).json({
-          ok: false,
-          error: 'Horário inválido ou fora do limite do dia.'
-        });
-      }
-
-      if (isPastSlot(date, start)) {
-        return res.status(409).json({
-          ok: false,
-          code: 'HORARIO_PASSADO',
-          error: 'Esse horário já passou. Escolha outro horário.'
-        });
-      }
-
-      if (!isSlotAvailable(context, start, end)) {
-        return res.status(409).json({
-          ok: false,
-          code: 'HORARIO_INDISPONIVEL',
-          error: 'Esse horário não está mais disponível. Atualize a agenda e escolha outro.'
-        });
-      }
-
-      const payload = {
-        nome_cliente: nome,
-        telefone_cliente: telefone,
-        servico_id: context.service.id,
-        nome_servico: context.service.nome,
-        cidade,
-        data: date,
-        hora_inicio: startTime,
-        hora_fim: minutesToTime(end),
-        preco: Number(context.service.preco || 0),
-        status: 'Pendente',
-        observacoes: observations,
-        origem: 'site'
-      };
-
-      const { data, error } = await db()
-        .from('agendamentos')
-        .insert(payload)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      return res.status(201).json({
-        ok: true,
-        data,
-        message: 'Agendamento realizado com sucesso.'
-      });
-    });
+    );
   } catch (error) {
     return sendDbError(res, error);
   }
