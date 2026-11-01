@@ -1719,24 +1719,28 @@ app.post('/api/admin/disponibilidade', admin, async (req, res) => {
     const start = normalizeTime(req.body?.hora_inicio);
     const end = normalizeTime(req.body?.hora_fim);
 
-    if (!Number.isInteger(day) || day < 0 || day > 6) {
-      return res.status(400).json({ ok: false, error: 'Dia da semana inválido.' });
-    }
-    if (dataEspecifica && !validDate(dataEspecifica)) {
-      return res.status(400).json({ ok: false, error: 'data_especifica inválida. Use AAAA-MM-DD' });
-    }
-    if (!start || !end || !validRange(start, end)) {
-      return res.status(400).json({ ok: false, error: 'Horário inválido.' });
-    }
+    if (!Number.isInteger(day) || day < 0 || day > 6) return res.status(400).json({ ok: false, error: 'Dia inválido.' });
+    if (dataEspecifica && !validDate(dataEspecifica)) return res.status(400).json({ ok: false, error: 'data_especifica inválida.' });
+    if (!start || !end || !validRange(start, end)) return res.status(400).json({ ok: false, error: 'Horário inválido.' });
 
     const payload = {
       dia_semana: day,
       hora_inicio: start,
       hora_fim: end,
       cidade: cidade,
-      data_especifica: dataEspecifica
+      data_especifica: dataEspecifica,
+      ativo: req.body?.ativo !== undefined ? parseBoolean(req.body.ativo) : true
     };
-    if (req.body?.ativo !== undefined) payload.ativo = parseBoolean(req.body.ativo);
+
+    // Se já existe essa data+cidade, atualiza em vez de dar erro 23505
+    if (dataEspecifica) {
+      const { data: existente } = await db().from('disponibilidade').select('id').eq('data_especifica', dataEspecifica).eq('cidade', cidade || '').maybeSingle();
+      if (existente?.id) {
+        const { data, error } = await db().from('disponibilidade').update(payload).eq('id', existente.id).select().single();
+        if (error) throw error;
+        return res.json({ ok: true, data });
+      }
+    }
 
     const { data, error } = await db().from('disponibilidade').insert(payload).select().single();
     if (error) throw error;
