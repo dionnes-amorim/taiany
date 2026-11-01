@@ -1,0 +1,3697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fbf4f2">
+  <meta name="description" content="Agende seu horário com Taiany Trindade Nail Designer.">
+  <title>Secretária Virtual | Taiany Trindade Nail Designer</title>
+
+  <style>
+    :root {
+      --rose: #b76e79;
+      --rose-dark: #914d5a;
+      --rose-light: #f5e3e5;
+      --gold: #c5a15b;
+      --gold-light: #ead7a5;
+      --cream: #fffaf6;
+      --background: #fbf5f1;
+      --text: #403438;
+      --muted: #8d7b80;
+      --white: #ffffff;
+      --green: #54866a;
+      --red: #b94d5b;
+      --shadow: 0 12px 35px rgba(100, 58, 67, .09);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      min-height: 100%;
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 5% 5%, rgba(197,161,91,.13), transparent 25%),
+        radial-gradient(circle at 95% 15%, rgba(183,110,121,.12), transparent 28%),
+        var(--background);
+      line-height: 1.5;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(183,110,121,.35);
+      outline-offset: 3px;
+    }
+
+    .page {
+      width: min(100%, 1050px);
+      margin: 0 auto;
+      padding: 18px 20px 12px;
+    }
+
+    /* CABEÇALHO */
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo-frame {
+      width: 94px;
+      height: 94px;
+      flex: 0 0 94px;
+      padding: 5px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f8e9bf, #bd9851, #f8e8b7);
+      box-shadow: 0 7px 24px rgba(151,112,48,.2);
+    }
+
+    .logo-inner {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border: 2px solid #fff7e4;
+      border-radius: 50%;
+      background: #fffaf7;
+    }
+
+    .logo-inner img {
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      object-fit: contain;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(22px, 3vw, 31px);
+      line-height: 1.15;
+      font-weight: 600;
+      color: var(--rose-dark);
+    }
+
+    .brand-copy p {
+      margin-top: 6px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .developer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+      min-width: 0;
+    }
+
+    .developer-logo {
+      display: block;
+      width: 155px;
+      max-height: 82px;
+      object-fit: contain;
+      opacity: .95;
+    }
+
+    /* APRESENTAÇÃO */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 25px 29px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(197,161,91,.35);
+      border-radius: 25px;
+      background: linear-gradient(120deg, rgba(255,255,255,.98), rgba(255,246,244,.94));
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "✦";
+      position: absolute;
+      top: 0;
+      right: 22px;
+      font-size: 90px;
+      color: rgba(197,161,91,.13);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--rose-dark);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero h2 {
+      max-width: 760px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(27px, 4vw, 38px);
+      line-height: 1.15;
+      font-weight: 500;
+      color: #593b43;
+    }
+
+    .hero h2 span {
+      color: var(--rose);
+      font-style: italic;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border: 1px solid #eed8d9;
+      border-radius: 30px;
+      color: #83515a;
+      background: white;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* CHAT PRINCIPAL */
+
+    .chat-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(197,161,91,.32);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.98);
+      box-shadow: var(--shadow);
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      color: white;
+      background: linear-gradient(115deg, var(--rose), var(--rose-dark));
+    }
+
+    .assistant-avatar {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,.7);
+      border-radius: 50%;
+      color: #80553b;
+      background: linear-gradient(145deg, #fff8e9, #ead3a0);
+      font-family: Georgia, serif;
+      font-size: 21px;
+    }
+
+    .assistant-avatar img {
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      object-fit: contain;
+    }
+
+    .chat-header-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .chat-header h3 {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .chat-header p {
+      margin-top: 2px;
+      font-size: 11px;
+      color: rgba(255,255,255,.88);
+    }
+
+    .online-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      white-space: nowrap;
+      color: #fff6e9;
+    }
+
+    .online-indicator::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #a9edb6;
+      box-shadow: 0 0 0 3px rgba(169,237,182,.14);
+    }
+
+    .chat-notice {
+      padding: 9px 14px;
+      text-align: center;
+      color: #856d54;
+      background: #fff8eb;
+      border-bottom: 1px solid #f2e5d3;
+      font-size: 10px;
+    }
+
+    .chat-body {
+      height: min(590px, 62vh);
+      height: min(590px, 62dvh);
+      min-height: 370px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 21px 20px 16px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(197,161,91,.055), transparent 32%),
+        #fffdfb;
+      scroll-behavior: smooth;
+    }
+
+    .chat-body::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chat-body::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: #e8d5d7;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 14px;
+      animation: messageIn .22s ease both;
+    }
+
+    .message-row.bot {
+      justify-content: flex-start;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bubble {
+      max-width: min(88%, 570px);
+      padding: 12px 15px;
+      border-radius: 17px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .bot .bubble {
+      color: #62464d;
+      border: 1px solid #f0e2e1;
+      border-top-left-radius: 5px;
+      background: #fff;
+      box-shadow: 0 4px 13px rgba(95,57,66,.035);
+    }
+
+    .user .bubble {
+      color: white;
+      border-top-right-radius: 5px;
+      background: linear-gradient(135deg, #bd7b85, #9d5864);
+      box-shadow: 0 4px 12px rgba(145,77,90,.12);
+    }
+
+    .bubble-time {
+      display: block;
+      margin-top: 5px;
+      opacity: .63;
+      font-size: 10px;
+      text-align: right;
+    }
+
+    .typing-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 17px;
+      border: 1px solid #f0e2e1;
+      border-radius: 17px;
+      border-top-left-radius: 5px;
+      background: white;
+    }
+
+    .typing-bubble span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--rose);
+      animation: typing 1s infinite ease-in-out;
+    }
+
+    .typing-bubble span:nth-child(2) {
+      animation-delay: .15s;
+    }
+
+    .typing-bubble span:nth-child(3) {
+      animation-delay: .3s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* BOTÕES DE RESPOSTA */
+
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -2px 0 17px 2px;
+      animation: messageIn .22s ease both;
+    }
+
+    .quick-reply {
+      max-width: 100%;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid #e7c7cc;
+      border-radius: 12px;
+      color: var(--rose-dark);
+      background: #fff;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 800;
+      transition: .18s ease;
+    }
+
+    .quick-reply:hover:not(:disabled) {
+      border-color: var(--rose);
+      background: #fff4f5;
+    }
+
+    .quick-reply.gold {
+      border-color: #d9bd7b;
+      color: #674b1f;
+      background: linear-gradient(135deg, #fff9e9, #f7e9c6);
+    }
+
+    /* CARTÕES DE SERVIÇO */
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      width: 100%;
+      margin: -2px 0 17px;
+      animation: messageIn .22s ease both;
+    }
+
+    .option-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 0;
+      min-height: 112px;
+      padding: 14px;
+      text-align: left;
+      border: 1px solid #eadadd;
+      border-radius: 14px;
+      color: var(--text);
+      background: white;
+      transition: .18s ease;
+    }
+
+    .option-card:hover:not(:disabled) {
+      border-color: var(--gold);
+      background: linear-gradient(145deg, #fff, #fff8f0);
+    }
+
+    .option-icon {
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .option-card strong {
+      color: var(--rose-dark);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .option-card small {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .option-card .option-price {
+      margin-top: auto;
+      color: var(--rose-dark);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    /* DATAS DISPONÍVEIS */
+
+    .date-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      margin: -2px 0 16px;
+      animation: messageIn .22s ease both;
+    }
+
+    .date-group {
+      grid-column: 1 / -1;
+      margin-top: 5px;
+      color: #76515a;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .date-group::after {
+      content: "";
+      display: block;
+      height: 1px;
+      margin-top: 7px;
+      background: #f0e1df;
+    }
+
+    .date-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      min-width: 0;
+      min-height: 85px;
+      padding: 9px 4px;
+      border: 1px solid #eadadd;
+      border-radius: 12px;
+      color: #62464d;
+      background: white;
+      text-align: center;
+      transition: .18s ease;
+    }
+
+    .date-option:hover:not(:disabled),
+    .date-option.selected {
+      border-color: var(--rose);
+      background: #fff3f5;
+      box-shadow: 0 3px 10px rgba(183,110,121,.08);
+    }
+
+    .date-option strong {
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .date-option span {
+      font-size: 10px;
+      text-transform: capitalize;
+      color: var(--muted);
+    }
+
+    .date-option .date-month {
+      color: var(--rose-dark);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* HORÁRIOS DISPONÍVEIS */
+
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      margin: -2px 0 16px;
+      animation: messageIn .22s ease both;
+    }
+
+    .time-option {
+      min-width: 0;
+      min-height: 43px;
+      padding: 9px 3px;
+      border: 1px solid #eadadd;
+      border-radius: 11px;
+      color: #704c55;
+      background: white;
+      font-size: 12px;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+
+    .time-option:hover:not(:disabled),
+    .time-option.selected {
+      color: white;
+      border-color: var(--rose);
+      background: var(--rose);
+    }
+
+    /* ENTRADA DE MENSAGEM */
+
+    .chat-composer {
+      padding: 14px 18px 16px;
+      border-top: 1px solid #f0e4e3;
+      background: #fff;
+    }
+
+    .composer-form {
+      display: flex;
+      align-items: flex-end;
+      gap: 9px;
+    }
+
+    .composer-field {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .composer-field label {
+      display: block;
+      margin-bottom: 5px;
+      color: #79545d;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .composer-input {
+      display: block;
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px solid #eadadd;
+      border-radius: 13px;
+      outline: none;
+      color: var(--text);
+      background: #fffdfc;
+      transition: border .18s, box-shadow .18s;
+      font-size: 14px;
+    }
+
+    .composer-input:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(183,110,121,.1);
+    }
+
+    .composer-input:disabled {
+      background: #f8f3f2;
+    }
+
+    .send-button {
+      display: grid;
+      place-items: center;
+      width: 47px;
+      height: 47px;
+      flex: 0 0 47px;
+      border: 0;
+      border-radius: 13px;
+      color: white;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      box-shadow: 0 5px 12px rgba(145,77,90,.18);
+      font-size: 19px;
+      transition: .18s;
+    }
+
+    .send-button:disabled {
+      opacity: .4;
+    }
+
+    .composer-hint {
+      margin-top: 7px;
+      color: #a08e92;
+      font-size: 10px;
+    }
+
+    .chat-tools {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 9px;
+    }
+
+    .text-tool {
+      padding: 5px 0;
+      border: 0;
+      color: #94717a;
+      background: transparent;
+      font-size: 11px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .text-tool:hover {
+      color: var(--rose-dark);
+    }
+
+    /* RESUMO DA REVISÃO */
+
+    .review-card {
+      width: min(100%, 550px);
+      padding: 16px;
+      margin: 0 0 17px;
+      border: 1px solid #efdfd6;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 4px 13px rgba(95,57,66,.035);
+    }
+
+    .review-title {
+      margin-bottom: 7px;
+      color: var(--rose-dark);
+      font-family: Georgia, serif;
+      font-size: 19px;
+    }
+
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f4eae7;
+      font-size: 12px;
+    }
+
+    .review-row:last-child {
+      border-bottom: 0;
+    }
+
+    .review-row span {
+      color: var(--muted);
+    }
+
+    .review-row strong {
+      max-width: 65%;
+      overflow-wrap: anywhere;
+      color: #65444c;
+      text-align: right;
+    }
+
+    /* MODAL FINAL */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      place-items: center;
+      overflow-y: auto;
+      padding: 16px;
+      background: rgba(54,34,40,.68);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+    }
+
+    .modal.open {
+      display: grid;
+      animation: fadeIn .22s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(570px, 100%);
+      max-height: 92dvh;
+      overflow-y: auto;
+      padding: 35px 28px 26px;
+      border: 1px solid #e6d0a0;
+      border-radius: 27px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(197,161,91,.14), transparent 42%),
+        linear-gradient(160deg, #fff, #fff7f4);
+      box-shadow: 0 30px 100px rgba(0,0,0,.25);
+      animation: modalPop .35s cubic-bezier(.18,.89,.32,1.15);
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(.91) translateY(15px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .success-icon {
+      display: grid;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(145deg, #d6b56e, #b68a3d);
+      box-shadow: 0 0 0 8px #f8edda, 0 0 0 10px #e9d6ac;
+      font-size: 39px;
+    }
+
+    .modal-kicker {
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .modal-card h2 {
+      margin-bottom: 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--rose-dark);
+      font-size: clamp(27px, 5vw, 36px);
+      font-weight: 600;
+      line-height: 1.15;
+    }
+
+    .modal-card > p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .modal-summary {
+      padding: 16px;
+      margin: 22px 0;
+      border: 1px solid #efdfd6;
+      border-radius: 16px;
+      background: rgba(255,255,255,.88);
+      text-align: left;
+    }
+
+    .modal-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f4eae7;
+      font-size: 12px;
+    }
+
+    .modal-summary-row:last-child {
+      border-bottom: 0;
+    }
+
+    .modal-summary-row span {
+      color: var(--muted);
+    }
+
+    .modal-summary-row strong {
+      max-width: 65%;
+      overflow-wrap: anywhere;
+      color: #65444c;
+      text-align: right;
+    }
+
+    .protocol {
+      padding: 12px;
+      margin-top: 14px;
+      border: 1px dashed #d9bd7b;
+      border-radius: 12px;
+      color: #775b2f;
+      background: #fffaf0;
+      font-size: 11px;
+      overflow-wrap: anywhere;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      transition: .18s;
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      box-shadow: 0 7px 17px rgba(145,77,90,.18);
+    }
+
+    .btn-secondary {
+      color: #79545d;
+      border: 1px solid #eadadd;
+      background: white;
+    }
+
+    .btn-full {
+      flex: 1;
+      width: 100%;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -15px;
+      width: 7px;
+      height: 12px;
+      border-radius: 2px;
+      opacity: 0;
+      pointer-events: none;
+      animation: confettiFall 2s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-10px) rotate(0); }
+      100% { opacity: 0; transform: translateY(380px) rotate(540deg); }
+    }
+
+    .footer {
+      padding: 20px 8px 8px;
+      color: #a08e92;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: .5px;
+    }
+
+    .footer span {
+      color: var(--rose);
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* TABLET */
+
+    @media (max-width: 700px) {
+      .page {
+        padding: 13px 13px 9px;
+      }
+
+      .topbar {
+        gap: 10px;
+        margin-bottom: 13px;
+      }
+
+      .logo-frame {
+        width: 76px;
+        height: 76px;
+        flex-basis: 76px;
+      }
+
+      .brand {
+        gap: 9px;
+      }
+
+      .brand-copy h1 {
+        font-size: 21px;
+      }
+
+      .brand-copy p {
+        font-size: 9px;
+        letter-spacing: .7px;
+      }
+
+      .developer-logo {
+        width: 105px;
+        max-height: 55px;
+      }
+
+      .hero {
+        padding: 20px 18px;
+        margin-bottom: 13px;
+        border-radius: 20px;
+      }
+
+      .hero h2 {
+        font-size: 29px;
+      }
+
+      .hero p {
+        max-width: 90%;
+        font-size: 12px;
+      }
+
+      .chat-header {
+        padding: 13px;
+      }
+
+      .chat-body {
+        height: 58dvh;
+        min-height: 350px;
+        max-height: 570px;
+        padding: 16px 12px 12px;
+      }
+
+      .bubble {
+        max-width: 94%;
+        padding: 11px 12px;
+        font-size: 12px;
+      }
+
+      .option-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .date-options {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .time-options {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .chat-composer {
+        padding: 12px;
+      }
+    }
+
+    /* CELULARES */
+
+    @media (max-width: 430px) {
+      .page {
+        width: 100%;
+        padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      }
+
+      .topbar {
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .brand {
+        gap: 7px;
+      }
+
+      .logo-frame {
+        width: 62px;
+        height: 62px;
+        flex-basis: 62px;
+        padding: 4px;
+      }
+
+      .brand-copy h1 {
+        font-size: 17px;
+        line-height: 1.15;
+      }
+
+      .brand-copy p {
+        max-width: 165px;
+        margin-top: 4px;
+        font-size: 7px;
+        letter-spacing: .5px;
+      }
+
+      .developer-logo {
+        width: 75px;
+        max-height: 43px;
+      }
+
+      .hero {
+        padding: 17px 13px;
+        margin-bottom: 10px;
+        border-radius: 17px;
+      }
+
+      .hero::after {
+        right: 6px;
+        font-size: 57px;
+      }
+
+      .eyebrow {
+        font-size: 9px;
+        letter-spacing: 1.2px;
+      }
+
+      .hero h2 {
+        font-size: 25px;
+      }
+
+      .hero p {
+        max-width: 100%;
+        margin-top: 8px;
+        font-size: 11px;
+      }
+
+      .hero-pills {
+        gap: 5px;
+        margin-top: 11px;
+      }
+
+      .pill {
+        padding: 5px 7px;
+        font-size: 8px;
+      }
+
+      .chat-card {
+        border-radius: 17px;
+      }
+
+      .chat-header {
+        gap: 9px;
+        padding: 11px 10px;
+      }
+
+      .assistant-avatar {
+        width: 39px;
+        height: 39px;
+        flex-basis: 39px;
+        font-size: 18px;
+      }
+
+      .chat-header h3 {
+        font-size: 12px;
+      }
+
+      .chat-header p {
+        font-size: 9px;
+      }
+
+      .online-indicator {
+        gap: 4px;
+        font-size: 8px;
+      }
+
+      .online-indicator::before {
+        width: 6px;
+        height: 6px;
+      }
+
+      .chat-notice {
+        padding: 8px 5px;
+        font-size: 9px;
+      }
+
+      .chat-body {
+        height: 54dvh;
+        min-height: 320px;
+        max-height: 520px;
+        padding: 13px 9px 10px;
+      }
+
+      .message-row {
+        margin-bottom: 11px;
+      }
+
+      .bubble {
+        max-width: 96%;
+        padding: 10px 11px;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .bubble-time {
+        font-size: 9px;
+      }
+
+      .quick-replies {
+        gap: 7px;
+        margin-bottom: 14px;
+      }
+
+      .quick-reply {
+        min-height: 42px;
+        padding: 10px 11px;
+        font-size: 11px;
+      }
+
+      .option-grid {
+        grid-template-columns: 1fr;
+        gap: 7px;
+        margin-bottom: 14px;
+      }
+
+      .option-card {
+        display: grid;
+        grid-template-columns: 25px minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 8px;
+        min-height: 76px;
+        padding: 10px;
+      }
+
+      .option-icon {
+        grid-row: 1 / span 2;
+        font-size: 17px;
+      }
+
+      .option-card strong {
+        font-size: 11px;
+      }
+
+      .option-card small {
+        grid-column: 2;
+        font-size: 10px;
+      }
+
+      .option-card .option-price {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        align-self: center;
+        margin-top: 0;
+        font-size: 11px;
+      }
+
+      .date-options {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+        margin-bottom: 13px;
+      }
+
+      .date-group {
+        font-size: 11px;
+      }
+
+      .date-option {
+        min-height: 72px;
+        padding: 7px 2px;
+        border-radius: 10px;
+      }
+
+      .date-option strong {
+        font-size: 19px;
+      }
+
+      .date-option span {
+        font-size: 9px;
+      }
+
+      .date-option .date-month {
+        font-size: 9px;
+      }
+
+      .time-options {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin-bottom: 13px;
+      }
+
+      .time-option {
+        min-height: 43px;
+        padding: 9px 2px;
+        font-size: 12px;
+      }
+
+      .chat-composer {
+        padding: 10px 9px calc(10px + env(safe-area-inset-bottom));
+      }
+
+      .composer-form {
+        gap: 7px;
+      }
+
+      .composer-field label {
+        font-size: 10px;
+      }
+
+      .composer-input {
+        min-height: 44px;
+        padding: 10px;
+        border-radius: 11px;
+        font-size: 16px;
+      }
+
+      .send-button {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
+        border-radius: 11px;
+      }
+
+      .composer-hint {
+        font-size: 9px;
+        line-height: 1.4;
+      }
+
+      .text-tool {
+        font-size: 10px;
+      }
+
+      .review-card {
+        padding: 12px;
+      }
+
+      .review-row {
+        gap: 8px;
+        font-size: 11px;
+      }
+
+      .modal {
+        padding: 9px;
+      }
+
+      .modal-card {
+        padding: 29px 14px 17px;
+        border-radius: 21px;
+      }
+
+      .success-icon {
+        width: 69px;
+        height: 69px;
+        margin-bottom: 17px;
+        font-size: 32px;
+      }
+
+      .modal-card h2 {
+        font-size: 27px;
+      }
+
+      .modal-card > p {
+        font-size: 12px;
+      }
+
+      .modal-summary {
+        padding: 11px;
+        margin: 17px 0;
+      }
+
+      .modal-summary-row {
+        gap: 8px;
+        font-size: 11px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .footer {
+        padding-top: 15px;
+        font-size: 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-frame">
+          <div class="logo-inner">
+            <img
+              src="/logo.png"
+              alt="Logo Taiany Trindade"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<span style=&quot;font-family:Georgia;font-size:25px;color:#914d5a&quot;>TT</span>';"
+            >
+          </div>
+        </div>
+
+        <div class="brand-copy">
+          <h1>Taiany Trindade</h1>
+          <p>Nail Designer · Agendamento</p>
+        </div>
+      </div>
+
+      <div class="developer-brand">
+        <img
+          class="developer-logo"
+          src="/logo-desenvolvimento.png"
+          alt="Logo de desenvolvimento"
+          onerror="this.style.display='none';"
+        >
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Seu momento de beleza</div>
+
+      <h2>
+        Unhas impecáveis,<br>
+        <span>cuidado em cada detalhe.</span>
+      </h2>
+
+      <p>
+        Converse com nossa secretária virtual, escolha seu procedimento
+        e encontre o melhor dia e horário para você.
+      </p>
+
+      <div class="hero-pills">
+        <span class="pill">✦ Atendimento personalizado</span>
+        <span class="pill">✧ Agenda online</span>
+        <span class="pill">♡ Cuidado em cada detalhe</span>
+      </div>
+    </section>
+
+    <main class="chat-card">
+      <header class="chat-header">
+        <div class="assistant-avatar" aria-hidden="true">
+          <img
+            src="/logo.png"
+            alt=""
+            onerror="this.style.display='none';this.parentElement.textContent='TT';"
+          >
+        </div>
+
+        <div class="chat-header-copy">
+          <h3>Secretária Virtual Taiany</h3>
+          <p>Agendamentos e informações</p>
+        </div>
+
+        <div class="online-indicator">Assistente virtual</div>
+      </header>
+
+      <div class="chat-notice">
+        ✦ Escolha as opções da conversa para realizar seu agendamento.
+      </div>
+
+      <div
+        id="chatMessages"
+        class="chat-body"
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions text"
+        aria-label="Conversa com a secretária virtual"
+      ></div>
+
+      <div class="chat-composer">
+        <form id="composerForm" class="composer-form">
+          <div class="composer-field">
+            <label id="inputLabel" for="chatInput">Sua mensagem</label>
+            <input
+              id="chatInput"
+              class="composer-input"
+              type="text"
+              placeholder="Selecione uma opção acima"
+              autocomplete="off"
+              maxlength="500"
+              disabled
+            >
+          </div>
+
+          <button
+            id="sendButton"
+            class="send-button"
+            type="submit"
+            aria-label="Enviar mensagem"
+            disabled
+          >➤</button>
+        </form>
+
+        <div id="composerHint" class="composer-hint">
+          Para começar, selecione uma das opções da secretária.
+        </div>
+
+        <div class="chat-tools">
+          <button type="button" class="text-tool" id="restartChat">
+            Reiniciar conversa
+          </button>
+
+          <button type="button" class="text-tool" id="backChat" hidden>
+            Voltar uma etapa
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      T A I A N Y &nbsp; T R I N D A D E <span>✦</span> NAIL DESIGNER
+      <br>
+      <span>Agendamento online</span>
+    </footer>
+  </div>
+
+  <!-- CONFIRMAÇÃO FINAL -->
+  <div
+    class="modal"
+    id="successModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="successTitle"
+    aria-describedby="successMessage"
+  >
+    <div class="modal-card" id="modalCard">
+      <div class="success-icon" aria-hidden="true">✓</div>
+
+      <div class="modal-kicker">Taiany Trindade · Nail Designer</div>
+
+      <h2 id="successTitle">Agendamento registrado!</h2>
+
+      <p id="successMessage">
+        Sua solicitação foi registrada com sucesso.
+      </p>
+
+      <div class="modal-summary" id="successDetails"></div>
+
+      <div class="protocol" id="successProtocol">
+        Guarde os detalhes do seu agendamento.
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary btn-full" id="closeSuccess">
+          Finalizar atendimento
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-full" id="newBooking">
+          Fazer outro agendamento
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    /*
+      ROTAS UTILIZADAS:
+      GET  /api/servicos
+      GET  /api/cliente?telefone=DDDNUMERO
+      GET  /api/disponibilidade
+      GET  /api/horarios?data=YYYY-MM-DD&servico_id=ID&cidade=NOME
+      POST /api/clientes
+      POST /api/agendamentos
+
+      A tela consulta os horários de cada data e só oferece datas
+      que retornarem horários disponíveis.
+
+      IMPORTANTE:
+      O servidor deve validar novamente a disponibilidade no POST
+      /api/agendamentos antes de registrar a solicitação.
+    */
+
+    const API = {
+      services: "/api/servicos",
+      availability: "/api/disponibilidade",
+      clients: "/api/cliente",
+      createClient: "/api/clientes",
+      times: "/api/horarios",
+      bookings: "/api/agendamentos"
+    };
+
+    const state = {
+      step: "welcome",
+      clientType: null,
+      clientExists: false,
+      clientId: null,
+      nome: "",
+      telefone: "",
+      email: "",
+      servico: null,
+      cidade: "",
+      data: "",
+      horario: "",
+      observacoes: "",
+      services: [],
+      cidades: [],
+      dates: [],
+      times: [],
+      bookingInProgress: false,
+      clientSaved: false,
+      requestToken: 0
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+    function money(value) {
+      const number = Number(value || 0);
+
+      return number.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function digits(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
+
+    function formatPhone(value) {
+      let number = digits(value).slice(0, 11);
+
+      if (number.length <= 2) return number;
+
+      if (number.length <= 6) {
+        return `(${number.slice(0, 2)}) ${number.slice(2)}`;
+      }
+
+      if (number.length <= 10) {
+        return `(${number.slice(0, 2)}) ${number.slice(2, 6)}-${number.slice(6)}`;
+      }
+
+      return `(${number.slice(0, 2)}) ${number.slice(2, 7)}-${number.slice(7)}`;
+    }
+
+    function saoPauloNowParts() {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+      }).formatToParts(new Date());
+
+      const values = {};
+
+      parts.forEach((part) => {
+        if (part.type !== "literal") {
+          values[part.type] = part.value;
+        }
+      });
+
+      return {
+        date: `${values.year}-${values.month}-${values.day}`,
+        minutes: Number(values.hour) * 60 + Number(values.minute)
+      };
+    }
+
+    function todayISO() {
+      return saoPauloNowParts().date;
+    }
+
+    function dateFromISO(iso) {
+      const [year, month, day] = String(iso).slice(0, 10).split("-").map(Number);
+      return new Date(year, month - 1, day, 12, 0, 0);
+    }
+
+    function isoFromDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function addDays(iso, amount) {
+      const date = dateFromISO(iso);
+      date.setDate(date.getDate() + amount);
+      return isoFromDate(date);
+    }
+
+    function formatDate(iso, includeYear = true) {
+      if (!iso) return "A escolher";
+
+      return dateFromISO(iso).toLocaleDateString("pt-BR", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        ...(includeYear ? { year: "numeric" } : {})
+      });
+    }
+
+    function shortWeekday(iso) {
+      return dateFromISO(iso)
+        .toLocaleDateString("pt-BR", { weekday: "short" })
+        .replace(".", "");
+    }
+
+    function dateOffset(iso) {
+      const start = dateFromISO(todayISO());
+      const target = dateFromISO(iso);
+
+      return Math.round((target - start) / 86400000);
+    }
+
+    function dateGroupTitle(iso) {
+      const offset = dateOffset(iso);
+
+      if (offset === 0) return "Hoje";
+      if (offset === 1) return "Amanhã";
+      if (offset <= 6) return "Próximos dias";
+      if (offset <= 13) return "Próxima semana";
+
+      return "Próximas semanas";
+    }
+
+    function isTimeInPastToday(iso, time) {
+      if (iso !== todayISO()) return false;
+
+      const parts = String(time || "").slice(0, 5).split(":");
+
+      if (parts.length !== 2) return false;
+
+      const hours = Number(parts[0]);
+      const minutes = Number(parts[1]);
+
+      if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+        return false;
+      }
+
+      const now = saoPauloNowParts();
+
+      return hours * 60 + minutes <= now.minutes;
+    }
+
+    /*
+      Normalização mais flexível:
+      aceita arrays diretos e arrays dentro de objetos comuns da API.
+    */
+    function normalizeList(data, depth = 0) {
+      if (Array.isArray(data)) return data;
+      if (!data || typeof data !== "object" || depth > 4) return [];
+
+      const possibleKeys = [
+        "data",
+        "servicos",
+        "services",
+        "horarios",
+        "horarios_disponiveis",
+        "horariosDisponiveis",
+        "disponibilidade",
+        "disponiveis",
+        "slots",
+        "available_times",
+        "availableTimes",
+        "available_slots",
+        "availableSlots",
+        "results",
+        "result",
+        "items",
+        "opcoes",
+        "options"
+      ];
+
+      for (const key of possibleKeys) {
+        if (data[key] !== undefined && data[key] !== null) {
+          const found = normalizeList(data[key], depth + 1);
+
+          if (found.length) return found;
+
+          if (Array.isArray(data[key])) return data[key];
+        }
+      }
+
+      return [];
+    }
+
+    function normalizeService(service) {
+      return {
+        id:
+          service.id ??
+          service.servico_id ??
+          service.id_servico ??
+          service.service_id,
+        nome:
+          service.nome ??
+          service.nome_servico ??
+          service.servico ??
+          service.name ??
+          "Serviço",
+        preco: Number(
+          service.preco ??
+          service.valor ??
+          service.preco_base ??
+          service.price ??
+          0
+        ),
+        duracao: Number(
+          service.duracao_minutos ??
+          service.duracao ??
+          service.tempo_minutos ??
+          service.duration_minutes ??
+          service.duration ??
+          60
+        ),
+        descricao:
+          service.descricao ??
+          service.description ??
+          ""
+      };
+    }
+
+    function normalizeClientResponse(result) {
+      if (!result) {
+        return { exists: false, client: null };
+      }
+
+      if (
+        result.existe === false ||
+        result.encontrado === false ||
+        result.exists === false
+      ) {
+        return { exists: false, client: null };
+      }
+
+      const client = result.cliente ?? result.data ?? result;
+
+      if (
+        result.existe === true ||
+        result.encontrado === true ||
+        result.exists === true
+      ) {
+        return { exists: true, client: client || null };
+      }
+
+      if (
+        client &&
+        typeof client === "object" &&
+        (client.id || client.nome || client.telefone)
+      ) {
+        return { exists: true, client };
+      }
+
+      return { exists: false, client: null };
+    }
+
+    function extractTime(item) {
+      if (typeof item === "string") return item;
+
+      if (!item || typeof item !== "object") return "";
+
+      return (
+        item.hora_inicio ??
+        item.horario_inicio ??
+        item.horario ??
+        item.hora ??
+        item.inicio ??
+        item.time ??
+        item.start_time ??
+        item.start ??
+        ""
+      );
+    }
+
+    function isUnavailableResponse(error) {
+      return error.status === 400 || error.status === 404;
+    }
+
+    async function apiRequest(url, options = {}) {
+      let response;
+
+      try {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            Accept: "application/json",
+            ...(options.body ? { "Content-Type": "application/json" } : {}),
+            ...(options.headers || {})
+          },
+          cache: "no-store"
+        });
+      } catch {
+        throw new Error(
+          "Não consegui conectar ao servidor. Verifique sua internet e tente novamente."
+        );
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      let data;
+
+      if (contentType.includes("application/json")) {
+        data = await response.json().catch(() => ({}));
+      } else {
+        const raw = await response.text().catch(() => "");
+        data = { message: raw };
+      }
+
+      if (!response.ok) {
+        const rawMessage =
+          data?.message ||
+          data?.error ||
+          data?.erro ||
+          data?.details ||
+          data?.mensagem ||
+          "Não foi possível concluir essa etapa.";
+
+        const error = new Error(
+          String(rawMessage).replace(/<[^>]*>/g, "").slice(0, 500)
+        );
+
+        error.status = response.status;
+        error.data = data;
+
+        throw error;
+      }
+
+      return data;
+    }
+
+    /* INTERFACE DO CHAT */
+
+    function scrollChatToBottom() {
+      const chat = $("#chatMessages");
+
+      requestAnimationFrame(() => {
+        chat.scrollTop = chat.scrollHeight;
+      });
+    }
+
+    function addBubble(text, sender = "bot") {
+      const row = document.createElement("div");
+      row.className = `message-row ${sender}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      const time = document.createElement("span");
+      time.className = "bubble-time";
+      time.textContent = new Intl.DateTimeFormat("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "America/Sao_Paulo"
+      }).format(new Date());
+
+      bubble.appendChild(time);
+      row.appendChild(bubble);
+      $("#chatMessages").appendChild(row);
+
+      scrollChatToBottom();
+
+      return row;
+    }
+
+    function addTyping() {
+      removeTyping();
+
+      const row = document.createElement("div");
+      row.className = "message-row bot";
+      row.id = "typingIndicator";
+
+      const bubble = document.createElement("div");
+      bubble.className = "typing-bubble";
+      bubble.setAttribute("aria-label", "A secretária está respondendo");
+
+      for (let i = 0; i < 3; i++) {
+        bubble.appendChild(document.createElement("span"));
+      }
+
+      row.appendChild(bubble);
+      $("#chatMessages").appendChild(row);
+
+      scrollChatToBottom();
+    }
+
+    function removeTyping() {
+      $("#typingIndicator")?.remove();
+    }
+
+    function botSay(text) {
+      removeTyping();
+      addBubble(text, "bot");
+    }
+
+    function userSay(text) {
+      addBubble(text, "user");
+    }
+
+    /*
+      CORREÇÃO IMPORTANTE:
+      Esta função remove somente as respostas rápidas antigas.
+      Ela NÃO apaga os botões de datas ou horários que acabaram
+      de ser exibidos.
+    */
+    function clearQuickReplies() {
+      $$(".quick-replies").forEach((element) => element.remove());
+    }
+
+    function clearOptionContainers() {
+      $$(".quick-replies, .option-grid, .date-options, .time-options, .review-card")
+        .forEach((element) => element.remove());
+    }
+
+    function renderQuickReplies(options) {
+      clearQuickReplies();
+
+      const container = document.createElement("div");
+      container.className = "quick-replies";
+
+      options.forEach((option) => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = `quick-reply ${option.gold ? "gold" : ""}`.trim();
+        button.textContent = option.label;
+
+        button.addEventListener("click", async () => {
+          if (button.disabled || state.bookingInProgress) return;
+
+          // Impede duplo clique em respostas rápidas do mesmo grupo.
+          container.querySelectorAll("button").forEach((item) => {
+            item.disabled = true;
+          });
+
+          userSay(option.label);
+
+          try {
+            if (typeof option.action === "function") {
+              await option.action();
+            }
+          } catch (error) {
+            botSay(error.message || "Ocorreu um erro. Tente novamente.");
+          }
+        });
+
+        container.appendChild(button);
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+    }
+
+    function renderOptionCards(options, onSelect) {
+      clearOptionContainers();
+
+      const container = document.createElement("div");
+      container.className = "option-grid";
+
+      options.forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option-card";
+
+        const icon = document.createElement("span");
+        icon.className = "option-icon";
+        icon.textContent = option.icon || "✧";
+
+        const title = document.createElement("strong");
+        title.textContent = option.title;
+
+        const description = document.createElement("small");
+        description.textContent = option.description || "";
+
+        button.append(icon, title, description);
+
+        if (option.price !== undefined) {
+          const price = document.createElement("span");
+          price.className = "option-price";
+          price.textContent = money(option.price);
+          button.appendChild(price);
+        }
+
+        button.addEventListener("click", async () => {
+          if (button.disabled) return;
+
+          container.querySelectorAll("button").forEach((item) => {
+            item.disabled = true;
+          });
+
+          button.classList.add("selected");
+          userSay(option.title);
+
+          try {
+            await onSelect(option);
+          } catch (error) {
+            botSay(error.message || "Não consegui selecionar esse procedimento. Tente novamente.");
+          }
+        });
+
+        container.appendChild(button);
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+    }
+
+    function configureInput({
+      label = "Sua mensagem",
+      placeholder = "Digite aqui...",
+      type = "text",
+      enabled = true,
+      hint = ""
+    } = {}) {
+      const input = $("#chatInput");
+
+      $("#inputLabel").textContent = label;
+      input.type = type;
+      input.placeholder = placeholder;
+      input.disabled = !enabled;
+      input.value = "";
+
+      input.autocomplete =
+        type === "tel" ? "tel" :
+        type === "email" ? "email" :
+        "off";
+
+      input.inputMode = type === "tel" ? "tel" : "text";
+
+      $("#sendButton").disabled = !enabled;
+      $("#composerHint").textContent = hint;
+
+      if (enabled) {
+        setTimeout(() => {
+          try {
+            input.focus({ preventScroll: true });
+          } catch {
+            input.focus();
+          }
+        }, 50);
+      }
+    }
+
+    function setStep(step) {
+      state.step = step;
+
+      $("#backChat").hidden = ![
+        "phone",
+        "clientChoice",
+        "name",
+        "email",
+        "services",
+        "cidade",
+        "dates",
+        "times",
+        "observations",
+        "review"
+      ].includes(step);
+
+      configureInput({
+        enabled: false,
+        placeholder: "Selecione uma opção acima",
+        hint: "A secretária vai orientar você durante todo o atendimento."
+      });
+    }
+
+    /* INÍCIO */
+
+    function startChat() {
+      state.requestToken++;
+
+      $("#chatMessages").innerHTML = "";
+
+      state.step = "welcome";
+      state.clientType = null;
+      state.clientExists = false;
+      state.clientId = null;
+      state.nome = "";
+      state.telefone = "";
+      state.email = "";
+      state.servico = null;
+      state.cidade = "";
+      state.cidades = [];
+      state.data = "";
+      state.horario = "";
+      state.observacoes = "";
+      state.services = [];
+      state.dates = [];
+      state.times = [];
+      state.bookingInProgress = false;
+      state.clientSaved = false;
+
+      botSay(
+        "Olá! Seja muito bem-vinda ao espaço Taiany Trindade Nail Designer. ♡\n\nSou a secretária virtual e vou ajudar você a agendar seu procedimento.\n\nVamos encontrar o melhor horário para você?"
+      );
+
+      renderQuickReplies([
+        {
+          label: "✦ Quero agendar",
+          gold: true,
+          action: askPhone
+        },
+        {
+          label: "♡ Consultar agendamento",
+          action: consultBooking
+        },
+        {
+          label: "Como funciona?",
+          action: explainBooking
+        }
+      ]);
+
+      setStep("welcome");
+    }
+
+
+function consultBooking() {
+  setStep("consultBookingPhone");
+
+  botSay(
+    "Claro! ♡ Vou ajudar você a consultar seu agendamento.\n\nInforme o WhatsApp com DDD que foi utilizado no momento da marcação."
+  );
+
+  configureInput({
+    label: "WhatsApp usado no agendamento",
+    placeholder: "(17) 99999-9999",
+    type: "tel",
+    enabled: true,
+    hint: "Digite o mesmo número informado ao realizar o agendamento."
+  });
+}
+      
+    function explainBooking() {
+      botSay(
+        "É simples! Vou localizar seu cadastro pelo WhatsApp, mostrar os procedimentos disponíveis e consultar os dias e horários livres. No final, você revisa os dados e envia a solicitação de agendamento."
+      );
+
+      renderQuickReplies([
+        {
+          label: "Vamos agendar",
+          gold: true,
+          action: askPhone
+        },
+        {
+          label: "Voltar ao início",
+          action: startChat
+        }
+      ]);
+    }
+
+    function askPhone() {
+      setStep("phone");
+
+      botSay(
+        "Perfeito! ✨ Para começar, informe seu WhatsApp com DDD. Vou verificar se já existe um cadastro com esse número."
+      );
+
+      configureInput({
+        label: "WhatsApp com DDD",
+        placeholder: "(17) 99999-9999",
+        type: "tel",
+        enabled: true,
+        hint: "Informe seu número com DDD, sem precisar digitar espaços ou traços."
+      });
+    }
+
+    async function checkExistingClient(phone) {
+      return apiRequest(
+        `${API.clients}?telefone=${encodeURIComponent(digits(phone))}`
+      ).then(normalizeClientResponse);
+    }
+
+    async function handlePhone(value) {
+      const phone = digits(value);
+
+      if (phone.length < 10 || phone.length > 11) {
+        botSay("Esse número parece incompleto. Confira o DDD e o WhatsApp e tente novamente.");
+
+        configureInput({
+          label: "WhatsApp com DDD",
+          placeholder: "(17) 99999-9999",
+          type: "tel",
+          enabled: true,
+          hint: "Informe um número com 10 ou 11 dígitos, incluindo o DDD."
+        });
+
+        return;
+      }
+
+      state.telefone = formatPhone(phone);
+
+      setStep("checkingClient");
+      botSay("Só um instante, estou verificando seu cadastro...");
+      addTyping();
+
+      try {
+        const result = await checkExistingClient(phone);
+
+        removeTyping();
+
+        state.clientExists = result.exists;
+        state.clientId = result.client?.id || null;
+
+        if (result.exists) {
+          state.nome = result.client?.nome || "";
+          state.email = result.client?.email || "";
+
+          botSay(
+            `Encontrei um cadastro${state.nome ? ` em nome de ${state.nome}` : ""}! ♡\n\nVamos utilizar os dados existentes para evitar um cadastro duplicado.`
+          );
+
+          renderQuickReplies([
+            {
+              label: "Continuar com esse cadastro",
+              gold: true,
+              action: () => continueWithExistingClient(result.client)
+            },
+            {
+              label: "Corrigir WhatsApp",
+              action: askPhone
+            }
+          ]);
+
+          setStep("clientChoice");
+        } else {
+          botSay(
+            "Ainda não encontrei um cadastro com esse WhatsApp. Se for sua primeira visita, podemos cadastrar seus dados rapidinho."
+          );
+
+          renderQuickReplies([
+            {
+              label: "Sou nova cliente",
+              gold: true,
+              action: startNewClient
+            },
+            {
+              label: "Tentar outro número",
+              action: askPhone
+            }
+          ]);
+
+          setStep("clientChoice");
+        }
+      } catch (error) {
+        removeTyping();
+
+        botSay(
+          `Não consegui consultar o cadastro neste momento.\n\n${error.message}\n\nVocê pode tentar novamente.`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: () => handlePhone(phone)
+          },
+          {
+            label: "Corrigir WhatsApp",
+            action: askPhone
+          }
+        ]);
+      }
+    }
+
+    function continueWithExistingClient(client) {
+      state.clientExists = true;
+      state.clientId = client?.id || state.clientId;
+      state.nome = client?.nome || state.nome;
+      state.email = client?.email || state.email;
+
+      botSay(
+        `Tudo certo${state.nome ? `, ${state.nome.split(" ")[0]}` : ""}! Vamos escolher seu procedimento.`
+      );
+
+      loadServices();
+    }
+
+    function availabilityIsActive(item) {
+      const value = item?.ativo ?? item?.active ?? item?.is_active;
+      if (value === false || value === 0) return false;
+      if (typeof value === "string" && /^(false|0|inativo|não|nao)$/i.test(value.trim())) {
+        return false;
+      }
+      return true;
+    }
+
+    function getAvailableCities(rows) {
+      const today = todayISO();
+      const cities = new Map();
+
+      rows.forEach((item) => {
+        if (!item || typeof item !== "object" || !availabilityIsActive(item)) return;
+
+        const city = String(item.cidade ?? item.city ?? "").trim();
+        if (!city) return;
+
+        const specificDate = String(
+          item.data_especifica ?? item.data ?? item.date ?? ""
+        ).slice(0, 10);
+
+        if (specificDate && /^\d{4}-\d{2}-\d{2}$/.test(specificDate) && specificDate < today) {
+          return;
+        }
+
+        const key = city.toLocaleLowerCase("pt-BR");
+        if (!cities.has(key)) cities.set(key, city);
+      });
+
+      return [...cities.values()].sort((a, b) =>
+        a.localeCompare(b, "pt-BR", { sensitivity: "base" })
+      );
+    }
+
+    async function askCidade() {
+      setStep("cidade");
+      clearOptionContainers();
+
+      botSay(
+        "Em qual cidade você quer ser atendida? ✨\n\nVou mostrar somente as cidades que possuem disponibilidade cadastrada e ativa no painel."
+      );
+      addTyping();
+
+      try {
+        const response = await apiRequest(API.availability);
+        const rows = normalizeList(response);
+        state.cidades = getAvailableCities(rows);
+        removeTyping();
+
+        if (!state.cidades.length) {
+          botSay(
+            "No momento, não encontrei cidades com disponibilidade ativa cadastrada. Peça à equipe para revisar a agenda no painel e tente novamente."
+          );
+          renderQuickReplies([
+            { label: "Consultar novamente", gold: true, action: askCidade },
+            { label: "Escolher outro procedimento", action: loadServices }
+          ]);
+          return;
+        }
+
+        renderQuickReplies(
+          state.cidades.map((cidade) => ({
+            label: `📍 ${cidade}`,
+            gold: true,
+            action: async () => {
+              state.cidade = cidade;
+              state.data = "";
+              state.horario = "";
+              state.dates = [];
+              state.times = [];
+              await loadDates();
+            }
+          }))
+        );
+      } catch (error) {
+        removeTyping();
+        botSay(
+          `Não consegui consultar as cidades disponíveis no painel.\n\n${error.message}`
+        );
+        renderQuickReplies([
+          { label: "Tentar novamente", gold: true, action: askCidade },
+          { label: "Voltar aos procedimentos", action: loadServices }
+        ]);
+      }
+    }
+
+    function startNewClient() {
+      state.clientType = "new";
+      state.clientExists = false;
+      state.clientId = null;
+      state.clientSaved = false;
+
+      botSay("Que bom ter você por aqui! ♡ Como posso chamar você? Informe seu nome completo.");
+
+      setStep("name");
+
+      configureInput({
+        label: "Nome completo",
+        placeholder: "Digite seu nome completo",
+        enabled: true,
+        hint: "Informe seu nome para o cadastro."
+      });
+    }
+
+    async function saveNewClient() {
+      if (state.clientExists || state.clientSaved) return;
+
+      const payload = {
+        nome: state.nome,
+        telefone: digits(state.telefone),
+        email: state.email || null
+      };
+
+      try {
+        const result = await apiRequest(API.createClient, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        const client = result?.cliente || result?.data || result;
+
+        state.clientId = client?.id || state.clientId;
+        state.clientSaved = true;
+      } catch (error) {
+        if (
+          error.status === 409 ||
+          /duplicad|já existe|ja existe|23505|duplicate key|unique constraint/i.test(error.message)
+        ) {
+          const result = await checkExistingClient(digits(state.telefone));
+
+          if (result.exists) {
+            state.clientExists = true;
+            state.clientId = result.client?.id || null;
+            state.nome = result.client?.nome || state.nome;
+            state.email = result.client?.email || state.email;
+            state.clientSaved = true;
+            return;
+          }
+        }
+
+        throw error;
+      }
+    }
+
+    /* CADASTRO */
+
+    async function handleName(value) {
+      const name = value.trim();
+
+      if (name.length < 3) {
+        botSay("Pode me informar seu nome completo? Preciso de pelo menos 3 caracteres.");
+
+        configureInput({
+          label: "Nome completo",
+          placeholder: "Digite seu nome completo",
+          enabled: true
+        });
+
+        return;
+      }
+
+      state.nome = name;
+
+      botSay(
+        `Prazer em receber você, ${name.split(" ")[0]}! ♡\n\nSe quiser, informe seu e-mail. Essa informação é opcional.`
+      );
+
+      setStep("email");
+
+      renderQuickReplies([
+        {
+          label: "Pular esta etapa",
+          action: () => handleEmail("")
+        }
+      ]);
+
+      configureInput({
+        label: "E-mail (opcional)",
+        placeholder: "voce@email.com",
+        type: "email",
+        enabled: true,
+        hint: "Você também pode selecionar “Pular esta etapa”."
+      });
+    }
+
+    async function handleEmail(value) {
+      const email = value.trim();
+
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        botSay("Esse e-mail parece estar incorreto. Confira o endereço ou escolha pular esta etapa.");
+
+        renderQuickReplies([
+          {
+            label: "Pular esta etapa",
+            action: () => handleEmail("")
+          }
+        ]);
+
+        configureInput({
+          label: "E-mail (opcional)",
+          placeholder: "voce@email.com",
+          type: "email",
+          enabled: true
+        });
+
+        return;
+      }
+
+      state.email = email;
+
+      try {
+        botSay("Vou registrar seus dados para que possamos seguir com o agendamento.");
+        addTyping();
+
+        await saveNewClient();
+
+        removeTyping();
+
+        botSay("Cadastro pronto! Agora vamos escolher o procedimento ideal para você. ✨");
+
+        await loadServices();
+      } catch (error) {
+        removeTyping();
+
+        botSay(
+          `Não consegui salvar o cadastro neste momento.\n\n${error.message}\n\nSeus dados ainda não foram confirmados no sistema. Vamos tentar novamente.`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: () => handleEmail(state.email)
+          },
+          {
+            label: "Recomeçar",
+            action: startChat
+          }
+        ]);
+      }
+    }
+    
+    /* SERVIÇOS */
+
+    async function loadServices() {
+      state.requestToken++;
+      setStep("services");
+
+      botSay("Estes são os procedimentos disponíveis no sistema. Escolha aquele que deseja realizar.");
+
+      addTyping();
+
+      try {
+        const data = await apiRequest(API.services);
+
+        removeTyping();
+
+        state.services = normalizeList(data)
+          .filter((service) => {
+            const active = service?.ativo ?? service?.active ?? service?.is_active;
+            if (active === false || active === 0) return false;
+            if (typeof active === "string" && /^(false|0|inativo|não|nao)$/i.test(active.trim())) {
+              return false;
+            }
+            return true;
+          })
+          .map(normalizeService)
+          .filter((service) => service.id !== undefined && service.id !== null);
+
+        if (!state.services.length) {
+          botSay("No momento, não encontrei serviços disponíveis para agendamento.");
+
+          renderQuickReplies([
+            {
+              label: "Tentar novamente",
+              gold: true,
+              action: loadServices
+            },
+            {
+              label: "Voltar ao início",
+              action: startChat
+            }
+          ]);
+
+          return;
+        }
+
+        renderOptionCards(
+          state.services.map((service) => ({
+            title: service.nome,
+            description: [
+              service.duracao > 0 ? `${service.duracao} minutos` : "",
+              service.descricao || ""
+            ].filter(Boolean).join(" · "),
+            price: service.preco,
+            icon: "✧",
+            service
+          })),
+          async (option) => {
+            state.servico = option.service;
+            state.data = "";
+            state.horario = "";
+            state.dates = [];
+            state.times = [];
+
+            botSay(
+              `Ótima escolha! ✨\n\nProcedimento: ${state.servico.nome}\nValor: ${money(state.servico.preco)}\nDuração prevista: ${state.servico.duracao} minutos.`
+            );
+
+            askCidade();
+          }
+        );
+      } catch (error) {
+        removeTyping();
+
+        botSay(`Não consegui carregar os procedimentos.\n\n${error.message}`);
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: loadServices
+          },
+          {
+            label: "Voltar ao início",
+            action: startChat
+          }
+        ]);
+      }
+    }
+    
+    /* CONSULTA DOS HORÁRIOS */
+
+    async function fetchTimesForDate(iso, serviceId) {
+      if (!state.cidade) {
+        throw new Error("Selecione uma cidade antes de consultar a disponibilidade.");
+      }
+
+      const params = new URLSearchParams({
+        data: iso,
+        servico_id: String(serviceId),
+        cidade: state.cidade
+      });
+
+      const result = await apiRequest(`${API.times}?${params.toString()}`);
+
+      /*
+        Alguns servidores retornam a lista diretamente.
+        Outros usam { horarios: [...] }, { data: [...] },
+        { horarios_disponiveis: [...] } ou estruturas semelhantes.
+      */
+      let list = normalizeList(result);
+
+      /*
+        Compatibilidade com APIs que retornam um único horário
+        em vez de uma lista.
+      */
+      if (
+        !list.length &&
+        result &&
+        typeof result === "object" &&
+        (
+          result.hora_inicio ||
+          result.horario ||
+          result.hora ||
+          result.inicio ||
+          result.time
+        )
+      ) {
+        list = [result];
+      }
+
+      const times = list
+        .filter((item) => {
+          if (typeof item === "string") return true;
+          if (!item || typeof item !== "object") return false;
+
+          if (
+            item.disponivel === false ||
+            item.available === false ||
+            item.livre === false
+          ) {
+            return false;
+          }
+
+          if (
+            item.status &&
+            /ocupado|indisponível|indisponivel|reservado|bloqueado/i.test(String(item.status))
+          ) {
+            return false;
+          }
+
+          return true;
+        })
+        .map(extractTime)
+        .filter(Boolean)
+        .map((time) => String(time).trim().slice(0, 5))
+        .filter((time) => /^\d{2}:\d{2}$/.test(time))
+        .filter((time) => {
+          const [hours, minutes] = time.split(":").map(Number);
+          return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+        })
+        .filter((time) => !isTimeInPastToday(iso, time));
+
+      return [...new Set(times)].sort((a, b) => a.localeCompare(b));
+    }
+
+    /* DATAS DISPONÍVEIS */
+
+    async function loadDates() {
+      setStep("dates");
+
+      clearOptionContainers();
+
+      botSay(
+        "Agora vou consultar a agenda para encontrar os dias com horários livres. Pode levar alguns segundos."
+      );
+
+      addTyping();
+
+      const serviceId = state.servico?.id;
+
+      if (!state.cidade) {
+        removeTyping();
+        botSay("Antes de consultar as datas, selecione a cidade em que deseja ser atendida.");
+        await askCidade();
+        return;
+      }
+
+      if (!serviceId) {
+        removeTyping();
+
+        botSay("Não encontrei o procedimento selecionado. Vamos escolher novamente.");
+
+        await loadServices();
+        return;
+      }
+
+      const token = ++state.requestToken;
+      const candidates = Array.from(
+        { length: 30 },
+        (_, index) => addDays(todayISO(), index)
+      );
+
+      const availableDates = [];
+      let completed = 0;
+      let errors = 0;
+      let validResponses = 0;
+
+      try {
+        /*
+          Consulta quatro datas por vez para reduzir o tempo de espera
+          sem enviar 30 solicitações simultâneas ao servidor.
+        */
+        for (let index = 0; index < candidates.length; index += 4) {
+          if (token !== state.requestToken) return;
+
+          const batch = candidates.slice(index, index + 4);
+
+          const results = await Promise.all(
+            batch.map(async (iso) => {
+              try {
+                const times = await fetchTimesForDate(iso, serviceId);
+
+                return {
+                  iso,
+                  times,
+                  error: false,
+                  unavailable: false
+                };
+              } catch (error) {
+                if (isUnavailableResponse(error)) {
+                  return {
+                    iso,
+                    times: [],
+                    error: false,
+                    unavailable: true
+                  };
+                }
+
+                return {
+                  iso,
+                  times: [],
+                  error: true,
+                  message: error.message
+                };
+              }
+            })
+          );
+
+          results.forEach((result) => {
+            completed++;
+
+            if (result.error) {
+              errors++;
+            } else {
+              validResponses++;
+
+              if (result.times.length > 0) {
+                availableDates.push(result.iso);
+              }
+            }
+          });
+
+          /*
+            Se nenhuma consulta conseguir responder, interrompe.
+            Isso evita dizer que não há datas quando o servidor caiu.
+          */
+          if (completed >= 4 && validResponses === 0 && errors === completed) {
+            throw new Error(
+              results.find((item) => item.error)?.message ||
+              "O servidor não conseguiu consultar a agenda."
+            );
+          }
+        }
+
+        if (token !== state.requestToken) return;
+
+        removeTyping();
+
+        state.dates = [...new Set(availableDates)].sort();
+
+        if (!state.dates.length) {
+          if (errors > 0) {
+            botSay(
+              "Não consegui confirmar as datas disponíveis agora. O sistema apresentou uma falha em parte das consultas."
+            );
+          } else {
+            botSay(
+              "Não encontrei horários livres para esse procedimento nos próximos 30 dias. Você pode consultar novamente ou escolher outro procedimento."
+            );
+          }
+
+          renderQuickReplies([
+            {
+              label: "Consultar novamente",
+              gold: true,
+              action: loadDates
+            },
+            {
+              label: "Escolher outro procedimento",
+              action: loadServices
+            }
+          ]);
+
+          return;
+        }
+
+        botSay(
+          `Encontrei ${state.dates.length} ${state.dates.length === 1 ? "data com horário disponível" : "datas com horários disponíveis"}! ♡\n\nToque em uma das datas abaixo para consultar os horários.`
+        );
+
+        renderDates();
+      } catch (error) {
+        removeTyping();
+
+        botSay(
+          `Não consegui consultar a agenda com segurança.\n\n${error.message}\n\nVocê pode tentar novamente.`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Tentar novamente",
+            gold: true,
+            action: loadDates
+          },
+          {
+            label: "Escolher outro procedimento",
+            action: loadServices
+          }
+        ]);
+      }
+    }
+
+    function renderDates() {
+      /*
+        Remove as opções anteriores, mas não chama renderQuickReplies
+        até depois de montar a grade de datas.
+      */
+      clearOptionContainers();
+
+      const container = document.createElement("div");
+      container.className = "date-options";
+
+      const orderedTitles = [
+        "Hoje",
+        "Amanhã",
+        "Próximos dias",
+        "Próxima semana",
+        "Próximas semanas"
+      ];
+
+      orderedTitles.forEach((title) => {
+        const datesForGroup = state.dates.filter(
+          (iso) => dateGroupTitle(iso) === title
+        );
+
+        if (!datesForGroup.length) return;
+
+        const heading = document.createElement("div");
+        heading.className = "date-group";
+        heading.textContent = title;
+        container.appendChild(heading);
+
+        datesForGroup.forEach((iso) => {
+          const date = dateFromISO(iso);
+          const button = document.createElement("button");
+
+          button.type = "button";
+          button.className = "date-option";
+          button.setAttribute("aria-label", `Consultar horários para ${formatDate(iso)}`);
+
+          button.innerHTML = `
+            <strong>${String(date.getDate()).padStart(2, "0")}</strong>
+            <span>${escapeHTML(shortWeekday(iso))}</span>
+            <span class="date-month">${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}</span>
+          `;
+
+          button.addEventListener("click", async () => {
+            if (button.disabled) return;
+
+            container.querySelectorAll("button").forEach((item) => {
+              item.disabled = true;
+            });
+
+            userSay(formatDate(iso));
+
+            state.data = iso;
+            state.horario = "";
+            state.times = [];
+
+            await loadTimes();
+          });
+
+          container.appendChild(button);
+        });
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+
+      /*
+        CORREÇÃO: renderQuickReplies agora preserva .date-options.
+        Os botões abaixo não apagam mais os botões de data.
+      */
+      renderQuickReplies([
+        {
+          label: "Escolher outro procedimento",
+          action: loadServices
+        },
+        {
+          label: "Voltar ao início",
+          action: startChat
+        }
+      ]);
+    }
+
+    /* HORÁRIOS DISPONÍVEIS */
+
+    async function loadTimes() {
+      if (!state.data || !state.servico?.id) {
+        await loadDates();
+        return;
+      }
+
+      setStep("times");
+      clearOptionContainers();
+      addTyping();
+
+      const token = ++state.requestToken;
+      const selectedDate = state.data;
+      const selectedServiceId = state.servico.id;
+
+      try {
+        const times = await fetchTimesForDate(selectedDate, selectedServiceId);
+
+        if (token !== state.requestToken) return;
+
+        removeTyping();
+
+        state.times = times;
+
+        if (!times.length) {
+          state.data = "";
+          state.horario = "";
+
+          botSay(
+            "Essa data não possui mais horários disponíveis. Vou consultar outras datas para você."
+          );
+
+          await loadDates();
+          return;
+        }
+
+        botSay(
+          `Para ${formatDate(selectedDate)}, estes são os horários que o sistema informa como disponíveis. Qual você prefere?`
+        );
+
+        renderTimes();
+      } catch (error) {
+        if (token !== state.requestToken) return;
+
+        removeTyping();
+
+        if (isUnavailableResponse(error)) {
+          state.data = "";
+          state.horario = "";
+
+          botSay("Não há horários disponíveis nessa data. Vamos consultar outro dia.");
+
+          await loadDates();
+          return;
+        }
+
+        botSay(
+          `Não consegui consultar os horários agora.\n\n${error.message}`
+        );
+
+        renderQuickReplies([
+          {
+            label: "Consultar novamente",
+            gold: true,
+            action: loadTimes
+          },
+          {
+            label: "Escolher outra data",
+            action: loadDates
+          }
+        ]);
+      }
+    }
+
+    function renderTimes() {
+      clearOptionContainers();
+
+      const container = document.createElement("div");
+      container.className = "time-options";
+
+      state.times.forEach((time) => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "time-option";
+        button.textContent = time;
+        button.setAttribute("aria-label", `Selecionar horário ${time}`);
+
+        button.addEventListener("click", async () => {
+          if (button.disabled) return;
+
+          if (isTimeInPastToday(state.data, time)) {
+            botSay("Esse horário já passou. Vou atualizar as opções disponíveis.");
+            await loadTimes();
+            return;
+          }
+
+          container.querySelectorAll("button").forEach((item) => {
+            item.disabled = true;
+          });
+
+          userSay(time);
+
+          state.horario = time;
+
+          botSay(`Horário selecionado: ${time}. ✨`);
+
+          setStep("observations");
+
+          renderQuickReplies([
+            {
+              label: "Continuar",
+              gold: true,
+              action: askObservations
+            },
+            {
+              label: "Escolher outro horário",
+              action: loadTimes
+            },
+            {
+              label: "Escolher outra data",
+              action: loadDates
+            }
+          ]);
+        });
+
+        container.appendChild(button);
+      });
+
+      $("#chatMessages").appendChild(container);
+      scrollChatToBottom();
+
+      /*
+        CORREÇÃO: os botões de navegação ficam abaixo dos horários
+        sem remover a grade de horários.
+      */
+      renderQuickReplies([
+        {
+          label: "Escolher outra data",
+          action: loadDates
+        },
+        {
+          label: "Escolher outro procedimento",
+          action: loadServices
+        }
+      ]);
+    }
+
+    /* OBSERVAÇÕES E REVISÃO */
+
+    function askObservations() {
+      botSay(
+        "Deseja deixar alguma observação sobre o procedimento? É opcional. Se não precisar, pode pular."
+      );
+
+      setStep("observations");
+
+      renderQuickReplies([
+        {
+          label: "Não, pode continuar",
+          gold: true,
+          action: () => {
+            state.observacoes = "";
+            renderReview();
+          }
+        }
+      ]);
+
+      configureInput({
+        label: "Observações (opcional)",
+        placeholder: "Digite uma observação...",
+        enabled: true,
+        hint: "Se não houver observações, selecione a opção acima."
+      });
+    }
+
+    function renderReview() {
+      clearOptionContainers();
+
+      botSay(
+        "Perfeito! Antes de enviar sua solicitação, confira os dados abaixo."
+      );
+
+      const rows = [
+        ["Cliente", state.nome],
+        ["WhatsApp", state.telefone],
+        ["Procedimento", state.servico?.nome || "—"],
+        ["Data", state.data ? formatDate(state.data) : "—"],
+        ["Horário", state.horario || "—"],
+        ["Cidade", state.cidade || "—"],
+        ["Valor", money(state.servico?.preco || 0)],
+        ["Observações", state.observacoes || "Nenhuma"]
+      ];
+
+      const review = document.createElement("div");
+      review.className = "review-card";
+
+      const title = document.createElement("h4");
+      title.className = "review-title";
+      title.textContent = "Resumo do agendamento";
+
+      review.appendChild(title);
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement("div");
+        row.className = "review-row";
+
+        const labelElement = document.createElement("span");
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("strong");
+        valueElement.textContent = value;
+
+        row.append(labelElement, valueElement);
+        review.appendChild(row);
+      });
+
+      $("#chatMessages").appendChild(review);
+      scrollChatToBottom();
+
+      setStep("review");
+
+      renderQuickReplies([
+        {
+          label: "Confirmar agendamento",
+          gold: true,
+          action: confirmBooking
+        },
+        {
+          label: "Alterar horário",
+          action: loadTimes
+        },
+        {
+          label: "Alterar data",
+          action: loadDates
+        },
+        {
+          label: "Alterar procedimento",
+          action: loadServices
+        }
+      ]);
+    }
+
+    /* REGISTRO DEFINITIVO */
+
+    function isDuplicateError(message) {
+      return /duplicad|já existe|ja existe|telefone.*cadastrad|whatsapp.*cadastrad|unique constraint|duplicate key|23505/i.test(message);
+    }
+
+    function isSlotUnavailableError(message) {
+      return /horário.*indisponível|horario.*indisponivel|já foi reservado|ja foi reservado|conflito|slot.*unavailable|agenda.*ocupada|não está mais disponível|nao esta mais disponivel/i.test(message);
+    }
+
+    function calculateEndTime(start, duration) {
+      const [hours, minutes] = start.split(":").map(Number);
+      const total = hours * 60 + minutes + Number(duration || 60);
+
+      const endHours = Math.floor(total / 60) % 24;
+      const endMinutes = total % 60;
+
+      return `${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`;
+    }
+
+    async function confirmBooking() {
+      if (state.bookingInProgress) return;
+
+      if (
+        !state.nome ||
+        digits(state.telefone).length < 10 ||
+        !state.servico ||
+        !state.cidade ||
+        !state.data ||
+        !state.horario
+      ) {
+        botSay("Falta alguma informação para concluir. Vamos revisar os dados antes de continuar.");
+
+        renderQuickReplies([
+          {
+            label: "Revisar agendamento",
+            gold: true,
+            action: renderReview
+          }
+        ]);
+
+        return;
+      }
+
+      if (isTimeInPastToday(state.data, state.horario)) {
+        botSay("Esse horário já passou. Vou atualizar a agenda para você.");
+        await loadTimes();
+        return;
+      }
+
+      state.bookingInProgress = true;
+
+      botSay(
+        "Estou validando a disponibilidade novamente e enviando seu agendamento ao sistema. Aguarde um instante, por favor. ♡"
+      );
+
+      addTyping();
+
+      try {
+        const payload = {
+          nome_cliente: state.nome,
+          telefone_cliente: digits(state.telefone),
+          email: state.email || null,
+          ...(state.clientId ? { cliente_id: state.clientId } : {}),
+          servico_id: state.servico.id,
+          nome_servico: state.servico.nome,
+          cidade: state.cidade,
+          data: state.data,
+          hora_inicio: state.horario,
+          hora_fim: calculateEndTime(
+            state.horario,
+            state.servico.duracao
+          ),
+          preco: state.servico.preco,
+          status: "Pendente",
+          observacoes: state.observacoes || "",
+          origem: "site"
+        };
+
+        const result = await apiRequest(API.bookings, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        removeTyping();
+
+        const booking =
+          result?.agendamento ||
+          result?.data?.agendamento ||
+          result?.data ||
+          result;
+
+        $("#successDetails").innerHTML = "";
+
+        const details = [
+          ["Cliente", state.nome],
+          ["Procedimento", state.servico.nome],
+          ["Cidade", state.cidade],
+          ["Data", formatDate(state.data)],
+          ["Horário", state.horario],
+          ["Valor", money(state.servico.preco)]
+        ];
+
+        details.forEach(([label, value]) => {
+          const row = document.createElement("div");
+          row.className = "modal-summary-row";
+
+          const labelElement = document.createElement("span");
+          labelElement.textContent = label;
+
+          const valueElement = document.createElement("strong");
+          valueElement.textContent = value;
+
+          row.append(labelElement, valueElement);
+          $("#successDetails").appendChild(row);
+        });
+
+        const protocol =
+          booking?.id ||
+          booking?.codigo ||
+          booking?.protocolo ||
+          booking?.agendamento_id ||
+          "";
+
+        $("#successProtocol").textContent = protocol
+          ? `Protocolo do agendamento: ${protocol}`
+          : "Sua solicitação foi registrada pelo sistema. Guarde os detalhes acima.";
+
+        const status = String(
+          booking?.status ||
+          result?.status ||
+          ""
+        ).toLowerCase();
+
+        if (/confirmad/.test(status)) {
+          $("#successTitle").textContent = "Horário confirmado!";
+          $("#successMessage").textContent =
+            "Seu agendamento foi confirmado. Será um prazer receber você!";
+        } else {
+          $("#successTitle").textContent = "Agendamento registrado!";
+          $("#successMessage").textContent =
+            "Sua solicitação foi registrada com sucesso. Caso o atendimento dependa de aprovação, aguarde a confirmação.";
+        }
+
+        $("#successModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+
+        createConfetti();
+      } catch (error) {
+        removeTyping();
+
+        if (isDuplicateError(error.message)) {
+          botSay(
+            "Parece que esse WhatsApp já possui cadastro. Não vamos criar outro registro. Você pode consultar novamente seu cadastro."
+          );
+
+          renderQuickReplies([
+            {
+              label: "Consultar cadastro",
+              gold: true,
+              action: () => handlePhone(digits(state.telefone))
+            },
+            {
+              label: "Voltar à revisão",
+              action: renderReview
+            }
+          ]);
+        } else if (isSlotUnavailableError(error.message)) {
+          state.horario = "";
+
+          botSay(
+            "Esse horário acabou de ficar indisponível. Não registrei a solicitação com esse horário. Vamos consultar as opções atualizadas."
+          );
+
+          await loadTimes();
+        } else {
+          botSay(
+            `Não consegui confirmar o agendamento.\n\n${error.message}\n\nNão vou apresentar uma confirmação enquanto o sistema não confirmar o registro. Você pode tentar novamente.`
+          );
+
+          renderQuickReplies([
+            {
+              label: "Tentar confirmar novamente",
+              gold: true,
+              action: confirmBooking
+            },
+            {
+              label: "Revisar dados",
+              action: renderReview
+            }
+          ]);
+        }
+      } finally {
+        state.bookingInProgress = false;
+      }
+    }
+
+    function createConfetti() {
+      const card = $("#modalCard");
+
+      card.querySelectorAll(".confetti").forEach((item) => item.remove());
+
+      const colors = [
+        "#c5a15b",
+        "#b76e79",
+        "#e8c9cc",
+        "#f0dca8",
+        "#d49ba3"
+      ];
+
+      for (let i = 0; i < 32; i++) {
+        const piece = document.createElement("span");
+
+        piece.className = "confetti";
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = `${Math.random() * .7}s`;
+        piece.style.animationDuration = `${1.2 + Math.random() * 1.1}s`;
+
+        card.appendChild(piece);
+      }
+    }
+
+    /* CAMPO DE ENTRADA - CORRIGIDO */
+
+    $("#composerForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const input = $("#chatInput");
+      const value = input.value.trim();
+
+      if (!value || input.disabled || state.bookingInProgress) return;
+
+      input.value = "";
+      userSay(value);
+
+      switch (state.step) {
+        case "consultBookingPhone": // <-- ESTE CASE FALTAVA
+          await handleConsultPhone(value);
+          break;
+
+        case "phone":
+          await handlePhone(value);
+          break;
+
+        case "name":
+          await handleName(value);
+          break;
+
+        case "email":
+          await handleEmail(value);
+          break;
+
+        case "observations":
+          state.observacoes = value.slice(0, 500);
+          renderReview();
+          break;
+
+        default:
+          botSay(
+            "Para continuar, selecione uma das opções apresentadas na conversa. Assim consigo consultar a agenda corretamente."
+          );
+          break;
+      }
+    });
+
+    async function handleConsultPhone(value){
+      const phone = digits(value);
+      if(phone.length < 10){
+        botSay("Esse número parece incompleto. Confira o DDD e o WhatsApp.");
+        configureInput({
+          label: "WhatsApp usado no agendamento",
+          placeholder: "(17) 99999-9999",
+          type: "tel",
+          enabled: true,
+          hint: "Digite o mesmo número informado ao realizar o agendamento."
+        });
+        return;
+      }
+      
+      botSay("Só um instante, estou consultando seus agendamentos... ♡");
+      addTyping();
+      
+      try{
+        // usa a rota nova que você já adicionou no server.js
+        const res = await apiRequest(`/api/meus-agendamentos?telefone=${encodeURIComponent(phone)}`);
+        const list = normalizeList(res);
+        removeTyping();
+        
+        if(!list.length){
+          botSay("Não encontrei agendamentos com esse WhatsApp.");
+          renderQuickReplies([
+            {label: "✦ Quero agendar", gold: true, action: askPhone},
+            {label: "Voltar ao início", action: startChat}
+          ]);
+          return;
+        }
+        
+        botSay(`Encontrei ${list.length} agendamento(s) com esse WhatsApp:`);
+        
+        list.forEach(a=>{
+          const card=document.createElement("div");
+          card.className="review-card";
+          card.innerHTML=`
+            <div class="review-row"><span>Serviço</span><strong>${escapeHTML(a.nome_servico||'—')}</strong></div>
+            <div class="review-row"><span>Data</span><strong>${formatDate(a.data)}</strong></div>
+            <div class="review-row"><span>Horário</span><strong>${String(a.hora_inicio||'').slice(0,5)} ${a.hora_fim?'- '+String(a.hora_fim).slice(0,5):''}</strong></div>
+            <div class="review-row"><span>Status</span><strong>${escapeHTML(a.status||'Pendente')}</strong></div>
+          `;
+          $("#chatMessages").appendChild(card);
+        });
+        scrollChatToBottom();
+        
+        renderQuickReplies([
+          {label: "✦ Fazer novo agendamento", gold: true, action: askPhone},
+          {label: "Voltar ao início", action: startChat}
+        ]);
+        
+      }catch(e){
+        removeTyping();
+        botSay(`Não consegui consultar agora.\n\n${e.message}`);
+        renderQuickReplies([
+          {label: "Tentar novamente", gold: true, action: ()=>handleConsultPhone(phone)},
+          {label: "Voltar ao início", action: startChat}
+        ]);
+      }
+    }
+
+    /* NAVEGAÇÃO */
+
+    $("#restartChat").addEventListener("click", () => {
+      if (state.bookingInProgress) return;
+      startChat();
+    });
+
+    $("#backChat").addEventListener("click", () => {
+      if (state.bookingInProgress) return;
+
+      switch (state.step) {
+        case "clientChoice":
+          askPhone();
+          break;
+
+        case "name":
+        case "email":
+          askPhone();
+          break;
+
+        case "services":
+          renderQuickReplies([
+            {
+              label: "Continuar com esse WhatsApp",
+              gold: true,
+              action: () => continueWithExistingClient({
+                id: state.clientId,
+                nome: state.nome,
+                email: state.email
+              })
+            },
+            {
+              label: "Voltar ao início",
+              action: startChat
+            }
+          ]);
+          break;
+
+        case "cidade":
+        case "dates":
+        case "times":
+          loadServices();
+          break;
+
+        case "observations":
+          loadTimes();
+          break;
+
+        case "review":
+          askObservations();
+          break;
+
+        default:
+          askPhone();
+          break;
+      }
+    });
+
+    /* MODAL */
+
+    function closeSuccessModal() {
+      $("#successModal").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    $("#closeSuccess").addEventListener("click", () => {
+      closeSuccessModal();
+
+      botSay(
+        "Obrigada por agendar com Taiany Trindade Nail Designer! ♡ Esperamos você. Tenha um excelente dia!"
+      );
+
+      renderQuickReplies([
+        {
+          label: "Fazer outro agendamento",
+          gold: true,
+          action: startChat
+        }
+      ]);
+    });
+
+    $("#newBooking").addEventListener("click", () => {
+      closeSuccessModal();
+      startChat();
+    });
+
+    $("#successModal").addEventListener("click", (event) => {
+      if (event.target === $("#successModal")) {
+        closeSuccessModal();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape" &&
+        $("#successModal").classList.contains("open")
+      ) {
+        closeSuccessModal();
+      }
+    });
+
+    /* INICIALIZAÇÃO */
+    startChat();
+  </script>
+</body>
+</html>
