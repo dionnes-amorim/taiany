@@ -912,21 +912,25 @@ async function getBookingContext(date, serviceId, cidade) {
   if (!parseBoolean(service.ativo, true)) return { inactiveService: true };
   const duration = getServiceDuration(service);
   if (!duration) return { invalidDuration: true };
-  const weekday = weekdayFromDate(date);
-  
-  let availQuery = client.from('disponibilidade').select('*').eq('dia_semana', weekday);
-  if (cidade) availQuery = availQuery.eq('cidade', cidade);
 
+  let availQuery = client.from('disponibilidade').select('*').eq('dia_semana', weekdayFromDate(date)).eq('ativo', true);
+  // SE TIVER CIDADE E DATA ESPECÍFICA, PRIORIZA ELA
+  if (cidade) availQuery = availQuery.eq('cidade', cidade);
+  if (date) {
+     const { data: specific } = await client.from('disponibilidade').select('*').eq('data_especifica', date).eq('ativo', true);
+     if (specific && specific.length > 0) {
+       // se achou data específica, usa ela
+       return { service, duration, availability: specific, blocks: [], bookings: [] } // blocks e bookings busca depois
+     }
+  }
   const [availability, blocks, bookings] = await Promise.all([
     availQuery,
     client.from('bloqueios').select('*').eq('data', date),
     client.from('agendamentos').select('*').eq('data', date)
   ]);
-
   if (availability.error) throw availability.error;
   if (blocks.error) throw blocks.error;
   if (bookings.error) throw bookings.error;
-
   return { service, duration, availability: availability.data || [], blocks: blocks.data || [], bookings: bookings.data || [] };
 }
 
@@ -1168,36 +1172,6 @@ app.post('/api/agendamentos', async (req, res) => {
 // ADMIN — AGENDAMENTOS
 // ======================================================
 
-app.get('/api/admin/agendamentos', admin, async (req, res) => {
-  try {
-    let query = db()
-      .from('agendamentos')
-      .select('*')
-      .order('data', { ascending: false })
-      .order('hora_inicio', { ascending: true });
-
-    if (req.query.data) {
-      const date = String(req.query.data);
-
-      if (!validDate(date)) {
-        return res.status(400).json({
-          ok: false,
-          error: 'Data de filtro inválida.'
-        });
-      }
-
-      query = query.eq('data', date);
-    }
-
-    if (req.query.status) {
-      query = query.eq('status', cleanText(req.query.status, 50));
-    }
-
-    return await executeQuery(res, query);
-  } catch (error) {
-    return sendDbError(res, error);
-  }
-});
 
 app.patch('/api/admin/agendamentos/:id', admin, async (req, res) => {
   try {
