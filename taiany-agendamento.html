@@ -1,3562 +1,1867 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fbf4f2">
-  <meta name="description" content="Agende seu horário com Taiany Trindade Nail Designer.">
-  <title>Secretária Virtual | Taiany Trindade Nail Designer</title>
-
-  <style>
-    :root {
-      --rose: #b76e79;
-      --rose-dark: #914d5a;
-      --rose-light: #f5e3e5;
-      --gold: #c5a15b;
-      --gold-light: #ead7a5;
-      --cream: #fffaf6;
-      --background: #fbf5f1;
-      --text: #403438;
-      --muted: #8d7b80;
-      --white: #ffffff;
-      --green: #54866a;
-      --red: #b94d5b;
-      --shadow: 0 12px 35px rgba(100, 58, 67, .09);
-      --radius: 22px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      min-height: 100%;
-      -webkit-text-size-adjust: 100%;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      font-family: "Segoe UI", Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 5% 5%, rgba(197,161,91,.13), transparent 25%),
-        radial-gradient(circle at 95% 15%, rgba(183,110,121,.12), transparent 28%),
-        var(--background);
-      line-height: 1.5;
-    }
-
-    button, input, textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: .55;
-    }
-
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible {
-      outline: 3px solid rgba(183,110,121,.35);
-      outline-offset: 3px;
-    }
-
-    .page {
-      width: min(100%, 1050px);
-      margin: 0 auto;
-      padding: 18px 20px 12px;
-    }
-
-    /* CABEÇALHO */
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 20px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
-    }
-
-    .logo-frame {
-      width: 94px;
-      height: 94px;
-      flex: 0 0 94px;
-      padding: 5px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #f8e9bf, #bd9851, #f8e8b7);
-      box-shadow: 0 7px 24px rgba(151,112,48,.2);
-    }
-
-    .logo-inner {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-      border: 2px solid #fff7e4;
-      border-radius: 50%;
-      background: #fffaf7;
-    }
-
-    .logo-inner img {
-      width: 100%;
-      height: 100%;
-      padding: 3px;
-      object-fit: contain;
-    }
-
-    .brand-copy {
-      min-width: 0;
-    }
-
-    .brand-copy h1 {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(22px, 3vw, 31px);
-      line-height: 1.15;
-      font-weight: 600;
-      color: var(--rose-dark);
-    }
-
-    .brand-copy p {
-      margin-top: 6px;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .developer-brand {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex: 0 0 auto;
-      min-width: 0;
-    }
-
-    .developer-logo {
-      display: block;
-      width: 155px;
-      max-height: 82px;
-      object-fit: contain;
-      opacity: .95;
-    }
-
-    /* APRESENTAÇÃO */
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 25px 29px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(197,161,91,.35);
-      border-radius: 25px;
-      background: linear-gradient(120deg, rgba(255,255,255,.98), rgba(255,246,244,.94));
-      box-shadow: var(--shadow);
-    }
-
-    .hero::after {
-      content: "✦";
-      position: absolute;
-      top: 0;
-      right: 22px;
-      font-size: 90px;
-      color: rgba(197,161,91,.13);
-      pointer-events: none;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      color: var(--rose-dark);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 22px;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    .hero h2 {
-      max-width: 760px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 4vw, 38px);
-      line-height: 1.15;
-      font-weight: 500;
-      color: #593b43;
-    }
-
-    .hero h2 span {
-      color: var(--rose);
-      font-style: italic;
-    }
-
-    .hero p {
-      max-width: 650px;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .hero-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 14px;
-    }
-
-    .pill {
-      padding: 6px 10px;
-      border: 1px solid #eed8d9;
-      border-radius: 30px;
-      color: #83515a;
-      background: white;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    /* CHAT PRINCIPAL */
-
-    .chat-card {
-      min-width: 0;
-      overflow: hidden;
-      border: 1px solid rgba(197,161,91,.32);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.98);
-      box-shadow: var(--shadow);
-    }
-
-    .chat-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
-      color: white;
-      background: linear-gradient(115deg, var(--rose), var(--rose-dark));
-    }
-
-    .assistant-avatar {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
-      overflow: hidden;
-      border: 2px solid rgba(255,255,255,.7);
-      border-radius: 50%;
-      color: #80553b;
-      background: linear-gradient(145deg, #fff8e9, #ead3a0);
-      font-family: Georgia, serif;
-      font-size: 21px;
-    }
-
-    .assistant-avatar img {
-      width: 100%;
-      height: 100%;
-      padding: 3px;
-      object-fit: contain;
-    }
-
-    .chat-header-copy {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .chat-header h3 {
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .chat-header p {
-      margin-top: 2px;
-      font-size: 11px;
-      color: rgba(255,255,255,.88);
-    }
-
-    .online-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
-      white-space: nowrap;
-      color: #fff6e9;
-    }
-
-    .online-indicator::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #a9edb6;
-      box-shadow: 0 0 0 3px rgba(169,237,182,.14);
-    }
-
-    .chat-notice {
-      padding: 9px 14px;
-      text-align: center;
-      color: #856d54;
-      background: #fff8eb;
-      border-bottom: 1px solid #f2e5d3;
-      font-size: 10px;
-    }
-
-    .chat-body {
-      height: min(590px, 62vh);
-      height: min(590px, 62dvh);
-      min-height: 370px;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
-      padding: 21px 20px 16px;
-      background:
-        radial-gradient(circle at 100% 0%, rgba(197,161,91,.055), transparent 32%),
-        #fffdfb;
-      scroll-behavior: smooth;
-    }
-
-    .chat-body::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    .chat-body::-webkit-scrollbar-thumb {
-      border-radius: 10px;
-      background: #e8d5d7;
-    }
-
-    .message-row {
-      display: flex;
-      margin-bottom: 14px;
-      animation: messageIn .22s ease both;
-    }
-
-    .message-row.bot {
-      justify-content: flex-start;
-    }
-
-    .message-row.user {
-      justify-content: flex-end;
-    }
-
-    @keyframes messageIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .bubble {
-      max-width: min(88%, 570px);
-      padding: 12px 15px;
-      border-radius: 17px;
-      overflow-wrap: anywhere;
-      white-space: pre-wrap;
-      font-size: 13px;
-      line-height: 1.65;
-    }
-
-    .bot .bubble {
-      color: #62464d;
-      border: 1px solid #f0e2e1;
-      border-top-left-radius: 5px;
-      background: #fff;
-      box-shadow: 0 4px 13px rgba(95,57,66,.035);
-    }
-
-    .user .bubble {
-      color: white;
-      border-top-right-radius: 5px;
-      background: linear-gradient(135deg, #bd7b85, #9d5864);
-      box-shadow: 0 4px 12px rgba(145,77,90,.12);
-    }
-
-    .bubble-time {
-      display: block;
-      margin-top: 5px;
-      opacity: .63;
-      font-size: 10px;
-      text-align: right;
-    }
-
-    .typing-bubble {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 14px 17px;
-      border: 1px solid #f0e2e1;
-      border-radius: 17px;
-      border-top-left-radius: 5px;
-      background: white;
-    }
-
-    .typing-bubble span {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--rose);
-      animation: typing 1s infinite ease-in-out;
-    }
-
-    .typing-bubble span:nth-child(2) {
-      animation-delay: .15s;
-    }
-
-    .typing-bubble span:nth-child(3) {
-      animation-delay: .3s;
-    }
-
-    @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); opacity: .45; }
-      30% { transform: translateY(-5px); opacity: 1; }
-    }
-
-    /* BOTÕES DE RESPOSTA */
-
-    .quick-replies {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: -2px 0 17px 2px;
-      animation: messageIn .22s ease both;
-    }
-
-    .quick-reply {
-      max-width: 100%;
-      min-height: 42px;
-      padding: 10px 14px;
-      border: 1px solid #e7c7cc;
-      border-radius: 12px;
-      color: var(--rose-dark);
-      background: #fff;
-      text-align: left;
-      font-size: 12px;
-      font-weight: 800;
-      transition: .18s ease;
-    }
-
-    .quick-reply:hover:not(:disabled) {
-      border-color: var(--rose);
-      background: #fff4f5;
-    }
-
-    .quick-reply.gold {
-      border-color: #d9bd7b;
-      color: #674b1f;
-      background: linear-gradient(135deg, #fff9e9, #f7e9c6);
-    }
-
-    /* CARTÕES DE SERVIÇO */
-
-    .option-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9px;
-      width: 100%;
-      margin: -2px 0 17px;
-      animation: messageIn .22s ease both;
-    }
-
-    .option-card {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      min-width: 0;
-      min-height: 112px;
-      padding: 14px;
-      text-align: left;
-      border: 1px solid #eadadd;
-      border-radius: 14px;
-      color: var(--text);
-      background: white;
-      transition: .18s ease;
-    }
-
-    .option-card:hover:not(:disabled) {
-      border-color: var(--gold);
-      background: linear-gradient(145deg, #fff, #fff8f0);
-    }
-
-    .option-icon {
-      color: var(--gold);
-      font-size: 18px;
-    }
-
-    .option-card strong {
-      color: var(--rose-dark);
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .option-card small {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.45;
-    }
-
-    .option-card .option-price {
-      margin-top: auto;
-      color: var(--rose-dark);
-      font-size: 13px;
-      font-weight: 900;
-    }
-
-    /* DATAS DISPONÍVEIS */
-
-    .date-options {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      width: 100%;
-      margin: -2px 0 16px;
-      animation: messageIn .22s ease both;
-    }
-
-    .date-group {
-      grid-column: 1 / -1;
-      margin-top: 5px;
-      color: #76515a;
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .date-group::after {
-      content: "";
-      display: block;
-      height: 1px;
-      margin-top: 7px;
-      background: #f0e1df;
-    }
-
-    .date-option {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      min-width: 0;
-      min-height: 85px;
-      padding: 9px 4px;
-      border: 1px solid #eadadd;
-      border-radius: 12px;
-      color: #62464d;
-      background: white;
-      text-align: center;
-      transition: .18s ease;
-    }
-
-    .date-option:hover:not(:disabled),
-    .date-option.selected {
-      border-color: var(--rose);
-      background: #fff3f5;
-      box-shadow: 0 3px 10px rgba(183,110,121,.08);
-    }
-
-    .date-option strong {
-      font-size: 22px;
-      line-height: 1.2;
-    }
-
-    .date-option span {
-      font-size: 10px;
-      text-transform: capitalize;
-      color: var(--muted);
-    }
-
-    .date-option .date-month {
-      color: var(--rose-dark);
-      font-size: 10px;
-      font-weight: 800;
-    }
-
-    /* HORÁRIOS DISPONÍVEIS */
-
-    .time-options {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 8px;
-      width: 100%;
-      margin: -2px 0 16px;
-      animation: messageIn .22s ease both;
-    }
-
-    .time-option {
-      min-width: 0;
-      min-height: 43px;
-      padding: 9px 3px;
-      border: 1px solid #eadadd;
-      border-radius: 11px;
-      color: #704c55;
-      background: white;
-      font-size: 12px;
-      font-weight: 900;
-      transition: .18s ease;
-    }
-
-    .time-option:hover:not(:disabled),
-    .time-option.selected {
-      color: white;
-      border-color: var(--rose);
-      background: var(--rose);
-    }
-
-    /* ENTRADA DE MENSAGEM */
-
-    .chat-composer {
-      padding: 14px 18px 16px;
-      border-top: 1px solid #f0e4e3;
-      background: #fff;
-    }
-
-    .composer-form {
-      display: flex;
-      align-items: flex-end;
-      gap: 9px;
-    }
-
-    .composer-field {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .composer-field label {
-      display: block;
-      margin-bottom: 5px;
-      color: #79545d;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .composer-input {
-      display: block;
-      width: 100%;
-      min-height: 46px;
-      padding: 12px 14px;
-      border: 1px solid #eadadd;
-      border-radius: 13px;
-      outline: none;
-      color: var(--text);
-      background: #fffdfc;
-      transition: border .18s, box-shadow .18s;
-      font-size: 14px;
-    }
-
-    .composer-input:focus {
-      border-color: var(--rose);
-      box-shadow: 0 0 0 3px rgba(183,110,121,.1);
-    }
-
-    .composer-input:disabled {
-      background: #f8f3f2;
-    }
-
-    .send-button {
-      display: grid;
-      place-items: center;
-      width: 47px;
-      height: 47px;
-      flex: 0 0 47px;
-      border: 0;
-      border-radius: 13px;
-      color: white;
-      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
-      box-shadow: 0 5px 12px rgba(145,77,90,.18);
-      font-size: 19px;
-      transition: .18s;
-    }
-
-    .send-button:disabled {
-      opacity: .4;
-    }
-
-    .composer-hint {
-      margin-top: 7px;
-      color: #a08e92;
-      font-size: 10px;
-    }
-
-    .chat-tools {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 9px;
-    }
-
-    .text-tool {
-      padding: 5px 0;
-      border: 0;
-      color: #94717a;
-      background: transparent;
-      font-size: 11px;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    .text-tool:hover {
-      color: var(--rose-dark);
-    }
-
-    /* RESUMO DA REVISÃO */
-
-    .review-card {
-      width: min(100%, 550px);
-      padding: 16px;
-      margin: 0 0 17px;
-      border: 1px solid #efdfd6;
-      border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 4px 13px rgba(95,57,66,.035);
-    }
-
-    .review-title {
-      margin-bottom: 7px;
-      color: var(--rose-dark);
-      font-family: Georgia, serif;
-      font-size: 19px;
-    }
-
-    .review-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid #f4eae7;
-      font-size: 12px;
-    }
-
-    .review-row:last-child {
-      border-bottom: 0;
-    }
-
-    .review-row span {
-      color: var(--muted);
-    }
-
-    .review-row strong {
-      max-width: 65%;
-      overflow-wrap: anywhere;
-      color: #65444c;
-      text-align: right;
-    }
-
-    /* MODAL FINAL */
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      display: none;
-      place-items: center;
-      overflow-y: auto;
-      padding: 16px;
-      background: rgba(54,34,40,.68);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
-    }
-
-    .modal.open {
-      display: grid;
-      animation: fadeIn .22s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .modal-card {
-      position: relative;
-      width: min(570px, 100%);
-      max-height: 92dvh;
-      overflow-y: auto;
-      padding: 35px 28px 26px;
-      border: 1px solid #e6d0a0;
-      border-radius: 27px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(197,161,91,.14), transparent 42%),
-        linear-gradient(160deg, #fff, #fff7f4);
-      box-shadow: 0 30px 100px rgba(0,0,0,.25);
-      animation: modalPop .35s cubic-bezier(.18,.89,.32,1.15);
-    }
-
-    @keyframes modalPop {
-      from { opacity: 0; transform: scale(.91) translateY(15px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .success-icon {
-      display: grid;
-      place-items: center;
-      width: 82px;
-      height: 82px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      color: white;
-      background: linear-gradient(145deg, #d6b56e, #b68a3d);
-      box-shadow: 0 0 0 8px #f8edda, 0 0 0 10px #e9d6ac;
-      font-size: 39px;
-    }
-
-    .modal-kicker {
-      margin-bottom: 8px;
-      color: var(--gold);
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .modal-card h2 {
-      margin-bottom: 12px;
-      font-family: Georgia, "Times New Roman", serif;
-      color: var(--rose-dark);
-      font-size: clamp(27px, 5vw, 36px);
-      font-weight: 600;
-      line-height: 1.15;
-    }
-
-    .modal-card > p {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .modal-summary {
-      padding: 16px;
-      margin: 22px 0;
-      border: 1px solid #efdfd6;
-      border-radius: 16px;
-      background: rgba(255,255,255,.88);
-      text-align: left;
-    }
-
-    .modal-summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid #f4eae7;
-      font-size: 12px;
-    }
-
-    .modal-summary-row:last-child {
-      border-bottom: 0;
-    }
-
-    .modal-summary-row span {
-      color: var(--muted);
-    }
-
-    .modal-summary-row strong {
-      max-width: 65%;
-      overflow-wrap: anywhere;
-      color: #65444c;
-      text-align: right;
-    }
-
-    .protocol {
-      padding: 12px;
-      margin-top: 14px;
-      border: 1px dashed #d9bd7b;
-      border-radius: 12px;
-      color: #775b2f;
-      background: #fffaf0;
-      font-size: 11px;
-      overflow-wrap: anywhere;
-    }
-
-    .modal-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-    }
-
-    .btn {
-      min-height: 46px;
-      padding: 12px 16px;
-      border: 0;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 800;
-      transition: .18s;
-    }
-
-    .btn-primary {
-      color: white;
-      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
-      box-shadow: 0 7px 17px rgba(145,77,90,.18);
-    }
-
-    .btn-secondary {
-      color: #79545d;
-      border: 1px solid #eadadd;
-      background: white;
-    }
-
-    .btn-full {
-      flex: 1;
-      width: 100%;
-    }
-
-    .confetti {
-      position: absolute;
-      top: -15px;
-      width: 7px;
-      height: 12px;
-      border-radius: 2px;
-      opacity: 0;
-      pointer-events: none;
-      animation: confettiFall 2s ease-out forwards;
-    }
-
-    @keyframes confettiFall {
-      0% { opacity: 1; transform: translateY(-10px) rotate(0); }
-      100% { opacity: 0; transform: translateY(380px) rotate(540deg); }
-    }
-
-    .footer {
-      padding: 20px 8px 8px;
-      color: #a08e92;
-      text-align: center;
-      font-size: 10px;
-      letter-spacing: .5px;
-    }
-
-    .footer span {
-      color: var(--rose);
-    }
-
-    [hidden] {
-      display: none !important;
-    }
-
-    /* TABLET */
-
-    @media (max-width: 700px) {
-      .page {
-        padding: 13px 13px 9px;
-      }
-
-      .topbar {
-        gap: 10px;
-        margin-bottom: 13px;
-      }
-
-      .logo-frame {
-        width: 76px;
-        height: 76px;
-        flex-basis: 76px;
-      }
-
-      .brand {
-        gap: 9px;
-      }
-
-      .brand-copy h1 {
-        font-size: 21px;
-      }
-
-      .brand-copy p {
-        font-size: 9px;
-        letter-spacing: .7px;
-      }
-
-      .developer-logo {
-        width: 105px;
-        max-height: 55px;
-      }
-
-      .hero {
-        padding: 20px 18px;
-        margin-bottom: 13px;
-        border-radius: 20px;
-      }
-
-      .hero h2 {
-        font-size: 29px;
-      }
-
-      .hero p {
-        max-width: 90%;
-        font-size: 12px;
-      }
-
-      .chat-header {
-        padding: 13px;
-      }
-
-      .chat-body {
-        height: 58dvh;
-        min-height: 350px;
-        max-height: 570px;
-        padding: 16px 12px 12px;
-      }
-
-      .bubble {
-        max-width: 94%;
-        padding: 11px 12px;
-        font-size: 12px;
-      }
-
-      .option-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .date-options {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
-      }
-
-      .time-options {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 7px;
-      }
-
-      .chat-composer {
-        padding: 12px;
-      }
-    }
-
-    /* CELULARES */
-
-    @media (max-width: 430px) {
-      .page {
-        width: 100%;
-        padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
-      }
-
-      .topbar {
-        gap: 6px;
-        margin-bottom: 10px;
-      }
-
-      .brand {
-        gap: 7px;
-      }
-
-      .logo-frame {
-        width: 62px;
-        height: 62px;
-        flex-basis: 62px;
-        padding: 4px;
-      }
-
-      .brand-copy h1 {
-        font-size: 17px;
-        line-height: 1.15;
-      }
-
-      .brand-copy p {
-        max-width: 165px;
-        margin-top: 4px;
-        font-size: 7px;
-        letter-spacing: .5px;
-      }
-
-      .developer-logo {
-        width: 75px;
-        max-height: 43px;
-      }
-
-      .hero {
-        padding: 17px 13px;
-        margin-bottom: 10px;
-        border-radius: 17px;
-      }
-
-      .hero::after {
-        right: 6px;
-        font-size: 57px;
-      }
-
-      .eyebrow {
-        font-size: 9px;
-        letter-spacing: 1.2px;
-      }
-
-      .hero h2 {
-        font-size: 25px;
-      }
-
-      .hero p {
-        max-width: 100%;
-        margin-top: 8px;
-        font-size: 11px;
-      }
-
-      .hero-pills {
-        gap: 5px;
-        margin-top: 11px;
-      }
-
-      .pill {
-        padding: 5px 7px;
-        font-size: 8px;
-      }
-
-      .chat-card {
-        border-radius: 17px;
-      }
-
-      .chat-header {
-        gap: 9px;
-        padding: 11px 10px;
-      }
-
-      .assistant-avatar {
-        width: 39px;
-        height: 39px;
-        flex-basis: 39px;
-        font-size: 18px;
-      }
-
-      .chat-header h3 {
-        font-size: 12px;
-      }
-
-      .chat-header p {
-        font-size: 9px;
-      }
-
-      .online-indicator {
-        gap: 4px;
-        font-size: 8px;
-      }
-
-      .online-indicator::before {
-        width: 6px;
-        height: 6px;
-      }
-
-      .chat-notice {
-        padding: 8px 5px;
-        font-size: 9px;
-      }
-
-      .chat-body {
-        height: 54dvh;
-        min-height: 320px;
-        max-height: 520px;
-        padding: 13px 9px 10px;
-      }
-
-      .message-row {
-        margin-bottom: 11px;
-      }
-
-      .bubble {
-        max-width: 96%;
-        padding: 10px 11px;
-        font-size: 12px;
-        line-height: 1.55;
-      }
-
-      .bubble-time {
-        font-size: 9px;
-      }
-
-      .quick-replies {
-        gap: 7px;
-        margin-bottom: 14px;
-      }
-
-      .quick-reply {
-        min-height: 42px;
-        padding: 10px 11px;
-        font-size: 11px;
-      }
-
-      .option-grid {
-        grid-template-columns: 1fr;
-        gap: 7px;
-        margin-bottom: 14px;
-      }
-
-      .option-card {
-        display: grid;
-        grid-template-columns: 25px minmax(0, 1fr) auto;
-        align-items: center;
-        column-gap: 8px;
-        min-height: 76px;
-        padding: 10px;
-      }
-
-      .option-icon {
-        grid-row: 1 / span 2;
-        font-size: 17px;
-      }
-
-      .option-card strong {
-        font-size: 11px;
-      }
-
-      .option-card small {
-        grid-column: 2;
-        font-size: 10px;
-      }
-
-      .option-card .option-price {
-        grid-column: 3;
-        grid-row: 1 / span 2;
-        align-self: center;
-        margin-top: 0;
-        font-size: 11px;
-      }
-
-      .date-options {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 5px;
-        margin-bottom: 13px;
-      }
-
-      .date-group {
-        font-size: 11px;
-      }
-
-      .date-option {
-        min-height: 72px;
-        padding: 7px 2px;
-        border-radius: 10px;
-      }
-
-      .date-option strong {
-        font-size: 19px;
-      }
-
-      .date-option span {
-        font-size: 9px;
-      }
-
-      .date-option .date-month {
-        font-size: 9px;
-      }
-
-      .time-options {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        margin-bottom: 13px;
-      }
-
-      .time-option {
-        min-height: 43px;
-        padding: 9px 2px;
-        font-size: 12px;
-      }
-
-      .chat-composer {
-        padding: 10px 9px calc(10px + env(safe-area-inset-bottom));
-      }
-
-      .composer-form {
-        gap: 7px;
-      }
-
-      .composer-field label {
-        font-size: 10px;
-      }
-
-      .composer-input {
-        min-height: 44px;
-        padding: 10px;
-        border-radius: 11px;
-        font-size: 16px;
-      }
-
-      .send-button {
-        width: 44px;
-        height: 44px;
-        flex-basis: 44px;
-        border-radius: 11px;
-      }
-
-      .composer-hint {
-        font-size: 9px;
-        line-height: 1.4;
-      }
-
-      .text-tool {
-        font-size: 10px;
-      }
-
-      .review-card {
-        padding: 12px;
-      }
-
-      .review-row {
-        gap: 8px;
-        font-size: 11px;
-      }
-
-      .modal {
-        padding: 9px;
-      }
-
-      .modal-card {
-        padding: 29px 14px 17px;
-        border-radius: 21px;
-      }
-
-      .success-icon {
-        width: 69px;
-        height: 69px;
-        margin-bottom: 17px;
-        font-size: 32px;
-      }
-
-      .modal-card h2 {
-        font-size: 27px;
-      }
-
-      .modal-card > p {
-        font-size: 12px;
-      }
-
-      .modal-summary {
-        padding: 11px;
-        margin: 17px 0;
-      }
-
-      .modal-summary-row {
-        gap: 8px;
-        font-size: 11px;
-      }
-
-      .modal-actions {
-        flex-direction: column;
-      }
-
-      .footer {
-        padding-top: 15px;
-        font-size: 9px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: .01ms !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbf4f2">
+<meta name="description" content="Agende seu horário com Taiany Trindade Nail Designer.">
+
+<title>Taiany Trindade | Agendamento</title>
+
+<style>
+:root {
+  --bg:#fbf4f2;
+  --paper:#fffdfc;
+  --rose:#914d5a;
+  --rose-dark:#713a47;
+  --rose-light:#f5e5e6;
+  --copper:#b77b69;
+  --text:#49383a;
+  --muted:#927f80;
+  --border:#eadbd9;
+  --success:#527d63;
+  --shadow:0 12px 35px rgba(92,54,59,.09);
+}
+
+* {box-sizing:border-box}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+}
+
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+
+.topbar {
+  max-width:1100px;
+  margin:auto;
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.logo-frame {
+  width:58px;
+  height:58px;
+  border:1px solid #d9b9b6;
+  border-radius:50%;
+  padding:4px;
+  background:white;
+}
+
+.logo-inner {
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+}
+
+.logo-inner img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.brand-copy h1 {
+  margin:0;
+  font-family:Georgia,serif;
+  color:var(--rose);
+  font-size:21px;
+  font-weight:normal;
+}
+
+.brand-copy p {
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:1px;
+}
+
+.developer-logo {
+  max-width:110px;
+  max-height:48px;
+  object-fit:contain;
+}
+
+.hero {
+  max-width:850px;
+  margin:22px auto 30px;
+  padding:35px 22px;
+  text-align:center;
+}
+
+.eyebrow {
+  color:var(--copper);
+  font-size:11px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:15px;
+}
+
+.hero h2 {
+  font-family:Georgia,serif;
+  font-weight:normal;
+  font-size:clamp(29px,5vw,43px);
+  line-height:1.2;
+  margin:0;
+  color:#67434a;
+}
+
+.hero h2 span {color:var(--rose)}
+
+.hero>p {
+  max-width:530px;
+  margin:16px auto;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+
+.hero-pills {
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+
+.pill {
+  background:#fff;
+  border:1px solid var(--border);
+  padding:9px 13px;
+  border-radius:30px;
+  font-size:11px;
+  color:var(--rose);
+}
+
+.chat-card {
+  max-width:720px;
+  margin:0 auto 40px;
+  background:var(--paper);
+  border:1px solid var(--border);
+  border-radius:19px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.chat-header {
+  padding:17px 20px;
+  background:#fffafa;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.assistant-avatar {
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:var(--rose-light);
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  color:var(--rose);
+  font-family:Georgia,serif;
+  font-size:21px;
+}
+
+.assistant-avatar img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.chat-header-copy {flex:1}
+
+.chat-header-copy h3 {
+  font-family:Georgia,serif;
+  font-size:16px;
+  margin:0;
+  color:var(--rose);
+  font-weight:normal;
+}
+
+.chat-header-copy p {
+  font-size:11px;
+  margin:5px 0 0;
+  color:var(--muted);
+}
+
+.online-indicator {
+  font-size:10px;
+  color:var(--success);
+}
+
+.online-indicator:before {
+  content:"";
+  display:inline-block;
+  width:7px;
+  height:7px;
+  background:#76a785;
+  border-radius:50%;
+  margin-right:5px;
+}
+
+.chat-notice {
+  background:#fcf6f4;
+  padding:12px;
+  text-align:center;
+  font-size:11px;
+  color:var(--copper);
+}
+
+.chat-body {
+  padding:20px;
+  min-height:320px;
+  max-height:620px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  scroll-behavior:smooth;
+}
+
+.message {
+  max-width:88%;
+  padding:13px 15px;
+  border-radius:13px;
+  font-size:13px;
+  line-height:1.65;
+  white-space:pre-line;
+  overflow-wrap:anywhere;
+}
+
+.message.bot {
+  background:#f7eeee;
+  align-self:flex-start;
+  border-bottom-left-radius:3px;
+}
+
+.message.user {
+  background:var(--rose);
+  color:white;
+  align-self:flex-end;
+  border-bottom-right-radius:3px;
+}
+
+.message strong {font-weight:700}
+
+.options {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:100%;
+  margin-top:10px;
+}
+
+.option-btn {
+  background:white;
+  color:var(--rose);
+  border:1px solid #d9b7b8;
+  padding:12px 14px;
+  border-radius:10px;
+  text-align:left;
+  font-size:12px;
+  transition:.2s;
+}
+
+.option-btn:hover {
+  background:var(--rose-light);
+  border-color:var(--rose);
+}
+
+.option-btn:disabled {
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.chat-composer {
+  border-top:1px solid var(--border);
+  padding:17px 20px;
+  background:#fffafa;
+}
+
+.composer-form {
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+}
+
+.composer-field {flex:1;min-width:0}
+
+.composer-field label {
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+
+.composer-input,.field-input,.field-select,.field-textarea {
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:white;
+  padding:13px;
+  color:var(--text);
+  outline:none;
+  font-size:13px;
+}
+
+.composer-input:focus,.field-input:focus,
+.field-select:focus,.field-textarea:focus {
+  border-color:var(--copper);
+}
+
+.send-button {
+  width:46px;
+  height:44px;
+  border:0;
+  border-radius:10px;
+  background:var(--rose);
+  color:white;
+  font-size:20px;
+}
+
+.send-button:disabled {
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.composer-hint {
+  font-size:10px;
+  color:var(--muted);
+  margin-top:9px;
+}
+
+.chat-tools {
+  display:flex;
+  justify-content:space-between;
+  margin-top:14px;
+}
+
+.text-tool {
+  background:none;
+  border:0;
+  color:var(--rose);
+  text-decoration:underline;
+  font-size:11px;
+  padding:5px;
+}
+
+.footer {
+  text-align:center;
+  padding:15px 15px 30px;
+  color:var(--rose);
+  font-size:10px;
+  letter-spacing:2px;
+  line-height:2;
+}
+
+.footer span {color:var(--copper)}
+
+.field-group {
+  margin:13px 0;
+}
+
+.field-group label {
+  display:block;
+  margin-bottom:7px;
+  font-size:12px;
+  color:var(--rose);
+}
+
+.field-hint {
+  color:var(--muted);
+  font-size:10px;
+  margin-top:5px;
+}
+
+.summary {
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:14px;
+  margin:10px 0;
+}
+
+.summary-row {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid #f2e9e7;
+  font-size:12px;
+}
+
+.summary-row:last-child {border:0}
+.summary-row span:first-child {color:var(--muted)}
+.summary-row strong {text-align:right}
+
+.primary-btn,.secondary-btn,.danger-btn {
+  width:100%;
+  border:0;
+  border-radius:9px;
+  padding:13px;
+  font-size:12px;
+  margin-top:8px;
+}
+
+.primary-btn {
+  background:var(--rose);
+  color:white;
+}
+
+.secondary-btn {
+  background:var(--rose-light);
+  color:var(--rose);
+}
+
+.danger-btn {
+  background:#f8e9e9;
+  color:#a04444;
+}
+
+.primary-btn:disabled {opacity:.5}
+
+.booking-card {
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:white;
+  padding:13px;
+  margin:10px 0;
+}
+
+.booking-card h4 {
+  color:var(--rose);
+  font-family:Georgia,serif;
+  font-weight:normal;
+  margin:0 0 8px;
+  font-size:16px;
+}
+
+.booking-card p {
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.7;
+  margin:4px 0;
+}
+
+.loading {
+  color:var(--muted);
+  font-size:12px;
+  padding:10px 0;
+}
+
+.error-text {color:#b24c4c;font-size:12px}
+.success-text {color:var(--success);font-size:12px}
+
+.modal-overlay {
+  position:fixed;
+  inset:0;
+  z-index:20;
+  background:rgba(48,29,32,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal-overlay.show {display:flex}
+
+.modal {
+  width:100%;
+  max-width:430px;
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  text-align:center;
+  box-shadow:var(--shadow);
+  max-height:90vh;
+  overflow:auto;
+}
+
+.modal-check {
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:#eaf2eb;
+  color:var(--success);
+  font-size:30px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 15px;
+}
+
+.modal-kicker {
+  font-size:10px;
+  color:var(--copper);
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.modal h2 {
+  font-family:Georgia,serif;
+  font-weight:normal;
+  color:var(--rose);
+  font-size:25px;
+  margin:12px 0;
+}
+
+.modal>p {
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.protocol {
+  background:#f9f1ef;
+  padding:13px;
+  border-radius:9px;
+  font-size:11px;
+  margin:15px 0;
+  overflow-wrap:anywhere;
+}
+
+[hidden] {display:none!important}
+
+@media(max-width:550px) {
+  .topbar {padding:15px}
+  .hero {padding:25px 18px;margin:8px auto 20px}
+  .chat-card {margin:0 10px 30px;border-radius:14px}
+  .chat-body {padding:14px;min-height:300px}
+  .chat-composer {padding:14px}
+  .online-indicator {font-size:0}
+  .online-indicator:before {width:9px;height:9px}
+  .message {max-width:95%}
+}
+</style>
 </head>
 
 <body>
-  <div class="page">
 
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo-frame">
-          <div class="logo-inner">
-            <img
-              src="/logo.png"
-              alt="Logo Taiany Trindade"
-              onerror="this.style.display='none';this.parentElement.innerHTML='<span style=&quot;font-family:Georgia;font-size:25px;color:#914d5a&quot;>TT</span>';"
-            >
-          </div>
-        </div>
-
-        <div class="brand-copy">
-          <h1>Taiany Trindade</h1>
-          <p>Nail Designer · Agendamento</p>
-        </div>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-frame">
+      <div class="logo-inner">
+        <img src="/logo.png" alt="Logo Taiany Trindade"
+          onerror="this.style.display='none';this.parentElement.innerHTML='<span style=&quot;font-family:Georgia;font-size:25px;color:#914d5a&quot;>TT</span>';">
       </div>
+    </div>
 
-      <div class="developer-brand">
-        <img
-          class="developer-logo"
-          src="/logo-desenvolvimento.png"
-          alt="Logo de desenvolvimento"
-          onerror="this.style.display='none';"
-        >
-      </div>
-    </header>
-
-    <section class="hero">
-      <div class="eyebrow">Seu momento de beleza</div>
-
-      <h2>
-        Unhas impecáveis,<br>
-        <span>cuidado em cada detalhe.</span>
-      </h2>
-
-      <p>
-        Converse com nossa secretária virtual, escolha seu procedimento
-        e encontre o melhor dia e horário para você.
-      </p>
-
-      <div class="hero-pills">
-        <span class="pill">✦ Atendimento personalizado</span>
-        <span class="pill">✧ Agenda online</span>
-        <span class="pill">♡ Cuidado em cada detalhe</span>
-      </div>
-    </section>
-
-    <main class="chat-card">
-      <header class="chat-header">
-        <div class="assistant-avatar" aria-hidden="true">
-          <img
-            src="/logo.png"
-            alt=""
-            onerror="this.style.display='none';this.parentElement.textContent='TT';"
-          >
-        </div>
-
-        <div class="chat-header-copy">
-          <h3>Secretária Virtual Taiany</h3>
-          <p>Agendamentos e informações</p>
-        </div>
-
-        <div class="online-indicator">Assistente virtual</div>
-      </header>
-
-      <div class="chat-notice">
-        ✦ Escolha as opções da conversa para realizar seu agendamento.
-      </div>
-
-      <div
-        id="chatMessages"
-        class="chat-body"
-        role="log"
-        aria-live="polite"
-        aria-relevant="additions text"
-        aria-label="Conversa com a secretária virtual"
-      ></div>
-
-      <div class="chat-composer">
-        <form id="composerForm" class="composer-form">
-          <div class="composer-field">
-            <label id="inputLabel" for="chatInput">Sua mensagem</label>
-            <input
-              id="chatInput"
-              class="composer-input"
-              type="text"
-              placeholder="Selecione uma opção acima"
-              autocomplete="off"
-              maxlength="500"
-              disabled
-            >
-          </div>
-
-          <button
-            id="sendButton"
-            class="send-button"
-            type="submit"
-            aria-label="Enviar mensagem"
-            disabled
-          >➤</button>
-        </form>
-
-        <div id="composerHint" class="composer-hint">
-          Para começar, selecione uma das opções da secretária.
-        </div>
-
-        <div class="chat-tools">
-          <button type="button" class="text-tool" id="restartChat">
-            Reiniciar conversa
-          </button>
-
-          <button type="button" class="text-tool" id="backChat" hidden>
-            Voltar uma etapa
-          </button>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">
-      T A I A N Y &nbsp; T R I N D A D E <span>✦</span> NAIL DESIGNER
-      <br>
-      <span>Agendamento online</span>
-    </footer>
-  </div>
-
-  <!-- CONFIRMAÇÃO FINAL -->
-  <div
-    class="modal"
-    id="successModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="successTitle"
-    aria-describedby="successMessage"
-  >
-    <div class="modal-card" id="modalCard">
-      <div class="success-icon" aria-hidden="true">✓</div>
-
-      <div class="modal-kicker">Taiany Trindade · Nail Designer</div>
-
-      <h2 id="successTitle">Agendamento registrado!</h2>
-
-      <p id="successMessage">
-        Sua solicitação foi registrada com sucesso.
-      </p>
-
-      <div class="modal-summary" id="successDetails"></div>
-
-      <div class="protocol" id="successProtocol">
-        Guarde os detalhes do seu agendamento.
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn btn-primary btn-full" id="closeSuccess">
-          Finalizar atendimento
-        </button>
-
-        <button type="button" class="btn btn-secondary btn-full" id="newBooking">
-          Fazer outro agendamento
-        </button>
-      </div>
+    <div class="brand-copy">
+      <h1>Taiany Trindade</h1>
+      <p>Nail Designer · Agendamento</p>
     </div>
   </div>
 
-  <script>
-    "use strict";
+  <div class="developer-brand">
+    <img class="developer-logo"
+      src="/logo-desenvolvimento.png"
+      alt="Logo de desenvolvimento"
+      onerror="this.style.display='none';">
+  </div>
+</header>
 
-    /*
-      ROTAS UTILIZADAS:
-      GET  /api/servicos
-      GET  /api/cliente?telefone=DDDNUMERO
-      GET  /api/horarios?data=YYYY-MM-DD&servico_id=ID
-      POST /api/clientes
-      POST /api/agendamentos
+<section class="hero">
+  <div class="eyebrow">Seu momento de beleza</div>
 
-      A tela consulta os horários de cada data e só oferece datas
-      que retornarem horários disponíveis.
+  <h2>
+    Unhas impecáveis,<br>
+    <span>cuidado em cada detalhe.</span>
+  </h2>
 
-      IMPORTANTE:
-      O servidor deve validar novamente a disponibilidade no POST
-      /api/agendamentos antes de registrar a solicitação.
-    */
+  <p>
+    Converse com nossa secretária virtual, escolha seu procedimento
+    e encontre o melhor dia e horário para você.
+  </p>
 
-    const API = {
-      services: "/api/servicos",
-      clients: "/api/cliente",
-      createClient: "/api/clientes",
-      times: "/api/horarios",
-      bookings: "/api/agendamentos"
-    };
+  <div class="hero-pills">
+    <span class="pill">✦ Atendimento personalizado</span>
+    <span class="pill">✧ Agenda online</span>
+    <span class="pill">♡ Cuidado em cada detalhe</span>
+  </div>
+</section>
 
-    const state = {
-      step: "welcome",
-      clientType: null,
-      clientExists: false,
-      clientId: null,
-      nome: "",
-      telefone: "",
-      email: "",
-      servico: null,
-      cidade: "",
-      data: "",
-      horario: "",
-      observacoes: "",
-      services: [],
-      dates: [],
-      times: [],
-      bookingInProgress: false,
-      clientSaved: false,
-      requestToken: 0
-    };
+<main class="chat-card">
 
-    const $ = (selector) => document.querySelector(selector);
-    const $$ = (selector) => [...document.querySelectorAll(selector)];
+  <header class="chat-header">
+    <div class="assistant-avatar">
+      <img src="/logo.png" alt=""
+        onerror="this.style.display='none';this.parentElement.textContent='TT';">
+    </div>
 
-    function money(value) {
-      const number = Number(value || 0);
+    <div class="chat-header-copy">
+      <h3>Secretária Virtual Taiany</h3>
+      <p>Agendamentos e informações</p>
+    </div>
 
-      return number.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
+    <div class="online-indicator">Assistente virtual</div>
+  </header>
+
+  <div class="chat-notice">
+    ✦ Escolha as opções da conversa para realizar seu agendamento.
+  </div>
+
+  <div id="chatMessages" class="chat-body"
+    role="log" aria-live="polite" aria-relevant="additions text"
+    aria-label="Conversa com a secretária virtual">
+  </div>
+
+  <div class="chat-composer">
+    <form id="composerForm" class="composer-form">
+      <div class="composer-field">
+        <label id="inputLabel" for="chatInput">Sua mensagem</label>
+        <input id="chatInput" class="composer-input"
+          type="text" placeholder="Selecione uma opção acima"
+          autocomplete="off" maxlength="500" disabled>
+      </div>
+
+      <button id="sendButton" class="send-button"
+        type="submit" aria-label="Enviar mensagem" disabled>➤</button>
+    </form>
+
+    <div id="composerHint" class="composer-hint">
+      Para começar, selecione uma das opções da secretária.
+    </div>
+
+    <div class="chat-tools">
+      <button type="button" class="text-tool" id="restartChat">
+        Reiniciar conversa
+      </button>
+
+      <button type="button" class="text-tool" id="backChat" hidden>
+        Voltar uma etapa
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  T A I A N Y &nbsp; T R I N D A D E <span>✦</span> NAIL DESIGNER
+  <br>
+  <span>Agendamento online</span>
+</footer>
+
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-check">✓</div>
+
+    <div class="modal-kicker">Taiany Trindade · Nail Designer</div>
+
+    <h2 id="successTitle">Agendamento registrado!</h2>
+
+    <p id="successMessage">
+      Sua solicitação foi registrada com sucesso.
+    </p>
+
+    <div class="summary" id="successDetails"></div>
+
+    <div class="protocol" id="successProtocol">
+      Guarde os detalhes do seu agendamento.
+    </div>
+
+    <button type="button" class="primary-btn" id="closeSuccess">
+      Finalizar atendimento
+    </button>
+
+    <button type="button" class="secondary-btn" id="newBooking">
+      Fazer outro agendamento
+    </button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* =====================================================
+   CONFIGURAÇÕES
+===================================================== */
+
+const CONFIG = {
+  cidade: 'Severínia',
+  intervaloMinutos: 30,
+  antecedenciaDias: 120
+};
+
+const API = {
+  servicos: '/api/servicos',
+  disponibilidade: '/api/disponibilidade',
+  horarios: '/api/horarios',
+  agendamentos: '/api/agendamentos',
+  cliente: '/api/cliente',
+  meusAgendamentos: '/api/meus-agendamentos',
+  cancelar: id => `/api/meus-agendamentos/${id}/cancelar`,
+  remarcar: id => `/api/meus-agendamentos/${id}/remarcar`
+};
+
+const state = {
+  step: 'inicio',
+  history: [],
+  services: [],
+  dates: [],
+  selectedService: null,
+  selectedDate: '',
+  selectedTime: '',
+  selectedClient: null,
+  bookings: [],
+  selectedBooking: null,
+  mode: 'novo',
+  customer: {
+    nome: '',
+    telefone: '',
+    email: ''
+  },
+  observations: ''
+};
+
+const chat = document.getElementById('chatMessages');
+const input = document.getElementById('chatInput');
+const sendButton = document.getElementById('sendButton');
+const inputLabel = document.getElementById('inputLabel');
+const composerHint = document.getElementById('composerHint');
+const backButton = document.getElementById('backChat');
+const successModal = document.getElementById('successModal');
+
+let busy = false;
+
+/* =====================================================
+   API
+===================================================== */
+
+async function api(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: 'same-origin',
+    ...options,
+    headers: {
+      ...(options.body ? {'Content-Type':'application/json'} : {}),
+      ...(options.headers || {})
     }
-
-    function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      })[character]);
-    }
-
-    function digits(value) {
-      return String(value || "").replace(/\D/g, "");
-    }
-
-    function formatPhone(value) {
-      let number = digits(value).slice(0, 11);
-
-      if (number.length <= 2) return number;
-
-      if (number.length <= 6) {
-        return `(${number.slice(0, 2)}) ${number.slice(2)}`;
-      }
-
-      if (number.length <= 10) {
-        return `(${number.slice(0, 2)}) ${number.slice(2, 6)}-${number.slice(6)}`;
-      }
-
-      return `(${number.slice(0, 2)}) ${number.slice(2, 7)}-${number.slice(7)}`;
-    }
-
-    function saoPauloNowParts() {
-      const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "America/Sao_Paulo",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hourCycle: "h23"
-      }).formatToParts(new Date());
-
-      const values = {};
-
-      parts.forEach((part) => {
-        if (part.type !== "literal") {
-          values[part.type] = part.value;
-        }
-      });
-
-      return {
-        date: `${values.year}-${values.month}-${values.day}`,
-        minutes: Number(values.hour) * 60 + Number(values.minute)
-      };
-    }
-
-    function todayISO() {
-      return saoPauloNowParts().date;
-    }
-
-    function dateFromISO(iso) {
-      const [year, month, day] = String(iso).slice(0, 10).split("-").map(Number);
-      return new Date(year, month - 1, day, 12, 0, 0);
-    }
-
-    function isoFromDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-
-      return `${year}-${month}-${day}`;
-    }
-
-    function addDays(iso, amount) {
-      const date = dateFromISO(iso);
-      date.setDate(date.getDate() + amount);
-      return isoFromDate(date);
-    }
-
-    function formatDate(iso, includeYear = true) {
-      if (!iso) return "A escolher";
-
-      return dateFromISO(iso).toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        ...(includeYear ? { year: "numeric" } : {})
-      });
-    }
-
-    function shortWeekday(iso) {
-      return dateFromISO(iso)
-        .toLocaleDateString("pt-BR", { weekday: "short" })
-        .replace(".", "");
-    }
-
-    function dateOffset(iso) {
-      const start = dateFromISO(todayISO());
-      const target = dateFromISO(iso);
-
-      return Math.round((target - start) / 86400000);
-    }
-
-    function dateGroupTitle(iso) {
-      const offset = dateOffset(iso);
-
-      if (offset === 0) return "Hoje";
-      if (offset === 1) return "Amanhã";
-      if (offset <= 6) return "Próximos dias";
-      if (offset <= 13) return "Próxima semana";
-
-      return "Próximas semanas";
-    }
-
-    function isTimeInPastToday(iso, time) {
-      if (iso !== todayISO()) return false;
-
-      const parts = String(time || "").slice(0, 5).split(":");
-
-      if (parts.length !== 2) return false;
-
-      const hours = Number(parts[0]);
-      const minutes = Number(parts[1]);
-
-      if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
-        return false;
-      }
-
-      const now = saoPauloNowParts();
-
-      return hours * 60 + minutes <= now.minutes;
-    }
-
-    /*
-      Normalização mais flexível:
-      aceita arrays diretos e arrays dentro de objetos comuns da API.
-    */
-    function normalizeList(data, depth = 0) {
-      if (Array.isArray(data)) return data;
-      if (!data || typeof data !== "object" || depth > 4) return [];
-
-      const possibleKeys = [
-        "data",
-        "servicos",
-        "services",
-        "horarios",
-        "horarios_disponiveis",
-        "horariosDisponiveis",
-        "disponibilidade",
-        "disponiveis",
-        "slots",
-        "available_times",
-        "availableTimes",
-        "available_slots",
-        "availableSlots",
-        "results",
-        "result",
-        "items",
-        "opcoes",
-        "options"
-      ];
-
-      for (const key of possibleKeys) {
-        if (data[key] !== undefined && data[key] !== null) {
-          const found = normalizeList(data[key], depth + 1);
-
-          if (found.length) return found;
-
-          if (Array.isArray(data[key])) return data[key];
-        }
-      }
-
-      return [];
-    }
-
-    function normalizeService(service) {
-      return {
-        id:
-          service.id ??
-          service.servico_id ??
-          service.id_servico ??
-          service.service_id,
-        nome:
-          service.nome ??
-          service.nome_servico ??
-          service.servico ??
-          service.name ??
-          "Serviço",
-        preco: Number(
-          service.preco ??
-          service.valor ??
-          service.preco_base ??
-          service.price ??
-          0
-        ),
-        duracao: Number(
-          service.duracao_minutos ??
-          service.duracao ??
-          service.tempo_minutos ??
-          service.duration_minutes ??
-          service.duration ??
-          60
-        ),
-        descricao:
-          service.descricao ??
-          service.description ??
-          ""
-      };
-    }
-
-    function normalizeClientResponse(result) {
-      if (!result) {
-        return { exists: false, client: null };
-      }
-
-      if (
-        result.existe === false ||
-        result.encontrado === false ||
-        result.exists === false
-      ) {
-        return { exists: false, client: null };
-      }
-
-      const client = result.cliente ?? result.data ?? result;
-
-      if (
-        result.existe === true ||
-        result.encontrado === true ||
-        result.exists === true
-      ) {
-        return { exists: true, client: client || null };
-      }
-
-      if (
-        client &&
-        typeof client === "object" &&
-        (client.id || client.nome || client.telefone)
-      ) {
-        return { exists: true, client };
-      }
-
-      return { exists: false, client: null };
-    }
-
-    function extractTime(item) {
-      if (typeof item === "string") return item;
-
-      if (!item || typeof item !== "object") return "";
-
-      return (
-        item.hora_inicio ??
-        item.horario_inicio ??
-        item.horario ??
-        item.hora ??
-        item.inicio ??
-        item.time ??
-        item.start_time ??
-        item.start ??
-        ""
-      );
-    }
-
-    function isUnavailableResponse(error) {
-      return error.status === 400 || error.status === 404;
-    }
-
-    async function apiRequest(url, options = {}) {
-      let response;
-
-      try {
-        response = await fetch(url, {
-          ...options,
-          headers: {
-            Accept: "application/json",
-            ...(options.body ? { "Content-Type": "application/json" } : {}),
-            ...(options.headers || {})
-          },
-          cache: "no-store"
-        });
-      } catch {
-        throw new Error(
-          "Não consegui conectar ao servidor. Verifique sua internet e tente novamente."
-        );
-      }
-
-      const contentType = response.headers.get("content-type") || "";
-      let data;
-
-      if (contentType.includes("application/json")) {
-        data = await response.json().catch(() => ({}));
-      } else {
-        const raw = await response.text().catch(() => "");
-        data = { message: raw };
-      }
-
-      if (!response.ok) {
-        const rawMessage =
-          data?.message ||
-          data?.error ||
-          data?.erro ||
-          data?.details ||
-          data?.mensagem ||
-          "Não foi possível concluir essa etapa.";
-
-        const error = new Error(
-          String(rawMessage).replace(/<[^>]*>/g, "").slice(0, 500)
-        );
-
-        error.status = response.status;
-        error.data = data;
-
-        throw error;
-      }
-
-      return data;
-    }
-
-    /* INTERFACE DO CHAT */
-
-    function scrollChatToBottom() {
-      const chat = $("#chatMessages");
-
-      requestAnimationFrame(() => {
-        chat.scrollTop = chat.scrollHeight;
-      });
-    }
-
-    function addBubble(text, sender = "bot") {
-      const row = document.createElement("div");
-      row.className = `message-row ${sender}`;
-
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
-
-      const time = document.createElement("span");
-      time.className = "bubble-time";
-      time.textContent = new Intl.DateTimeFormat("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "America/Sao_Paulo"
-      }).format(new Date());
-
-      bubble.appendChild(time);
-      row.appendChild(bubble);
-      $("#chatMessages").appendChild(row);
-
-      scrollChatToBottom();
-
-      return row;
-    }
-
-    function addTyping() {
-      removeTyping();
-
-      const row = document.createElement("div");
-      row.className = "message-row bot";
-      row.id = "typingIndicator";
-
-      const bubble = document.createElement("div");
-      bubble.className = "typing-bubble";
-      bubble.setAttribute("aria-label", "A secretária está respondendo");
-
-      for (let i = 0; i < 3; i++) {
-        bubble.appendChild(document.createElement("span"));
-      }
-
-      row.appendChild(bubble);
-      $("#chatMessages").appendChild(row);
-
-      scrollChatToBottom();
-    }
-
-    function removeTyping() {
-      $("#typingIndicator")?.remove();
-    }
-
-    function botSay(text) {
-      removeTyping();
-      addBubble(text, "bot");
-    }
-
-    function userSay(text) {
-      addBubble(text, "user");
-    }
-
-    /*
-      CORREÇÃO IMPORTANTE:
-      Esta função remove somente as respostas rápidas antigas.
-      Ela NÃO apaga os botões de datas ou horários que acabaram
-      de ser exibidos.
-    */
-    function clearQuickReplies() {
-      $$(".quick-replies").forEach((element) => element.remove());
-    }
-
-    function clearOptionContainers() {
-      $$(".quick-replies, .option-grid, .date-options, .time-options, .review-card")
-        .forEach((element) => element.remove());
-    }
-
-    function renderQuickReplies(options) {
-      clearQuickReplies();
-
-      const container = document.createElement("div");
-      container.className = "quick-replies";
-
-      options.forEach((option) => {
-        const button = document.createElement("button");
-
-        button.type = "button";
-        button.className = `quick-reply ${option.gold ? "gold" : ""}`.trim();
-        button.textContent = option.label;
-
-        button.addEventListener("click", async () => {
-          if (button.disabled || state.bookingInProgress) return;
-
-          // Impede duplo clique em respostas rápidas do mesmo grupo.
-          container.querySelectorAll("button").forEach((item) => {
-            item.disabled = true;
-          });
-
-          userSay(option.label);
-
-          try {
-            if (typeof option.action === "function") {
-              await option.action();
-            }
-          } catch (error) {
-            botSay(error.message || "Ocorreu um erro. Tente novamente.");
-          }
-        });
-
-        container.appendChild(button);
-      });
-
-      $("#chatMessages").appendChild(container);
-      scrollChatToBottom();
-    }
-
-    function renderOptionCards(options, onSelect) {
-      clearOptionContainers();
-
-      const container = document.createElement("div");
-      container.className = "option-grid";
-
-      options.forEach((option) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "option-card";
-
-        const icon = document.createElement("span");
-        icon.className = "option-icon";
-        icon.textContent = option.icon || "✧";
-
-        const title = document.createElement("strong");
-        title.textContent = option.title;
-
-        const description = document.createElement("small");
-        description.textContent = option.description || "";
-
-        button.append(icon, title, description);
-
-        if (option.price !== undefined) {
-          const price = document.createElement("span");
-          price.className = "option-price";
-          price.textContent = money(option.price);
-          button.appendChild(price);
-        }
-
-        button.addEventListener("click", async () => {
-          if (button.disabled) return;
-
-          container.querySelectorAll("button").forEach((item) => {
-            item.disabled = true;
-          });
-
-          button.classList.add("selected");
-          userSay(option.title);
-
-          try {
-            await onSelect(option);
-          } catch (error) {
-            botSay(error.message || "Não consegui selecionar esse procedimento. Tente novamente.");
-          }
-        });
-
-        container.appendChild(button);
-      });
-
-      $("#chatMessages").appendChild(container);
-      scrollChatToBottom();
-    }
-
-    function configureInput({
-      label = "Sua mensagem",
-      placeholder = "Digite aqui...",
-      type = "text",
-      enabled = true,
-      hint = ""
-    } = {}) {
-      const input = $("#chatInput");
-
-      $("#inputLabel").textContent = label;
-      input.type = type;
-      input.placeholder = placeholder;
-      input.disabled = !enabled;
-      input.value = "";
-
-      input.autocomplete =
-        type === "tel" ? "tel" :
-        type === "email" ? "email" :
-        "off";
-
-      input.inputMode = type === "tel" ? "tel" : "text";
-
-      $("#sendButton").disabled = !enabled;
-      $("#composerHint").textContent = hint;
-
-      if (enabled) {
-        setTimeout(() => {
-          try {
-            input.focus({ preventScroll: true });
-          } catch {
-            input.focus();
-          }
-        }, 50);
-      }
-    }
-
-    function setStep(step) {
-      state.step = step;
-
-      $("#backChat").hidden = ![
-        "phone",
-        "clientChoice",
-        "name",
-        "email",
-        "services",
-        "dates",
-        "times",
-        "observations",
-        "review"
-      ].includes(step);
-
-      configureInput({
-        enabled: false,
-        placeholder: "Selecione uma opção acima",
-        hint: "A secretária vai orientar você durante todo o atendimento."
-      });
-    }
-
-    /* INÍCIO */
-
-    function startChat() {
-      state.requestToken++;
-
-      $("#chatMessages").innerHTML = "";
-
-      state.step = "welcome";
-      state.clientType = null;
-      state.clientExists = false;
-      state.clientId = null;
-      state.nome = "";
-      state.telefone = "";
-      state.email = "";
-      state.servico = null;
-      state.data = "";
-      state.horario = "";
-      state.observacoes = "";
-      state.services = [];
-      state.dates = [];
-      state.times = [];
-      state.bookingInProgress = false;
-      state.clientSaved = false;
-
-      botSay(
-        "Olá! Seja muito bem-vinda ao espaço Taiany Trindade Nail Designer. ♡\n\nSou a secretária virtual e vou ajudar você a agendar seu procedimento.\n\nVamos encontrar o melhor horário para você?"
-      );
-
-      renderQuickReplies([
-        {
-          label: "✦ Quero agendar",
-          gold: true,
-          action: askPhone
-        },
-        {
-          label: "♡ Consultar agendamento",
-          action: consultBooking
-        },
-        {
-          label: "Como funciona?",
-          action: explainBooking
-        }
-      ]);
-
-      setStep("welcome");
-    }
-
-
-function consultBooking() {
-  setStep("consultBookingPhone");
-
-  botSay(
-    "Claro! ♡ Vou ajudar você a consultar seu agendamento.\n\nInforme o WhatsApp com DDD que foi utilizado no momento da marcação."
-  );
-
-  configureInput({
-    label: "WhatsApp usado no agendamento",
-    placeholder: "(17) 99999-9999",
-    type: "tel",
-    enabled: true,
-    hint: "Digite o mesmo número informado ao realizar o agendamento."
   });
-}
-      
-    function explainBooking() {
-      botSay(
-        "É simples! Vou localizar seu cadastro pelo WhatsApp, mostrar os procedimentos disponíveis e consultar os dias e horários livres. No final, você revisa os dados e envia a solicitação de agendamento."
-      );
 
-      renderQuickReplies([
-        {
-          label: "Vamos agendar",
-          gold: true,
-          action: askPhone
-        },
-        {
-          label: "Voltar ao início",
-          action: startChat
-        }
-      ]);
-    }
-
-    function askPhone() {
-      setStep("phone");
-
-      botSay(
-        "Perfeito! ✨ Para começar, informe seu WhatsApp com DDD. Vou verificar se já existe um cadastro com esse número."
-      );
-
-      configureInput({
-        label: "WhatsApp com DDD",
-        placeholder: "(17) 99999-9999",
-        type: "tel",
-        enabled: true,
-        hint: "Informe seu número com DDD, sem precisar digitar espaços ou traços."
-      });
-    }
-
-    async function checkExistingClient(phone) {
-      return apiRequest(
-        `${API.clients}?telefone=${encodeURIComponent(digits(phone))}`
-      ).then(normalizeClientResponse);
-    }
-
-    async function handlePhone(value) {
-      const phone = digits(value);
-
-      if (phone.length < 10 || phone.length > 11) {
-        botSay("Esse número parece incompleto. Confira o DDD e o WhatsApp e tente novamente.");
-
-        configureInput({
-          label: "WhatsApp com DDD",
-          placeholder: "(17) 99999-9999",
-          type: "tel",
-          enabled: true,
-          hint: "Informe um número com 10 ou 11 dígitos, incluindo o DDD."
-        });
-
-        return;
-      }
-
-      state.telefone = formatPhone(phone);
-
-      setStep("checkingClient");
-      botSay("Só um instante, estou verificando seu cadastro...");
-      addTyping();
-
-      try {
-        const result = await checkExistingClient(phone);
-
-        removeTyping();
-
-        state.clientExists = result.exists;
-        state.clientId = result.client?.id || null;
-
-        if (result.exists) {
-          state.nome = result.client?.nome || "";
-          state.email = result.client?.email || "";
-
-          botSay(
-            `Encontrei um cadastro${state.nome ? ` em nome de ${state.nome}` : ""}! ♡\n\nVamos utilizar os dados existentes para evitar um cadastro duplicado.`
-          );
-
-          renderQuickReplies([
-            {
-              label: "Continuar com esse cadastro",
-              gold: true,
-              action: () => continueWithExistingClient(result.client)
-            },
-            {
-              label: "Corrigir WhatsApp",
-              action: askPhone
-            }
-          ]);
-
-          setStep("clientChoice");
-        } else {
-          botSay(
-            "Ainda não encontrei um cadastro com esse WhatsApp. Se for sua primeira visita, podemos cadastrar seus dados rapidinho."
-          );
-
-          renderQuickReplies([
-            {
-              label: "Sou nova cliente",
-              gold: true,
-              action: startNewClient
-            },
-            {
-              label: "Tentar outro número",
-              action: askPhone
-            }
-          ]);
-
-          setStep("clientChoice");
-        }
-      } catch (error) {
-        removeTyping();
-
-        botSay(
-          `Não consegui consultar o cadastro neste momento.\n\n${error.message}\n\nVocê pode tentar novamente.`
-        );
-
-        renderQuickReplies([
-          {
-            label: "Tentar novamente",
-            gold: true,
-            action: () => handlePhone(phone)
-          },
-          {
-            label: "Corrigir WhatsApp",
-            action: askPhone
-          }
-        ]);
-      }
-    }
-
-    function continueWithExistingClient(client) {
-      state.clientExists = true;
-      state.clientId = client?.id || state.clientId;
-      state.nome = client?.nome || state.nome;
-      state.email = client?.email || state.email;
-
-      botSay(
-        `Tudo certo${state.nome ? `, ${state.nome.split(" ")[0]}` : ""}! Vamos escolher seu procedimento.`
-      );
-
-      loadServices();
-    }
-
-    function askCidade() {
-      setStep("cidade");
-      botSay("Em qual cidade você quer ser atendida? ✨\n\nSelecione abaixo para eu consultar os horários na cidade correta.");
-
-      renderQuickReplies([
-        { label: "📍 Severínia", gold: true, action: () => { state.cidade = "Severínia"; loadDates(); } },
-        { label: "📍 Olímpia", gold: true, action: () => { state.cidade = "Olímpia"; loadDates(); } }
-      ]);
-    }
-
-    function startNewClient() {
-      state.clientType = "new";
-      state.clientExists = false;
-      state.clientId = null;
-      state.clientSaved = false;
-
-      botSay("Que bom ter você por aqui! ♡ Como posso chamar você? Informe seu nome completo.");
-
-      setStep("name");
-
-      configureInput({
-        label: "Nome completo",
-        placeholder: "Digite seu nome completo",
-        enabled: true,
-        hint: "Informe seu nome para o cadastro."
-      });
-    }
-
-    async function saveNewClient() {
-      if (state.clientExists || state.clientSaved) return;
-
-      const payload = {
-        nome: state.nome,
-        telefone: digits(state.telefone),
-        email: state.email || null
-      };
-
-      try {
-        const result = await apiRequest(API.createClient, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-
-        const client = result?.cliente || result?.data || result;
-
-        state.clientId = client?.id || state.clientId;
-        state.clientSaved = true;
-      } catch (error) {
-        if (
-          error.status === 409 ||
-          /duplicad|já existe|ja existe|23505|duplicate key|unique constraint/i.test(error.message)
-        ) {
-          const result = await checkExistingClient(digits(state.telefone));
-
-          if (result.exists) {
-            state.clientExists = true;
-            state.clientId = result.client?.id || null;
-            state.nome = result.client?.nome || state.nome;
-            state.email = result.client?.email || state.email;
-            state.clientSaved = true;
-            return;
-          }
-        }
-
-        throw error;
-      }
-    }
-
-    /* CADASTRO */
-
-    async function handleName(value) {
-      const name = value.trim();
-
-      if (name.length < 3) {
-        botSay("Pode me informar seu nome completo? Preciso de pelo menos 3 caracteres.");
-
-        configureInput({
-          label: "Nome completo",
-          placeholder: "Digite seu nome completo",
-          enabled: true
-        });
-
-        return;
-      }
-
-      state.nome = name;
-
-      botSay(
-        `Prazer em receber você, ${name.split(" ")[0]}! ♡\n\nSe quiser, informe seu e-mail. Essa informação é opcional.`
-      );
-
-      setStep("email");
-
-      renderQuickReplies([
-        {
-          label: "Pular esta etapa",
-          action: () => handleEmail("")
-        }
-      ]);
-
-      configureInput({
-        label: "E-mail (opcional)",
-        placeholder: "voce@email.com",
-        type: "email",
-        enabled: true,
-        hint: "Você também pode selecionar “Pular esta etapa”."
-      });
-    }
-
-    async function handleEmail(value) {
-      const email = value.trim();
-
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        botSay("Esse e-mail parece estar incorreto. Confira o endereço ou escolha pular esta etapa.");
-
-        renderQuickReplies([
-          {
-            label: "Pular esta etapa",
-            action: () => handleEmail("")
-          }
-        ]);
-
-        configureInput({
-          label: "E-mail (opcional)",
-          placeholder: "voce@email.com",
-          type: "email",
-          enabled: true
-        });
-
-        return;
-      }
-
-      state.email = email;
-
-      try {
-        botSay("Vou registrar seus dados para que possamos seguir com o agendamento.");
-        addTyping();
-
-        await saveNewClient();
-
-        removeTyping();
-
-        botSay("Cadastro pronto! Agora vamos escolher o procedimento ideal para você. ✨");
-
-        await loadServices();
-      } catch (error) {
-        removeTyping();
-
-        botSay(
-          `Não consegui salvar o cadastro neste momento.\n\n${error.message}\n\nSeus dados ainda não foram confirmados no sistema. Vamos tentar novamente.`
-        );
-
-        renderQuickReplies([
-          {
-            label: "Tentar novamente",
-            gold: true,
-            action: () => handleEmail(state.email)
-          },
-          {
-            label: "Recomeçar",
-            action: startChat
-          }
-        ]);
-      }
-    }
-    
-    /* SERVIÇOS */
-
-    async function loadServices() {
-      state.requestToken++;
-      setStep("services");
-
-      botSay("Estes são os procedimentos disponíveis no sistema. Escolha aquele que deseja realizar.");
-
-      addTyping();
-
-      try {
-        const data = await apiRequest(API.services);
-
-        removeTyping();
-
-        state.services = normalizeList(data)
-          .map(normalizeService)
-          .filter((service) => service.id !== undefined && service.id !== null);
-
-        if (!state.services.length) {
-          botSay("No momento, não encontrei serviços disponíveis para agendamento.");
-
-          renderQuickReplies([
-            {
-              label: "Tentar novamente",
-              gold: true,
-              action: loadServices
-            },
-            {
-              label: "Voltar ao início",
-              action: startChat
-            }
-          ]);
-
-          return;
-        }
-
-        renderOptionCards(
-          state.services.map((service) => ({
-            title: service.nome,
-            description: [
-              service.duracao > 0 ? `${service.duracao} minutos` : "",
-              service.descricao || ""
-            ].filter(Boolean).join(" · "),
-            price: service.preco,
-            icon: "✧",
-            service
-          })),
-          async (option) => {
-            state.servico = option.service;
-            state.data = "";
-            state.horario = "";
-            state.dates = [];
-            state.times = [];
-
-            botSay(
-              `Ótima escolha! ✨\n\nProcedimento: ${state.servico.nome}\nValor: ${money(state.servico.preco)}\nDuração prevista: ${state.servico.duracao} minutos.`
-            );
-
-            askCidade();
-          }
-        );
-      } catch (error) {
-        removeTyping();
-
-        botSay(`Não consegui carregar os procedimentos.\n\n${error.message}`);
-
-        renderQuickReplies([
-          {
-            label: "Tentar novamente",
-            gold: true,
-            action: loadServices
-          },
-          {
-            label: "Voltar ao início",
-            action: startChat
-          }
-        ]);
-      }
-    }
-    
-    /* CONSULTA DOS HORÁRIOS */
-
-async function fetchTimesForDate(iso, serviceId) {
-  const cidadeParam = state.cidade ? `&cidade=${encodeURIComponent(state.cidade)}` : '';
-  const url = `${API.times}?data=${encodeURIComponent(iso)}&servico_id=${encodeURIComponent(serviceId)}` + cidadeParam;
-  const result = await apiRequest(url);
-  let list = normalizeList(result);
-  if (!list.length && result && typeof result === "object" && (result.hora_inicio || result.horario)) list = [result];
-  const times = list
-    .map(extractTime)
-    .filter(Boolean)
-    .map(t => String(t).trim().slice(0,5))
-    .filter(t => /^\d{2}:\d{2}$/.test(t))
-    .filter(t => !isTimeInPastToday(iso, t));
-  return [...new Set(times)].sort((a,b)=>a.localeCompare(b));
-}
-
-      const times = list
-        .filter((item) => {
-          if (typeof item === "string") return true;
-          if (!item || typeof item !== "object") return false;
-
-          if (
-            item.disponivel === false ||
-            item.available === false ||
-            item.livre === false
-          ) {
-            return false;
-          }
-
-          if (
-            item.status &&
-            /ocupado|indisponível|indisponivel|reservado|bloqueado/i.test(String(item.status))
-          ) {
-            return false;
-          }
-
-          return true;
-        })
-        .map(extractTime)
-        .filter(Boolean)
-        .map((time) => String(time).trim().slice(0, 5))
-        .filter((time) => /^\d{2}:\d{2}$/.test(time))
-        .filter((time) => {
-          const [hours, minutes] = time.split(":").map(Number);
-          return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
-        })
-        .filter((time) => !isTimeInPastToday(iso, time));
-
-      return [...new Set(times)].sort((a, b) => a.localeCompare(b));
-    }
-
-    /* DATAS DISPONÍVEIS */
-
-async function loadDates() {
-  setStep("dates");
-  clearOptionContainers();
-  botSay("Vou consultar a agenda da cidade de " + state.cidade + " para encontrar os dias com horários livres.");
-  addTyping();
-  const serviceId = state.servico?.id;
-  if (!serviceId) { removeTyping(); await loadServices(); return; }
-  const token = ++state.requestToken;
+  let result;
 
   try {
-    // 1. Pega a agenda da cidade (tanto as fixas quanto as de data_especifica)
-    const dispRes = await apiRequest(`/api/disponibilidade?cidade=${encodeURIComponent(state.cidade)}`);
-    const disponibilidades = normalizeList(dispRes);
+    result = await response.json();
+  } catch {
+    throw new Error('O servidor retornou uma resposta inválida.');
+  }
 
-    // 2. Gera os próximos 30 dias
-    const candidates = Array.from({ length: 30 }, (_, i) => addDays(todayISO(), i));
-    
-    // 3. Filtra só os dias que TEM disponibilidade
-    // - Se tem data_especifica = aquele dia específico trabalha
-    // - Se não tem data_especifica, verifica se o dia da semana daquele dia existe no modelo semanal
-    const diasComAgenda = candidates.filter(iso => {
-      const weekday = dateFromISO(iso).getDay();
-      // tem data específica pra esse dia?
-      const temEspecifica = disponibilidades.some(d => d.data_especifica === iso && parseBoolean(d.ativo, true));
-      if (temEspecifica) return true;
-      // senão, tem regra semanal pro dia da semana?
-      const temSemanal = disponibilidades.some(d => !d.data_especifica && Number(d.dia_semana) === weekday && parseBoolean(d.ativo, true));
-      return temSemanal;
+  if (!response.ok || result.ok === false) {
+    throw new Error(result.error || 'Não foi possível concluir a operação.');
+  }
+
+  return result;
+}
+
+function getErrorMessage(error) {
+  return error?.message || 'Ocorreu um erro inesperado.';
+}
+
+function formatDate(date) {
+  if (!date) return '';
+
+  const [year, month, day] = date.split('-');
+  return `${day}/${month}/${year}`;
+}
+
+function formatMoney(value) {
+  return Number(value || 0).toLocaleString('pt-BR', {
+    style:'currency',
+    currency:'BRL'
+  });
+}
+
+function normalizePhone(value) {
+  return String(value || '').replace(/\D/g,'');
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[char]);
+}
+
+function todayLocal() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  return new Date(now.getTime() - offset * 60000)
+    .toISOString().slice(0,10);
+}
+
+function addDays(date, days) {
+  const d = new Date(date + 'T12:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0,10);
+}
+
+function weekdayName(date) {
+  return new Date(date + 'T12:00:00').toLocaleDateString('pt-BR', {
+    weekday:'long'
+  });
+}
+
+function fullDate(date) {
+  return new Date(date + 'T12:00:00').toLocaleDateString('pt-BR', {
+    weekday:'long',
+    day:'2-digit',
+    month:'long',
+    year:'numeric'
+  });
+}
+
+/* =====================================================
+   CONVERSA
+===================================================== */
+
+function scrollChat() {
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addMessage(text, type = 'bot') {
+  const message = document.createElement('div');
+  message.className = `message ${type}`;
+  message.textContent = text;
+  chat.appendChild(message);
+  scrollChat();
+  return message;
+}
+
+function addOptions(items) {
+  const container = document.createElement('div');
+  container.className = 'options';
+
+  items.forEach(item => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'option-btn';
+    button.textContent = item.label;
+
+    button.addEventListener('click', async () => {
+      if (busy || button.disabled) return;
+
+      container.querySelectorAll('button').forEach(b => b.disabled = true);
+
+      addMessage(item.label, 'user');
+
+      try {
+        await item.action();
+      } catch (error) {
+        addMessage(getErrorMessage(error));
+        addOptions([{label:'Voltar ao início',action:showHome}]);
+      }
     });
 
-    // 4. Agora sim consulta horários só desses dias filtrados (bem mais rápido)
-    const availableDates = [];
-    for (let i = 0; i < diasComAgenda.length; i += 4) {
-      if (token !== state.requestToken) return;
-      const batch = diasComAgenda.slice(i, i+4);
-      const results = await Promise.all(batch.map(async iso => {
-        try { const times = await fetchTimesForDate(iso, serviceId); return { iso, times }; } 
-        catch { return { iso, times: [] }; }
-      }));
-      results.forEach(r => { if (r.times.length > 0) availableDates.push(r.iso); });
-    }
+    container.appendChild(button);
+  });
 
-    if (token !== state.requestToken) return;
-    removeTyping();
-    state.dates = [...new Set(availableDates)].sort();
+  chat.appendChild(container);
+  scrollChat();
+}
 
-    if (!state.dates.length) {
-      botSay(`Ainda não liberei agenda para ${state.cidade} nos próximos 30 dias. Você pode escolher outra cidade ou outro procedimento.`);
-      renderQuickReplies([
-        { label: "Escolher outra cidade", action: askCidade },
-        { label: "Escolher outro procedimento", action: loadServices }
-      ]);
+function setInput(enabled, label = 'Sua mensagem', placeholder = '') {
+  input.disabled = !enabled;
+  sendButton.disabled = !enabled;
+  inputLabel.textContent = label;
+  input.placeholder = placeholder;
+  input.value = '';
+  input.focus();
+}
+
+function setHint(text) {
+  composerHint.textContent = text;
+}
+
+function setBusy(value) {
+  busy = value;
+  sendButton.disabled = value || input.disabled;
+}
+
+function saveStep(step) {
+  if (state.step !== step) {
+    state.history.push(state.step);
+  }
+  state.step = step;
+  backButton.hidden = state.history.length === 0;
+}
+
+function resetFlow() {
+  state.history = [];
+  state.step = 'inicio';
+  state.selectedService = null;
+  state.selectedDate = '';
+  state.selectedTime = '';
+  state.selectedClient = null;
+  state.selectedBooking = null;
+  state.bookings = [];
+  state.mode = 'novo';
+  state.observations = '';
+  state.customer = {nome:'',telefone:'',email:''};
+  setInput(false);
+  backButton.hidden = true;
+}
+
+/* =====================================================
+   INÍCIO
+===================================================== */
+
+async function initialize() {
+  chat.innerHTML = '';
+
+  addMessage(
+    'Olá! Seja muito bem-vinda ao atendimento da Taiany Trindade! ♡\n\nSou a secretária virtual e estou aqui para ajudar você a cuidar das suas unhas.\n\nComo posso ajudar hoje?'
+  );
+
+  addOptions([
+    {label:'✦ Quero fazer um agendamento',action:startBooking},
+    {label:'♡ Consultar meus agendamentos',action:startMyBookings},
+    {label:'✧ Conhecer os serviços e valores',action:showServices},
+    {label:'✦ Informações sobre atendimento',action:showInformation}
+  ]);
+}
+
+async function showHome() {
+  resetFlow();
+  addMessage('Como posso ajudar você?');
+  addOptions([
+    {label:'✦ Fazer um agendamento',action:startBooking},
+    {label:'♡ Consultar meus agendamentos',action:startMyBookings},
+    {label:'✧ Serviços e valores',action:showServices},
+    {label:'Voltar ao início',action:showHome}
+  ]);
+}
+
+/* =====================================================
+   SERVIÇOS
+===================================================== */
+
+async function loadServices() {
+  const result = await api(API.servicos);
+
+  state.services = (result.data || []).filter(service =>
+    service.ativo === undefined ||
+    service.ativo === true ||
+    service.ativo === 'true' ||
+    service.ativo === 1
+  );
+
+  return state.services;
+}
+
+async function showServices() {
+  saveStep('servicos_info');
+  setInput(false);
+
+  try {
+    const services = await loadServices();
+
+    if (!services.length) {
+      addMessage('No momento, não há serviços cadastrados.');
       return;
     }
 
-    botSay(`Encontrei ${state.dates.length} data(s) com horário em ${state.cidade}! ♡`);
-    renderDates();
+    addMessage('Confira os procedimentos disponíveis:');
 
-  } catch (error) {
-    removeTyping();
-    botSay(`Não consegui consultar a agenda.\n\n${error.message}`);
-    renderQuickReplies([{ label: "Tentar novamente", gold: true, action: loadDates }]);
+    const container = document.createElement('div');
+    container.className = 'options';
+
+    services.forEach(service => {
+      const item = document.createElement('div');
+      item.className = 'booking-card';
+
+      item.innerHTML = `
+        <h4>${escapeHTML(service.nome)}</h4>
+        <p>${escapeHTML(service.descricao || 'Atendimento personalizado.')}</p>
+        <p>⏱ ${Number(service.duracao_minutos || service.duracao || 60)} minutos</p>
+        <p><strong>${formatMoney(service.preco)}</strong></p>
+      `;
+
+      container.appendChild(item);
+    });
+
+    chat.appendChild(container);
+
+    addOptions([
+      {label:'Quero agendar um procedimento',action:startBooking},
+      {label:'Voltar ao início',action:showHome}
+    ]);
+
+  } catch(error) {
+    addMessage('Não consegui carregar os serviços. ' + getErrorMessage(error));
   }
 }
 
-          results.forEach((result) => {
-            completed++;
+/* =====================================================
+   CADASTRO DO CLIENTE
+===================================================== */
 
-            if (result.error) {
-              errors++;
-            } else {
-              validResponses++;
+async function findCustomer(phone) {
+  const result = await api(
+    `${API.cliente}?telefone=${encodeURIComponent(normalizePhone(phone))}`
+  );
 
-              if (result.times.length > 0) {
-                availableDates.push(result.iso);
-              }
-            }
+  if (result.existe) {
+    return result.data;
+  }
+
+  return null;
+}
+
+async function startBooking() {
+  resetFlow();
+  saveStep('servico');
+
+  addMessage('Vamos encontrar o melhor horário para você! ♡\n\nPrimeiro, escolha o procedimento desejado.');
+
+  setInput(false);
+
+  try {
+    const services = await loadServices();
+
+    if (!services.length) {
+      addMessage('Não existem serviços disponíveis no momento.');
+      return;
+    }
+
+    addOptions(services.map(service => ({
+      label:`${service.nome} · ${formatMoney(service.preco)}`,
+      action:async () => {
+        state.selectedService = service;
+        await askPhone();
+      }
+    })));
+
+  } catch(error) {
+    addMessage('Não consegui consultar os serviços. ' + getErrorMessage(error));
+  }
+}
+
+async function askPhone() {
+  saveStep('telefone');
+
+  addMessage(
+    `Perfeito! Você escolheu ${state.selectedService.nome}.\n\nAgora informe seu WhatsApp com DDD para verificarmos seu cadastro.`
+  );
+
+  setInput(true,'WhatsApp','Ex.: (17) 99999-9999');
+  input.dataset.type = 'telefone';
+  setHint('Informe o número utilizado no seu cadastro.');
+}
+
+/* =====================================================
+   DATAS ESPECÍFICAS DO SUPABASE
+===================================================== */
+
+async function loadSpecificDates() {
+  const result = await api(
+    `${API.disponibilidade}?cidade=${encodeURIComponent(CONFIG.cidade)}`
+  );
+
+  const today = todayLocal();
+  const limit = addDays(today, CONFIG.antecedenciaDias);
+
+  /*
+    IMPORTANTE:
+    O cliente só recebe datas cadastradas
+    em data_especifica e marcadas como ativas.
+  */
+
+  const grouped = new Map();
+
+  (result.data || []).forEach(item => {
+    const date = String(item.data_especifica || '').slice(0,10);
+
+    if (!date) return;
+    if (item.ativo !== true && item.ativo !== 'true' && item.ativo !== 1) return;
+    if (date < today || date > limit) return;
+
+    if (!grouped.has(date)) {
+      grouped.set(date, []);
+    }
+
+    grouped.get(date).push(item);
+  });
+
+  state.dates = [...grouped.keys()].sort();
+
+  return state.dates;
+}
+
+async function showDates() {
+  saveStep('data');
+
+  setInput(false);
+
+  addMessage('Agora vamos escolher o dia do seu atendimento.\n\nEstou consultando as datas liberadas pela Taiany na agenda.');
+
+  const loading = addMessage('Consultando disponibilidade...', 'bot');
+
+  try {
+    const dates = await loadSpecificDates();
+    loading.remove();
+
+    if (!dates.length) {
+      addMessage(
+        'No momento não existem datas específicas disponíveis para agendamento.\n\nA agenda será atualizada assim que novos dias forem liberados.'
+      );
+
+      addOptions([
+        {label:'Consultar novamente',action:showDates},
+        {label:'Voltar ao início',action:showHome}
+      ]);
+
+      return;
+    }
+
+    addMessage('Estas são as datas disponíveis:');
+
+    addOptions(dates.map(date => ({
+      label:`${formatDate(date)} · ${weekdayName(date)}`,
+      action:async () => {
+        state.selectedDate = date;
+        await showTimes();
+      }
+    })));
+
+  } catch(error) {
+    loading.remove();
+    addMessage('Erro ao consultar as datas: ' + getErrorMessage(error));
+    addOptions([{label:'Tentar novamente',action:showDates}]);
+  }
+}
+
+/* =====================================================
+   HORÁRIOS
+===================================================== */
+
+async function showTimes() {
+  saveStep('horario');
+  setInput(false);
+
+  addMessage(`Você escolheu ${fullDate(state.selectedDate)}.\n\nVou verificar os horários livres para esse dia.`);
+
+  const loading = addMessage('Verificando horários...', 'bot');
+
+  try {
+    const params = new URLSearchParams({
+      data:state.selectedDate,
+      servico_id:state.selectedService.id,
+      cidade:CONFIG.cidade
+    });
+
+    const result = await api(`${API.horarios}?${params}`);
+    loading.remove();
+
+    const times = result.data || [];
+
+    if (!times.length) {
+      addMessage('Não há mais horários disponíveis nesta data para o procedimento escolhido.');
+
+      addOptions([
+        {label:'Escolher outra data',action:showDates},
+        {label:'Voltar ao início',action:showHome}
+      ]);
+
+      return;
+    }
+
+    addMessage('Estes são os horários disponíveis:');
+
+    addOptions(times.map(time => ({
+      label:`◷ ${String(time).slice(0,5)}`,
+      action:async () => {
+        state.selectedTime = String(time).slice(0,5);
+        await showCustomerForm();
+      }
+    })));
+
+  } catch(error) {
+    loading.remove();
+    addMessage('Não consegui consultar os horários. ' + getErrorMessage(error));
+
+    addOptions([
+      {label:'Consultar novamente',action:showTimes},
+      {label:'Escolher outra data',action:showDates}
+    ]);
+  }
+}
+
+/* =====================================================
+   DADOS DO CLIENTE
+===================================================== */
+
+async function showCustomerForm() {
+  saveStep('dados');
+
+  addMessage(
+    `Horário selecionado: ${state.selectedTime}.\n\nAgora precisamos confirmar seus dados para registrar o atendimento.`
+  );
+
+  const existing = state.selectedClient;
+
+  if (existing) {
+    state.customer.nome = existing.nome || '';
+    state.customer.email = existing.email || '';
+    state.customer.telefone = normalizePhone(existing.telefone);
+  }
+
+  const container = document.createElement('div');
+  container.className = 'booking-card';
+
+  container.innerHTML = `
+    <div class="field-group">
+      <label for="customerName">Nome completo *</label>
+      <input class="field-input" id="customerName"
+        maxlength="150" placeholder="Seu nome completo"
+        value="${escapeHTML(state.customer.nome)}">
+    </div>
+
+    <div class="field-group">
+      <label for="customerPhone">WhatsApp *</label>
+      <input class="field-input" id="customerPhone"
+        maxlength="20" placeholder="(17) 99999-9999"
+        value="${escapeHTML(state.customer.telefone)}">
+    </div>
+
+    <div class="field-group">
+      <label for="customerEmail">E-mail (opcional)</label>
+      <input class="field-input" id="customerEmail"
+        type="email" maxlength="200"
+        placeholder="seuemail@email.com"
+        value="${escapeHTML(state.customer.email)}">
+    </div>
+
+    <div class="field-group">
+      <label for="customerNotes">Observações (opcional)</label>
+      <textarea class="field-textarea" id="customerNotes"
+        rows="3" maxlength="1000"
+        placeholder="Alguma informação importante?"></textarea>
+    </div>
+
+    <button class="primary-btn" id="confirmCustomer">
+      Continuar para confirmação
+    </button>
+  `;
+
+  chat.appendChild(container);
+
+  document.getElementById('confirmCustomer').addEventListener('click', () => {
+    const nome = document.getElementById('customerName').value.trim();
+    const telefone = normalizePhone(document.getElementById('customerPhone').value);
+    const email = document.getElementById('customerEmail').value.trim();
+    const observacoes = document.getElementById('customerNotes').value.trim();
+
+    if (nome.length < 2) {
+      addMessage('Informe seu nome completo.');
+      return;
+    }
+
+    if (telefone.length < 10 || telefone.length > 15) {
+      addMessage('Informe um WhatsApp válido com DDD.');
+      return;
+    }
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      addMessage('Informe um e-mail válido.');
+      return;
+    }
+
+    state.customer = {nome,telefone,email};
+    state.observations = observacoes;
+
+    showConfirmation();
+  });
+
+  scrollChat();
+}
+
+/* =====================================================
+   CONFIRMAÇÃO
+===================================================== */
+
+function showConfirmation() {
+  saveStep('confirmacao');
+
+  addMessage('Confira os dados do seu agendamento antes de confirmar.');
+
+  const service = state.selectedService;
+
+  const container = document.createElement('div');
+  container.className = 'booking-card';
+
+  container.innerHTML = `
+    <h4>Resumo do agendamento</h4>
+
+    <div class="summary">
+      <div class="summary-row">
+        <span>Procedimento</span>
+        <strong>${escapeHTML(service.nome)}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Data</span>
+        <strong>${formatDate(state.selectedDate)}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Horário</span>
+        <strong>${escapeHTML(state.selectedTime)}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Duração</span>
+        <strong>${Number(service.duracao_minutos || service.duracao || 60)} minutos</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Cliente</span>
+        <strong>${escapeHTML(state.customer.nome)}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>WhatsApp</span>
+        <strong>${escapeHTML(state.customer.telefone)}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Valor</span>
+        <strong>${formatMoney(service.preco)}</strong>
+      </div>
+    </div>
+
+    <button class="primary-btn" id="confirmBooking">
+      Confirmar meu agendamento
+    </button>
+
+    <button class="secondary-btn" id="editBooking">
+      Alterar meus dados
+    </button>
+  `;
+
+  chat.appendChild(container);
+
+  document.getElementById('confirmBooking').addEventListener('click', submitBooking);
+
+  document.getElementById('editBooking').addEventListener('click', showCustomerForm);
+
+  scrollChat();
+}
+
+/* =====================================================
+   REGISTRO DO AGENDAMENTO
+===================================================== */
+
+async function submitBooking() {
+  if (busy) return;
+
+  setBusy(true);
+
+  const button = document.getElementById('confirmBooking');
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Registrando agendamento...';
+  }
+
+  try {
+    const payload = {
+      nome_cliente:state.customer.nome,
+      telefone_cliente:state.customer.telefone,
+      servico_id:state.selectedService.id,
+      cidade:CONFIG.cidade,
+      data:state.selectedDate,
+      hora_inicio:state.selectedTime,
+      observacoes:state.observations
+    };
+
+    const result = await api(API.agendamentos,{
+      method:'POST',
+      body:JSON.stringify(payload)
+    });
+
+    showSuccess(result.data);
+
+  } catch(error) {
+    addMessage(getErrorMessage(error));
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Tentar novamente';
+    }
+
+    if (error.message.toLowerCase().includes('disponível')) {
+      addOptions([
+        {label:'Escolher outro horário',action:showTimes},
+        {label:'Escolher outra data',action:showDates}
+      ]);
+    }
+
+  } finally {
+    setBusy(false);
+  }
+}
+
+/* =====================================================
+   SUCESSO
+===================================================== */
+
+function showSuccess(booking) {
+  document.getElementById('successTitle').textContent =
+    'Agendamento registrado!';
+
+  document.getElementById('successMessage').textContent =
+    'Seu agendamento foi registrado com sucesso. Será um prazer receber você!';
+
+  document.getElementById('successDetails').innerHTML = `
+    <div class="summary-row">
+      <span>Procedimento</span>
+      <strong>${escapeHTML(booking.nome_servico || state.selectedService.nome)}</strong>
+    </div>
+
+    <div class="summary-row">
+      <span>Data</span>
+      <strong>${formatDate(booking.data)}</strong>
+    </div>
+
+    <div class="summary-row">
+      <span>Horário</span>
+      <strong>${escapeHTML(String(booking.hora_inicio).slice(0,5))}</strong>
+    </div>
+
+    <div class="summary-row">
+      <span>Cliente</span>
+      <strong>${escapeHTML(booking.nome_cliente || state.customer.nome)}</strong>
+    </div>
+  `;
+
+  document.getElementById('successProtocol').textContent =
+    `Protocolo: ${booking.id || 'Registro confirmado'}\nGuarde estas informações para consultar seu atendimento.`;
+
+  successModal.classList.add('show');
+
+  addMessage('Prontinho! Seu agendamento foi registrado com sucesso. ♡\n\nAgradecemos por escolher Taiany Trindade Nail Designer!');
+}
+
+function closeSuccess() {
+  successModal.classList.remove('show');
+  showHome();
+}
+
+/* =====================================================
+   CONSULTAR AGENDAMENTOS
+===================================================== */
+
+async function startMyBookings() {
+  resetFlow();
+  saveStep('consultar_telefone');
+
+  addMessage('Vamos consultar seus agendamentos!\n\nInforme o WhatsApp utilizado no cadastro.');
+
+  setInput(true,'WhatsApp','Ex.: (17) 99999-9999');
+  input.dataset.type = 'consulta';
+  setHint('Digite seu número com DDD.');
+}
+
+async function loadMyBookings(phone) {
+  const result = await api(
+    `${API.meusAgendamentos}?telefone=${encodeURIComponent(normalizePhone(phone))}`
+  );
+
+  state.bookings = result.data || [];
+
+  return state.bookings;
+}
+
+async function showMyBookings(phone) {
+  saveStep('meus_agendamentos');
+  setInput(false);
+
+  addMessage('Consultando seus atendimentos...');
+
+  try {
+    const bookings = await loadMyBookings(phone);
+
+    if (!bookings.length) {
+      addMessage('Não encontramos agendamentos vinculados a esse WhatsApp.');
+
+      addOptions([
+        {label:'Fazer um novo agendamento',action:startBooking},
+        {label:'Voltar ao início',action:showHome}
+      ]);
+
+      return;
+    }
+
+    addMessage(`Encontramos ${bookings.length} agendamento(s):`);
+
+    bookings.forEach(booking => {
+      const card = document.createElement('div');
+      card.className = 'booking-card';
+
+      card.innerHTML = `
+        <h4>${escapeHTML(booking.nome_servico || 'Atendimento')}</h4>
+        <p>Data: ${formatDate(booking.data)}</p>
+        <p>Horário: ${escapeHTML(String(booking.hora_inicio || '').slice(0,5))}</p>
+        <p>Status: ${escapeHTML(booking.status || 'Pendente')}</p>
+        <p>Valor: ${formatMoney(booking.preco)}</p>
+      `;
+
+      if (!['cancelado','cancelada','concluido','concluído','concluída','concluida']
+        .includes(String(booking.status || '').toLowerCase())) {
+
+        const reschedule = document.createElement('button');
+        reschedule.className = 'secondary-btn';
+        reschedule.textContent = 'Remarcar horário';
+
+        reschedule.addEventListener('click', () => {
+          state.selectedBooking = booking;
+          state.customer.telefone = normalizePhone(phone);
+          state.mode = 'remarcar';
+          startReschedule();
+        });
+
+        const cancel = document.createElement('button');
+        cancel.className = 'danger-btn';
+        cancel.textContent = 'Cancelar agendamento';
+
+        cancel.addEventListener('click', () => {
+          state.selectedBooking = booking;
+          state.customer.telefone = normalizePhone(phone);
+          confirmCancel();
+        });
+
+        card.appendChild(reschedule);
+        card.appendChild(cancel);
+      }
+
+      chat.appendChild(card);
+    });
+
+    addOptions([
+      {label:'Fazer novo agendamento',action:startBooking},
+      {label:'Atualizar consulta',action:() => showMyBookings(phone)},
+      {label:'Voltar ao início',action:showHome}
+    ]);
+
+  } catch(error) {
+    addMessage('Não foi possível consultar seus agendamentos. ' + getErrorMessage(error));
+  }
+}
+
+/* =====================================================
+   CANCELAMENTO
+===================================================== */
+
+function confirmCancel() {
+  const booking = state.selectedBooking;
+
+  addMessage(
+    `Deseja realmente cancelar o atendimento de ${formatDate(booking.data)} às ${String(booking.hora_inicio).slice(0,5)}?`
+  );
+
+  addOptions([
+    {
+      label:'Sim, cancelar agendamento',
+      action:async () => {
+        try {
+          const result = await api(API.cancelar(booking.id),{
+            method:'PATCH',
+            body:JSON.stringify({
+              telefone:state.customer.telefone
+            })
           });
 
-          /*
-            Se nenhuma consulta conseguir responder, interrompe.
-            Isso evita dizer que não há datas quando o servidor caiu.
-          */
-          if (completed >= 4 && validResponses === 0 && errors === completed) {
-            throw new Error(
-              results.find((item) => item.error)?.message ||
-              "O servidor não conseguiu consultar a agenda."
-            );
-          }
+          addMessage(result.message || 'Agendamento cancelado com sucesso.');
+          await showMyBookings(state.customer.telefone);
+
+        } catch(error) {
+          addMessage(getErrorMessage(error));
         }
-
-        if (token !== state.requestToken) return;
-
-        removeTyping();
-
-        state.dates = [...new Set(availableDates)].sort();
-
-        if (!state.dates.length) {
-          if (errors > 0) {
-            botSay(
-              "Não consegui confirmar as datas disponíveis agora. O sistema apresentou uma falha em parte das consultas."
-            );
-          } else {
-            botSay(
-              "Não encontrei horários livres para esse procedimento nos próximos 30 dias. Você pode consultar novamente ou escolher outro procedimento."
-            );
-          }
-
-          renderQuickReplies([
-            {
-              label: "Consultar novamente",
-              gold: true,
-              action: loadDates
-            },
-            {
-              label: "Escolher outro procedimento",
-              action: loadServices
-            }
-          ]);
-
-          return;
-        }
-
-        botSay(
-          `Encontrei ${state.dates.length} ${state.dates.length === 1 ? "data com horário disponível" : "datas com horários disponíveis"}! ♡\n\nToque em uma das datas abaixo para consultar os horários.`
-        );
-
-        renderDates();
-      } catch (error) {
-        removeTyping();
-
-        botSay(
-          `Não consegui consultar a agenda com segurança.\n\n${error.message}\n\nVocê pode tentar novamente.`
-        );
-
-        renderQuickReplies([
-          {
-            label: "Tentar novamente",
-            gold: true,
-            action: loadDates
-          },
-          {
-            label: "Escolher outro procedimento",
-            action: loadServices
-          }
-        ]);
       }
+    },
+    {
+      label:'Não, manter agendamento',
+      action:() => showMyBookings(state.customer.telefone)
+    }
+  ]);
+}
+
+/* =====================================================
+   REMARCAÇÃO
+===================================================== */
+
+async function startReschedule() {
+  saveStep('remarcar');
+
+  addMessage(
+    'Vamos encontrar uma nova data para seu atendimento.\n\nEscolha uma das datas disponíveis.'
+  );
+
+  await showRescheduleDates();
+}
+
+async function showRescheduleDates() {
+  saveStep('remarcar_data');
+
+  try {
+    const dates = await loadSpecificDates();
+
+    if (!dates.length) {
+      addMessage('Não existem novas datas disponíveis no momento.');
+      return;
     }
 
-    function renderDates() {
-      /*
-        Remove as opções anteriores, mas não chama renderQuickReplies
-        até depois de montar a grade de datas.
-      */
-      clearOptionContainers();
+    addOptions(dates.map(date => ({
+      label:formatDate(date),
+      action:async () => {
+        state.selectedDate = date;
+        await showRescheduleTimes();
+      }
+    })));
 
-      const container = document.createElement("div");
-      container.className = "date-options";
+  } catch(error) {
+    addMessage(getErrorMessage(error));
+  }
+}
 
-      const orderedTitles = [
-        "Hoje",
-        "Amanhã",
-        "Próximos dias",
-        "Próxima semana",
-        "Próximas semanas"
-      ];
+async function showRescheduleTimes() {
+  saveStep('remarcar_horario');
 
-      orderedTitles.forEach((title) => {
-        const datesForGroup = state.dates.filter(
-          (iso) => dateGroupTitle(iso) === title
-        );
+  const booking = state.selectedBooking;
 
-        if (!datesForGroup.length) return;
+  try {
+    const params = new URLSearchParams({
+      data:state.selectedDate,
+      servico_id:booking.servico_id,
+      cidade:booking.cidade || CONFIG.cidade
+    });
 
-        const heading = document.createElement("div");
-        heading.className = "date-group";
-        heading.textContent = title;
-        container.appendChild(heading);
+    const result = await api(`${API.horarios}?${params}`);
 
-        datesForGroup.forEach((iso) => {
-          const date = dateFromISO(iso);
-          const button = document.createElement("button");
+    const times = (result.data || []).filter(time =>
+      !(state.selectedDate === booking.data &&
+        String(time).slice(0,5) === String(booking.hora_inicio).slice(0,5))
+    );
 
-          button.type = "button";
-          button.className = "date-option";
-          button.setAttribute("aria-label", `Consultar horários para ${formatDate(iso)}`);
+    if (!times.length) {
+      addMessage('Não há horários livres nesta data.');
 
-          button.innerHTML = `
-            <strong>${String(date.getDate()).padStart(2, "0")}</strong>
-            <span>${escapeHTML(shortWeekday(iso))}</span>
-            <span class="date-month">${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}</span>
-          `;
+      addOptions([
+        {label:'Escolher outra data',action:showRescheduleDates},
+        {label:'Voltar ao início',action:showHome}
+      ]);
 
-          button.addEventListener("click", async () => {
-            if (button.disabled) return;
+      return;
+    }
 
-            container.querySelectorAll("button").forEach((item) => {
-              item.disabled = true;
-            });
+    addMessage(`Escolha o novo horário para ${formatDate(state.selectedDate)}:`);
 
-            userSay(formatDate(iso));
+    addOptions(times.map(time => ({
+      label:String(time).slice(0,5),
+      action:async () => {
+        await confirmReschedule(String(time).slice(0,5));
+      }
+    })));
 
-            state.data = iso;
-            state.horario = "";
-            state.times = [];
+  } catch(error) {
+    addMessage(getErrorMessage(error));
+  }
+}
 
-            await loadTimes();
+async function confirmReschedule(time) {
+  addMessage(
+    `Confirme a alteração:\n\nNova data: ${formatDate(state.selectedDate)}\nNovo horário: ${time}`
+  );
+
+  addOptions([
+    {
+      label:'Confirmar remarcação',
+      action:async () => {
+        try {
+          const result = await api(API.remarcar(state.selectedBooking.id),{
+            method:'PATCH',
+            body:JSON.stringify({
+              telefone:state.customer.telefone,
+              data:state.selectedDate,
+              hora_inicio:time
+            })
           });
 
-          container.appendChild(button);
-        });
-      });
-
-      $("#chatMessages").appendChild(container);
-      scrollChatToBottom();
-
-      /*
-        CORREÇÃO: renderQuickReplies agora preserva .date-options.
-        Os botões abaixo não apagam mais os botões de data.
-      */
-      renderQuickReplies([
-        {
-          label: "Escolher outro procedimento",
-          action: loadServices
-        },
-        {
-          label: "Voltar ao início",
-          action: startChat
-        }
-      ]);
-    }
-
-    /* HORÁRIOS DISPONÍVEIS */
-
-    async function loadTimes() {
-      if (!state.data || !state.servico?.id) {
-        await loadDates();
-        return;
-      }
-
-      setStep("times");
-      clearOptionContainers();
-      addTyping();
-
-      const token = ++state.requestToken;
-      const selectedDate = state.data;
-      const selectedServiceId = state.servico.id;
-
-      try {
-        const times = await fetchTimesForDate(selectedDate, selectedServiceId);
-
-        if (token !== state.requestToken) return;
-
-        removeTyping();
-
-        state.times = times;
-
-        if (!times.length) {
-          state.data = "";
-          state.horario = "";
-
-          botSay(
-            "Essa data não possui mais horários disponíveis. Vou consultar outras datas para você."
-          );
-
-          await loadDates();
-          return;
-        }
-
-        botSay(
-          `Para ${formatDate(selectedDate)}, estes são os horários que o sistema informa como disponíveis. Qual você prefere?`
-        );
-
-        renderTimes();
-      } catch (error) {
-        if (token !== state.requestToken) return;
-
-        removeTyping();
-
-        if (isUnavailableResponse(error)) {
-          state.data = "";
-          state.horario = "";
-
-          botSay("Não há horários disponíveis nessa data. Vamos consultar outro dia.");
-
-          await loadDates();
-          return;
-        }
-
-        botSay(
-          `Não consegui consultar os horários agora.\n\n${error.message}`
-        );
-
-        renderQuickReplies([
-          {
-            label: "Consultar novamente",
-            gold: true,
-            action: loadTimes
-          },
-          {
-            label: "Escolher outra data",
-            action: loadDates
-          }
-        ]);
-      }
-    }
-
-    function renderTimes() {
-      clearOptionContainers();
-
-      const container = document.createElement("div");
-      container.className = "time-options";
-
-      state.times.forEach((time) => {
-        const button = document.createElement("button");
-
-        button.type = "button";
-        button.className = "time-option";
-        button.textContent = time;
-        button.setAttribute("aria-label", `Selecionar horário ${time}`);
-
-        button.addEventListener("click", async () => {
-          if (button.disabled) return;
-
-          if (isTimeInPastToday(state.data, time)) {
-            botSay("Esse horário já passou. Vou atualizar as opções disponíveis.");
-            await loadTimes();
-            return;
-          }
-
-          container.querySelectorAll("button").forEach((item) => {
-            item.disabled = true;
-          });
-
-          userSay(time);
-
-          state.horario = time;
-
-          botSay(`Horário selecionado: ${time}. ✨`);
-
-          setStep("observations");
-
-          renderQuickReplies([
-            {
-              label: "Continuar",
-              gold: true,
-              action: askObservations
-            },
-            {
-              label: "Escolher outro horário",
-              action: loadTimes
-            },
-            {
-              label: "Escolher outra data",
-              action: loadDates
-            }
-          ]);
-        });
-
-        container.appendChild(button);
-      });
-
-      $("#chatMessages").appendChild(container);
-      scrollChatToBottom();
-
-      /*
-        CORREÇÃO: os botões de navegação ficam abaixo dos horários
-        sem remover a grade de horários.
-      */
-      renderQuickReplies([
-        {
-          label: "Escolher outra data",
-          action: loadDates
-        },
-        {
-          label: "Escolher outro procedimento",
-          action: loadServices
-        }
-      ]);
-    }
-
-    /* OBSERVAÇÕES E REVISÃO */
-
-    function askObservations() {
-      botSay(
-        "Deseja deixar alguma observação sobre o procedimento? É opcional. Se não precisar, pode pular."
-      );
-
-      setStep("observations");
-
-      renderQuickReplies([
-        {
-          label: "Não, pode continuar",
-          gold: true,
-          action: () => {
-            state.observacoes = "";
-            renderReview();
-          }
-        }
-      ]);
-
-      configureInput({
-        label: "Observações (opcional)",
-        placeholder: "Digite uma observação...",
-        enabled: true,
-        hint: "Se não houver observações, selecione a opção acima."
-      });
-    }
-
-    function renderReview() {
-      clearOptionContainers();
-
-      botSay(
-        "Perfeito! Antes de enviar sua solicitação, confira os dados abaixo."
-      );
-
-      const rows = [
-        ["Cliente", state.nome],
-        ["WhatsApp", state.telefone],
-        ["Procedimento", state.servico?.nome || "—"],
-        ["Data", state.data ? formatDate(state.data) : "—"],
-        ["Horário", state.horario || "—"],
-        ["Cidade", state.cidade || "—"],
-        ["Valor", money(state.servico?.preco || 0)],
-        ["Observações", state.observacoes || "Nenhuma"]
-      ];
-
-      const review = document.createElement("div");
-      review.className = "review-card";
-
-      const title = document.createElement("h4");
-      title.className = "review-title";
-      title.textContent = "Resumo do agendamento";
-
-      review.appendChild(title);
-
-      rows.forEach(([label, value]) => {
-        const row = document.createElement("div");
-        row.className = "review-row";
-
-        const labelElement = document.createElement("span");
-        labelElement.textContent = label;
-
-        const valueElement = document.createElement("strong");
-        valueElement.textContent = value;
-
-        row.append(labelElement, valueElement);
-        review.appendChild(row);
-      });
-
-      $("#chatMessages").appendChild(review);
-      scrollChatToBottom();
-
-      setStep("review");
-
-      renderQuickReplies([
-        {
-          label: "Confirmar agendamento",
-          gold: true,
-          action: confirmBooking
-        },
-        {
-          label: "Alterar horário",
-          action: loadTimes
-        },
-        {
-          label: "Alterar data",
-          action: loadDates
-        },
-        {
-          label: "Alterar procedimento",
-          action: loadServices
-        }
-      ]);
-    }
-
-    /* REGISTRO DEFINITIVO */
-
-    function isDuplicateError(message) {
-      return /duplicad|já existe|ja existe|telefone.*cadastrad|whatsapp.*cadastrad|unique constraint|duplicate key|23505/i.test(message);
-    }
-
-    function isSlotUnavailableError(message) {
-      return /horário.*indisponível|horario.*indisponivel|já foi reservado|ja foi reservado|conflito|slot.*unavailable|agenda.*ocupada|não está mais disponível|nao esta mais disponivel/i.test(message);
-    }
-
-    function calculateEndTime(start, duration) {
-      const [hours, minutes] = start.split(":").map(Number);
-      const total = hours * 60 + minutes + Number(duration || 60);
-
-      const endHours = Math.floor(total / 60) % 24;
-      const endMinutes = total % 60;
-
-      return `${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`;
-    }
-
-    async function confirmBooking() {
-      if (state.bookingInProgress) return;
-
-      if (
-        !state.nome ||
-        digits(state.telefone).length < 10 ||
-        !state.servico ||
-        !state.data ||
-        !state.horario
-      ) {
-        botSay("Falta alguma informação para concluir. Vamos revisar os dados antes de continuar.");
-
-        renderQuickReplies([
-          {
-            label: "Revisar agendamento",
-            gold: true,
-            action: renderReview
-          }
-        ]);
-
-        return;
-      }
-
-      if (isTimeInPastToday(state.data, state.horario)) {
-        botSay("Esse horário já passou. Vou atualizar a agenda para você.");
-        await loadTimes();
-        return;
-      }
-
-      state.bookingInProgress = true;
-
-      botSay(
-        "Estou validando a disponibilidade novamente e enviando seu agendamento ao sistema. Aguarde um instante, por favor. ♡"
-      );
-
-      addTyping();
-
-      try {
-        const payload = {
-          nome_cliente: state.nome,
-          telefone_cliente: digits(state.telefone),
-          email: state.email || null,
-          ...(state.clientId ? { cliente_id: state.clientId } : {}),
-          servico_id: state.servico.id,
-          nome_servico: state.servico.nome,
-          cidade: state.cidade,
-          data: state.data,
-          hora_inicio: state.horario,
-          hora_fim: calculateEndTime(
-            state.horario,
-            state.servico.duracao
-          ),
-          preco: state.servico.preco,
-          status: "Pendente",
-          observacoes: state.observacoes || "",
-          origem: "site"
-        };
-
-        const result = await apiRequest(API.bookings, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-
-        removeTyping();
-
-        const booking =
-          result?.agendamento ||
-          result?.data?.agendamento ||
-          result?.data ||
-          result;
-
-        $("#successDetails").innerHTML = "";
-
-        const details = [
-          ["Cliente", state.nome],
-          ["Procedimento", state.servico.nome],
-          ["Data", formatDate(state.data)],
-          ["Horário", state.horario],
-          ["Valor", money(state.servico.preco)]
-        ];
-
-        details.forEach(([label, value]) => {
-          const row = document.createElement("div");
-          row.className = "modal-summary-row";
-
-          const labelElement = document.createElement("span");
-          labelElement.textContent = label;
-
-          const valueElement = document.createElement("strong");
-          valueElement.textContent = value;
-
-          row.append(labelElement, valueElement);
-          $("#successDetails").appendChild(row);
-        });
-
-        const protocol =
-          booking?.id ||
-          booking?.codigo ||
-          booking?.protocolo ||
-          booking?.agendamento_id ||
-          "";
-
-        $("#successProtocol").textContent = protocol
-          ? `Protocolo do agendamento: ${protocol}`
-          : "Sua solicitação foi registrada pelo sistema. Guarde os detalhes acima.";
-
-        const status = String(
-          booking?.status ||
-          result?.status ||
-          ""
-        ).toLowerCase();
-
-        if (/confirmad/.test(status)) {
-          $("#successTitle").textContent = "Horário confirmado!";
-          $("#successMessage").textContent =
-            "Seu agendamento foi confirmado. Será um prazer receber você!";
-        } else {
-          $("#successTitle").textContent = "Agendamento registrado!";
-          $("#successMessage").textContent =
-            "Sua solicitação foi registrada com sucesso. Caso o atendimento dependa de aprovação, aguarde a confirmação.";
-        }
-
-        $("#successModal").classList.add("open");
-        document.body.style.overflow = "hidden";
-
-        createConfetti();
-      } catch (error) {
-        removeTyping();
-
-        if (isDuplicateError(error.message)) {
-          botSay(
-            "Parece que esse WhatsApp já possui cadastro. Não vamos criar outro registro. Você pode consultar novamente seu cadastro."
-          );
-
-          renderQuickReplies([
-            {
-              label: "Consultar cadastro",
-              gold: true,
-              action: () => handlePhone(digits(state.telefone))
-            },
-            {
-              label: "Voltar à revisão",
-              action: renderReview
-            }
-          ]);
-        } else if (isSlotUnavailableError(error.message)) {
-          state.horario = "";
-
-          botSay(
-            "Esse horário acabou de ficar indisponível. Não registrei a solicitação com esse horário. Vamos consultar as opções atualizadas."
-          );
-
-          await loadTimes();
-        } else {
-          botSay(
-            `Não consegui confirmar o agendamento.\n\n${error.message}\n\nNão vou apresentar uma confirmação enquanto o sistema não confirmar o registro. Você pode tentar novamente.`
-          );
-
-          renderQuickReplies([
-            {
-              label: "Tentar confirmar novamente",
-              gold: true,
-              action: confirmBooking
-            },
-            {
-              label: "Revisar dados",
-              action: renderReview
-            }
+          addMessage(result.message || 'Seu agendamento foi remarcado com sucesso!');
+          await showMyBookings(state.customer.telefone);
+
+        } catch(error) {
+          addMessage(getErrorMessage(error));
+
+          addOptions([
+            {label:'Escolher outro horário',action:showRescheduleTimes},
+            {label:'Escolher outra data',action:showRescheduleDates}
           ]);
         }
-      } finally {
-        state.bookingInProgress = false;
       }
+    },
+    {
+      label:'Escolher outro horário',
+      action:showRescheduleTimes
+    }
+  ]);
+}
+
+/* =====================================================
+   INFORMAÇÕES
+===================================================== */
+
+function showInformation() {
+  saveStep('informacoes');
+
+  addMessage(
+    'Seja bem-vinda ao atendimento Taiany Trindade Nail Designer! ♡\n\nPor aqui você pode consultar os procedimentos, visualizar os dias liberados na agenda, escolher horários e acompanhar seus agendamentos.\n\nOs horários são atualizados conforme a disponibilidade cadastrada pela profissional.'
+  );
+
+  addOptions([
+    {label:'Consultar serviços e valores',action:showServices},
+    {label:'Fazer um agendamento',action:startBooking},
+    {label:'Voltar ao início',action:showHome}
+  ]);
+}
+
+/* =====================================================
+   CAMPO DE TEXTO
+===================================================== */
+
+document.getElementById('composerForm').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  if (busy || input.disabled) return;
+
+  const value = input.value.trim();
+
+  if (!value) return;
+
+  const type = input.dataset.type;
+
+  addMessage(value,'user');
+  input.value = '';
+
+  setInput(false);
+
+  if (type === 'telefone') {
+    const phone = normalizePhone(value);
+
+    if (phone.length < 10 || phone.length > 15) {
+      addMessage('Esse número não parece ser um WhatsApp válido. Informe o número com DDD.');
+      setInput(true,'WhatsApp','Ex.: (17) 99999-9999');
+      input.dataset.type = 'telefone';
+      return;
     }
 
-    function createConfetti() {
-      const card = $("#modalCard");
+    setBusy(true);
 
-      card.querySelectorAll(".confetti").forEach((item) => item.remove());
+    try {
+      const client = await findCustomer(phone);
 
-      const colors = [
-        "#c5a15b",
-        "#b76e79",
-        "#e8c9cc",
-        "#f0dca8",
-        "#d49ba3"
-      ];
+      state.selectedClient = client;
+      state.customer.telefone = phone;
 
-      for (let i = 0; i < 32; i++) {
-        const piece = document.createElement("span");
+      if (client) {
+        state.customer.nome = client.nome || '';
+        state.customer.email = client.email || '';
 
-        piece.className = "confetti";
-        piece.style.left = `${Math.random() * 100}%`;
-        piece.style.background = colors[i % colors.length];
-        piece.style.animationDelay = `${Math.random() * .7}s`;
-        piece.style.animationDuration = `${1.2 + Math.random() * 1.1}s`;
-
-        card.appendChild(piece);
+        addMessage(`Encontramos seu cadastro, ${client.nome}! ♡\n\nVamos continuar seu agendamento.`);
+      } else {
+        addMessage('Ainda não encontramos um cadastro com esse WhatsApp. Vamos registrar seus dados no agendamento.');
       }
+
+      await showDates();
+
+    } catch(error) {
+      addMessage('Não foi possível consultar seu cadastro. ' + getErrorMessage(error));
+
+      addOptions([{label:'Tentar novamente',action:askPhone}]);
+
+    } finally {
+      setBusy(false);
     }
 
-    /* CAMPO DE ENTRADA - CORRIGIDO */
+  } else if (type === 'consulta') {
+    const phone = normalizePhone(value);
 
-    $("#composerForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const input = $("#chatInput");
-      const value = input.value.trim();
-
-      if (!value || input.disabled || state.bookingInProgress) return;
-
-      input.value = "";
-      userSay(value);
-
-      switch (state.step) {
-        case "consultBookingPhone": // <-- ESTE CASE FALTAVA
-          await handleConsultPhone(value);
-          break;
-
-        case "phone":
-          await handlePhone(value);
-          break;
-
-        case "name":
-          await handleName(value);
-          break;
-
-        case "email":
-          await handleEmail(value);
-          break;
-
-        case "observations":
-          state.observacoes = value.slice(0, 500);
-          renderReview();
-          break;
-
-        default:
-          botSay(
-            "Para continuar, selecione uma das opções apresentadas na conversa. Assim consigo consultar a agenda corretamente."
-          );
-          break;
-      }
-    });
-
-    async function handleConsultPhone(value){
-      const phone = digits(value);
-      if(phone.length < 10){
-        botSay("Esse número parece incompleto. Confira o DDD e o WhatsApp.");
-        configureInput({
-          label: "WhatsApp usado no agendamento",
-          placeholder: "(17) 99999-9999",
-          type: "tel",
-          enabled: true,
-          hint: "Digite o mesmo número informado ao realizar o agendamento."
-        });
-        return;
-      }
-      
-      botSay("Só um instante, estou consultando seus agendamentos... ♡");
-      addTyping();
-      
-      try{
-        // usa a rota nova que você já adicionou no server.js
-        const res = await apiRequest(`/api/meus-agendamentos?telefone=${encodeURIComponent(phone)}`);
-        const list = normalizeList(res);
-        removeTyping();
-        
-        if(!list.length){
-          botSay("Não encontrei agendamentos com esse WhatsApp.");
-          renderQuickReplies([
-            {label: "✦ Quero agendar", gold: true, action: askPhone},
-            {label: "Voltar ao início", action: startChat}
-          ]);
-          return;
-        }
-        
-        botSay(`Encontrei ${list.length} agendamento(s) com esse WhatsApp:`);
-        
-        list.forEach(a=>{
-          const card=document.createElement("div");
-          card.className="review-card";
-          card.innerHTML=`
-            <div class="review-row"><span>Serviço</span><strong>${escapeHTML(a.nome_servico||'—')}</strong></div>
-            <div class="review-row"><span>Data</span><strong>${formatDate(a.data)}</strong></div>
-            <div class="review-row"><span>Horário</span><strong>${String(a.hora_inicio||'').slice(0,5)} ${a.hora_fim?'- '+String(a.hora_fim).slice(0,5):''}</strong></div>
-            <div class="review-row"><span>Status</span><strong>${escapeHTML(a.status||'Pendente')}</strong></div>
-          `;
-          $("#chatMessages").appendChild(card);
-        });
-        scrollChatToBottom();
-        
-        renderQuickReplies([
-          {label: "✦ Fazer novo agendamento", gold: true, action: askPhone},
-          {label: "Voltar ao início", action: startChat}
-        ]);
-        
-      }catch(e){
-        removeTyping();
-        botSay(`Não consegui consultar agora.\n\n${e.message}`);
-        renderQuickReplies([
-          {label: "Tentar novamente", gold: true, action: ()=>handleConsultPhone(phone)},
-          {label: "Voltar ao início", action: startChat}
-        ]);
-      }
+    if (phone.length < 10 || phone.length > 15) {
+      addMessage('Informe um WhatsApp válido com DDD.');
+      setInput(true,'WhatsApp','Ex.: (17) 99999-9999');
+      input.dataset.type = 'consulta';
+      return;
     }
 
-    /* NAVEGAÇÃO */
+    state.customer.telefone = phone;
+    await showMyBookings(phone);
+  }
+});
 
-    $("#restartChat").addEventListener("click", () => {
-      if (state.bookingInProgress) return;
-      startChat();
-    });
+/* =====================================================
+   NAVEGAÇÃO
+===================================================== */
 
-    $("#backChat").addEventListener("click", () => {
-      if (state.bookingInProgress) return;
+document.getElementById('restartChat').addEventListener('click', () => {
+  chat.innerHTML = '';
+  resetFlow();
+  initialize();
+});
 
-      switch (state.step) {
-        case "clientChoice":
-          askPhone();
-          break;
+backButton.addEventListener('click', () => {
+  if (busy) return;
 
-        case "name":
-        case "email":
-          askPhone();
-          break;
+  if (state.step === 'horario') {
+    showDates();
+  } else if (state.step === 'dados') {
+    showTimes();
+  } else if (state.step === 'confirmacao') {
+    showCustomerForm();
+  } else if (state.step === 'data') {
+    askPhone();
+  } else {
+    showHome();
+  }
+});
 
-        case "services":
-          renderQuickReplies([
-            {
-              label: "Continuar com esse WhatsApp",
-              gold: true,
-              action: () => continueWithExistingClient({
-                id: state.clientId,
-                nome: state.nome,
-                email: state.email
-              })
-            },
-            {
-              label: "Voltar ao início",
-              action: startChat
-            }
-          ]);
-          break;
+document.getElementById('closeSuccess').addEventListener('click',closeSuccess);
+document.getElementById('newBooking').addEventListener('click',() => {
+  successModal.classList.remove('show');
+  startBooking();
+});
 
-        case "dates":
-        case "times":
-          loadServices();
-          break;
+successModal.addEventListener('click',event => {
+  if (event.target === successModal) {
+    closeSuccess();
+  }
+});
 
-        case "observations":
-          loadTimes();
-          break;
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
 
-        case "review":
-          askObservations();
-          break;
+initialize();
 
-        default:
-          askPhone();
-          break;
-      }
-    });
+</script>
 
-    /* MODAL */
-
-    function closeSuccessModal() {
-      $("#successModal").classList.remove("open");
-      document.body.style.overflow = "";
-    }
-
-    $("#closeSuccess").addEventListener("click", () => {
-      closeSuccessModal();
-
-      botSay(
-        "Obrigada por agendar com Taiany Trindade Nail Designer! ♡ Esperamos você. Tenha um excelente dia!"
-      );
-
-      renderQuickReplies([
-        {
-          label: "Fazer outro agendamento",
-          gold: true,
-          action: startChat
-        }
-      ]);
-    });
-
-    $("#newBooking").addEventListener("click", () => {
-      closeSuccessModal();
-      startChat();
-    });
-
-    $("#successModal").addEventListener("click", (event) => {
-      if (event.target === $("#successModal")) {
-        closeSuccessModal();
-      }
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (
-        event.key === "Escape" &&
-        $("#successModal").classList.contains("open")
-      ) {
-        closeSuccessModal();
-      }
-    });
-
-    /* INICIALIZAÇÃO */
-    startChat();
-  </script>
 </body>
 </html>
