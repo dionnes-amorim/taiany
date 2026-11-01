@@ -1857,7 +1857,7 @@
     }
 
     function isUnavailableResponse(error) {
-      return error.status === 400 || error.status === 404;
+      return error.status === 400 || error.status === 404 || error.status === 409;
     }
 
     async function apiRequest(url, options = {}) {
@@ -2212,7 +2212,7 @@ function consultBooking() {
     hint: "Digite o mesmo número informado ao realizar o agendamento."
   });
 }
-      
+
     function explainBooking() {
       botSay(
         "É simples! Vou localizar seu cadastro pelo WhatsApp, mostrar os procedimentos disponíveis e consultar os dias e horários livres. No final, você revisa os dados e envia a solicitação de agendamento."
@@ -2359,12 +2359,49 @@ function consultBooking() {
     }
 
     function availabilityIsActive(item) {
-      const value = item?.ativo ?? item?.active ?? item?.is_active;
+      const value = item?.ativo ?? item?.active ?? item?.is_active ?? item?.status;
+
       if (value === false || value === 0) return false;
-      if (typeof value === "string" && /^(false|0|inativo|não|nao)$/i.test(value.trim())) {
-        return false;
+
+      if (typeof value === "string") {
+        const normalized = value.trim().toLocaleLowerCase("pt-BR");
+        if (["false", "0", "inativo", "não", "nao", "cancelado", "cancelada"].includes(normalized)) {
+          return false;
+        }
       }
+
       return true;
+    }
+
+    function normalizeCityKey(value) {
+      return String(value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR");
+    }
+
+    function getSpecificAvailabilityDate(item) {
+      const raw =
+        item?.data_especifica ??
+        item?.dataEspecifica ??
+        item?.specific_date ??
+        item?.specificDate ??
+        item?.data ??
+        item?.date ??
+        "";
+
+      if (!raw) return "";
+
+      const value = String(raw).trim();
+      const isoMatch = value.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (isoMatch) return isoMatch[1];
+
+      const brMatch = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (brMatch) return `${brMatch[3]}-${brMatch[2]}-${brMatch[1]}`;
+
+      return "";
     }
 
     function getAvailableCities(rows) {
@@ -2374,24 +2411,44 @@ function consultBooking() {
       rows.forEach((item) => {
         if (!item || typeof item !== "object" || !availabilityIsActive(item)) return;
 
-        const city = String(item.cidade ?? item.city ?? "").trim();
-        if (!city) return;
+        const city = String(
+          item.cidade ?? item.city ?? item.nome_cidade ?? item.city_name ?? ""
+        ).trim();
+        const specificDate = getSpecificAvailabilityDate(item);
 
-        const specificDate = String(
-          item.data_especifica ?? item.data ?? item.date ?? ""
-        ).slice(0, 10);
+        // A cidade só aparece quando possui ao menos uma data específica futura cadastrada.
+        if (!city || !specificDate || specificDate < today) return;
 
-        if (specificDate && /^\d{4}-\d{2}-\d{2}$/.test(specificDate) && specificDate < today) {
-          return;
-        }
-
-        const key = city.toLocaleLowerCase("pt-BR");
+        const key = normalizeCityKey(city);
         if (!cities.has(key)) cities.set(key, city);
       });
 
       return [...cities.values()].sort((a, b) =>
         a.localeCompare(b, "pt-BR", { sensitivity: "base" })
       );
+    }
+
+    function getSpecificDatesForCity(rows, city) {
+      const today = todayISO();
+      const selectedCity = normalizeCityKey(city);
+      const dates = new Set();
+
+      rows.forEach((item) => {
+        if (!item || typeof item !== "object" || !availabilityIsActive(item)) return;
+
+        const rowCity = normalizeCityKey(
+          item.cidade ?? item.city ?? item.nome_cidade ?? item.city_name ?? ""
+        );
+        if (!rowCity || rowCity !== selectedCity) return;
+
+        const specificDate = getSpecificAvailabilityDate(item);
+        if (!specificDate || !/^\d{4}-\d{2}-\d{2}$/.test(specificDate)) return;
+        if (specificDate < today) return;
+
+        dates.add(specificDate);
+      });
+
+      return [...dates].sort();
     }
 
     async function askCidade() {
@@ -2425,6 +2482,7 @@ function consultBooking() {
             label: `📍 ${cidade}`,
             gold: true,
             action: async () => {
+              state.requestToken++;
               state.cidade = cidade;
               state.data = "";
               state.horario = "";
@@ -2601,7 +2659,7 @@ function consultBooking() {
         ]);
       }
     }
-    
+
     /* SERVIÇOS */
 
     async function loadServices() {
@@ -2690,7 +2748,7 @@ function consultBooking() {
         ]);
       }
     }
-    
+
     /* CONSULTA DOS HORÁRIOS */
 
     async function fetchTimesForDate(iso, serviceId) {
@@ -2771,165 +2829,140 @@ function consultBooking() {
 
     async function loadDates() {
       setStep("dates");
-
       clearOptionContainers();
 
-      botSay(
-        "Agora vou consultar a agenda para encontrar os dias com horários livres. Pode levar alguns segundos."
-      );
-
-      addTyping();
-
-      const serviceId = state.servico?.id;
-
       if (!state.cidade) {
-        removeTyping();
         botSay("Antes de consultar as datas, selecione a cidade em que deseja ser atendida.");
         await askCidade();
         return;
       }
 
+      const serviceId = state.servico?.id;
       if (!serviceId) {
-        removeTyping();
-
         botSay("Não encontrei o procedimento selecionado. Vamos escolher novamente.");
-
         await loadServices();
         return;
       }
 
-      const token = ++state.requestToken;
-      const candidates = Array.from(
-        { length: 30 },
-        (_, index) => addDays(todayISO(), index)
+      botSay(
+        `Vou consultar as datas específicas cadastradas para ${state.cidade} e verificar quais ainda têm horários livres. ♡`
       );
+      addTyping();
 
+      const token = ++state.requestToken;
       const availableDates = [];
-      let completed = 0;
-      let errors = 0;
-      let validResponses = 0;
+      let successfulChecks = 0;
+      let unavailableChecks = 0;
+      let errors = [];
 
       try {
-        /*
-          Consulta quatro datas por vez para reduzir o tempo de espera
-          sem enviar 30 solicitações simultâneas ao servidor.
-        */
+        // A lista de datas vem do cadastro de disponibilidade, não de um período fixo de 30 dias.
+        const availabilityResponse = await apiRequest(API.availability);
+        const availabilityRows = normalizeList(availabilityResponse);
+        const candidates = getSpecificDatesForCity(availabilityRows, state.cidade);
+
+        if (token !== state.requestToken) return;
+
+        if (!candidates.length) {
+          removeTyping();
+          state.dates = [];
+          state.times = [];
+          state.data = "";
+          state.horario = "";
+
+          botSay(
+            `Não encontrei datas futuras específicas cadastradas para ${state.cidade}. Confira no painel se os dias foram cadastrados para essa cidade e tente novamente.`
+          );
+
+          renderQuickReplies([
+            { label: "Escolher outra cidade", gold: true, action: askCidade },
+            { label: "Escolher outro procedimento", action: loadServices },
+            { label: "Voltar ao início", action: startChat }
+          ]);
+          return;
+        }
+
+        // Consulta em pequenos grupos para oferecer somente dias com horários realmente livres.
         for (let index = 0; index < candidates.length; index += 4) {
           if (token !== state.requestToken) return;
 
           const batch = candidates.slice(index, index + 4);
-
           const results = await Promise.all(
             batch.map(async (iso) => {
               try {
                 const times = await fetchTimesForDate(iso, serviceId);
-
-                return {
-                  iso,
-                  times,
-                  error: false,
-                  unavailable: false
-                };
+                return { iso, times, kind: "success" };
               } catch (error) {
-                if (isUnavailableResponse(error)) {
-                  return {
-                    iso,
-                    times: [],
-                    error: false,
-                    unavailable: true
-                  };
+                if (isUnavailableResponse(error) || error.status === 409) {
+                  return { iso, times: [], kind: "unavailable" };
                 }
-
-                return {
-                  iso,
-                  times: [],
-                  error: true,
-                  message: error.message
-                };
+                return { iso, times: [], kind: "error", message: error.message };
               }
             })
           );
 
           results.forEach((result) => {
-            completed++;
-
-            if (result.error) {
-              errors++;
+            if (result.kind === "success") {
+              successfulChecks++;
+              if (result.times.length > 0) availableDates.push(result.iso);
+            } else if (result.kind === "unavailable") {
+              unavailableChecks++;
             } else {
-              validResponses++;
-
-              if (result.times.length > 0) {
-                availableDates.push(result.iso);
-              }
+              errors.push(result.message || "Falha ao consultar um dia da agenda.");
             }
           });
 
-          /*
-            Se nenhuma consulta conseguir responder, interrompe.
-            Isso evita dizer que não há datas quando o servidor caiu.
-          */
-          if (completed >= 4 && validResponses === 0 && errors === completed) {
-            throw new Error(
-              results.find((item) => item.error)?.message ||
-              "O servidor não conseguiu consultar a agenda."
-            );
+          // Se todas as consultas da primeira rodada falharem por erro técnico, não informa agenda vazia.
+          if (
+            successfulChecks === 0 &&
+            unavailableChecks === 0 &&
+            errors.length === results.length
+          ) {
+            throw new Error(errors[0] || "O servidor não conseguiu consultar a agenda.");
           }
         }
 
         if (token !== state.requestToken) return;
 
         removeTyping();
-
         state.dates = [...new Set(availableDates)].sort();
 
         if (!state.dates.length) {
-          if (errors > 0) {
+          if (errors.length && successfulChecks === 0 && unavailableChecks === 0) {
             botSay(
-              "Não consegui confirmar as datas disponíveis agora. O sistema apresentou uma falha em parte das consultas."
+              `Não consegui consultar os horários de ${state.cidade} neste momento. Tente novamente em instantes.`
             );
           } else {
             botSay(
-              "Não encontrei horários livres para esse procedimento nos próximos 30 dias. Você pode consultar novamente ou escolher outro procedimento."
+              `As datas cadastradas para ${state.cidade} não possuem horários livres para esse procedimento no momento. Você pode escolher outra cidade ou outro procedimento.`
             );
           }
 
           renderQuickReplies([
-            {
-              label: "Consultar novamente",
-              gold: true,
-              action: loadDates
-            },
-            {
-              label: "Escolher outro procedimento",
-              action: loadServices
-            }
+            { label: "Consultar novamente", gold: true, action: loadDates },
+            { label: "Escolher outra cidade", action: askCidade },
+            { label: "Escolher outro procedimento", action: loadServices }
           ]);
-
           return;
         }
 
         botSay(
-          `Encontrei ${state.dates.length} ${state.dates.length === 1 ? "data com horário disponível" : "datas com horários disponíveis"}! ♡\n\nToque em uma das datas abaixo para consultar os horários.`
+          `Encontrei ${state.dates.length} ${state.dates.length === 1 ? "data com horário disponível" : "datas com horários disponíveis"} para ${state.cidade}! ♡\n\nToque em uma das datas abaixo para consultar os horários.`
         );
 
         renderDates();
       } catch (error) {
+        if (token !== state.requestToken) return;
         removeTyping();
 
         botSay(
-          `Não consegui consultar a agenda com segurança.\n\n${error.message}\n\nVocê pode tentar novamente.`
+          `Não consegui consultar as datas cadastradas para ${state.cidade}.\n\n${error.message}\n\nVocê pode tentar novamente.`
         );
 
         renderQuickReplies([
-          {
-            label: "Tentar novamente",
-            gold: true,
-            action: loadDates
-          },
-          {
-            label: "Escolher outro procedimento",
-            action: loadServices
-          }
+          { label: "Tentar novamente", gold: true, action: loadDates },
+          { label: "Escolher outra cidade", action: askCidade },
+          { label: "Escolher outro procedimento", action: loadServices }
         ]);
       }
     }
@@ -3540,16 +3573,16 @@ function consultBooking() {
         });
         return;
       }
-      
+
       botSay("Só um instante, estou consultando seus agendamentos... ♡");
       addTyping();
-      
+
       try{
         // usa a rota nova que você já adicionou no server.js
         const res = await apiRequest(`/api/meus-agendamentos?telefone=${encodeURIComponent(phone)}`);
         const list = normalizeList(res);
         removeTyping();
-        
+
         if(!list.length){
           botSay("Não encontrei agendamentos com esse WhatsApp.");
           renderQuickReplies([
@@ -3558,9 +3591,9 @@ function consultBooking() {
           ]);
           return;
         }
-        
+
         botSay(`Encontrei ${list.length} agendamento(s) com esse WhatsApp:`);
-        
+
         list.forEach(a=>{
           const card=document.createElement("div");
           card.className="review-card";
@@ -3573,12 +3606,12 @@ function consultBooking() {
           $("#chatMessages").appendChild(card);
         });
         scrollChatToBottom();
-        
+
         renderQuickReplies([
           {label: "✦ Fazer novo agendamento", gold: true, action: askPhone},
           {label: "Voltar ao início", action: startChat}
         ]);
-        
+
       }catch(e){
         removeTyping();
         botSay(`Não consegui consultar agora.\n\n${e.message}`);
