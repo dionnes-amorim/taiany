@@ -1740,148 +1740,68 @@ app.get('/api/admin/disponibilidade', admin, async (req, res) => {
 app.post('/api/admin/disponibilidade', admin, async (req, res) => {
   try {
     const day = Number(req.body?.dia_semana);
-    const cidade = cleanText(req.body?.cidade, 50) || 'Severínia';
+    const cidade = cleanText(req.body?.cidade, 50) || null;
+    const dataEspecifica = req.body?.data_especifica ? cleanText(req.body.data_especifica, 10) : null;
     const start = normalizeTime(req.body?.hora_inicio);
     const end = normalizeTime(req.body?.hora_fim);
 
     if (!Number.isInteger(day) || day < 0 || day > 6) {
-      return res.status(400).json({
-        ok: false,
-        error: 'Dia da semana inválido. Use de 0 a 6.'
-      });
+      return res.status(400).json({ ok: false, error: 'Dia da semana inválido.' });
     }
-
+    if (dataEspecifica && !validDate(dataEspecifica)) {
+      return res.status(400).json({ ok: false, error: 'data_especifica inválida. Use AAAA-MM-DD' });
+    }
     if (!start || !end || !validRange(start, end)) {
-      return res.status(400).json({
-        ok: false,
-        error: 'Informe horários válidos, com o fim depois do início.'
-      });
+      return res.status(400).json({ ok: false, error: 'Horário inválido.' });
     }
 
     const payload = {
       dia_semana: day,
       hora_inicio: start,
       hora_fim: end,
-      cidade: cidade
+      cidade: cidade,
+      data_especifica: dataEspecifica
     };
+    if (req.body?.ativo !== undefined) payload.ativo = parseBoolean(req.body.ativo);
 
-    if (req.body?.ativo !== undefined) {
-      payload.ativo = parseBoolean(req.body.ativo);
-    }
-
-    const { data, error } = await db()
-      .from('disponibilidade')
-      .insert(payload)
-      .select()
-      .single();
-
+    const { data, error } = await db().from('disponibilidade').insert(payload).select().single();
     if (error) throw error;
-
     return res.status(201).json({ ok: true, data });
-  } catch (error) {
-    return sendDbError(res, error);
-  }
+  } catch (error) { return sendDbError(res, error); }
 });
 
 app.patch('/api/admin/disponibilidade/:id', admin, async (req, res) => {
   try {
     const id = req.params.id;
-
-    if (!validId(id)) {
-      return res.status(400).json({
-        ok: false,
-        error: 'ID de disponibilidade inválido.'
-      });
-    }
-
+    if (!validId(id)) return res.status(400).json({ ok: false, error: 'ID inválido.' });
     const updates = {};
 
     if (req.body?.dia_semana !== undefined) {
       const day = Number(req.body.dia_semana);
-
-      if (!Number.isInteger(day) || day < 0 || day > 6) {
-        return res.status(400).json({
-          ok: false,
-          error: 'Dia da semana inválido.'
-        });
-      }
-
+      if (!Number.isInteger(day) || day < 0 || day > 6) return res.status(400).json({ ok: false, error: 'Dia inválido.' });
       updates.dia_semana = day;
     }
-
+    if (req.body?.cidade !== undefined) updates.cidade = cleanText(req.body.cidade, 50) || null;
+    if (req.body?.data_especifica !== undefined) {
+      const d = cleanText(req.body.data_especifica, 10);
+      if (d && !validDate(d)) return res.status(400).json({ ok: false, error: 'data_especifica inválida.' });
+      updates.data_especifica = d || null;
+    }
     for (const field of ['hora_inicio', 'hora_fim']) {
       if (req.body?.[field] !== undefined) {
         const time = normalizeTime(req.body[field]);
-
-        if (!time) {
-          return res.status(400).json({
-            ok: false,
-            error: `Horário inválido: ${field}.`
-          });
-        }
-
+        if (!time) return res.status(400).json({ ok: false, error: `Horário inválido: ${field}.` });
         updates[field] = time;
       }
     }
+    if (req.body?.ativo !== undefined) updates.ativo = parseBoolean(req.body.ativo);
+    if (!Object.keys(updates).length) return res.status(400).json({ ok: false, error: 'Nada para atualizar.' });
 
-    if (req.body?.ativo !== undefined) {
-      updates.ativo = parseBoolean(req.body.ativo);
-    }
-
-    if (!Object.keys(updates).length) {
-      return res.status(400).json({
-        ok: false,
-        error: 'Nenhum campo válido foi enviado.'
-      });
-    }
-
-    if (updates.hora_inicio || updates.hora_fim) {
-      const { data: current, error: readError } = await db()
-        .from('disponibilidade')
-        .select('hora_inicio,hora_fim')
-        .eq('id', id)
-        .maybeSingle();
-
-      if (readError) throw readError;
-
-      if (!current) {
-        return res.status(404).json({
-          ok: false,
-          error: 'Disponibilidade não encontrada.'
-        });
-      }
-
-      const start = updates.hora_inicio || current.hora_inicio;
-      const end = updates.hora_fim || current.hora_fim;
-
-      if (!validRange(start, end)) {
-        return res.status(400).json({
-          ok: false,
-          error: 'O horário final deve ser posterior ao horário inicial.'
-        });
-      }
-    }
-
-    const { data, error } = await db()
-      .from('disponibilidade')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .maybeSingle();
-
+    const { data, error } = await db().from('disponibilidade').update(updates).eq('id', id).select().maybeSingle();
     if (error) throw error;
-
-    if (!data) {
-      return res.status(404).json({
-        ok: false,
-        error: 'Disponibilidade não encontrada.'
-      });
-    }
-
+    if (!data) return res.status(404).json({ ok: false, error: 'Não encontrado.' });
     return res.json({ ok: true, data });
-  } catch (error) {
-    return sendDbError(res, error);
-  }
+  } catch (error) { return sendDbError(res, error); }
 });
 
 app.delete('/api/admin/disponibilidade/:id', admin, async (req, res) => {
